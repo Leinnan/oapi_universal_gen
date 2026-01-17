@@ -1,0 +1,102 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Structs API",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "SimpleUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": ["id", "name"]
+      },
+      "UserWithAllTypes": {
+        "type": "object",
+        "properties": {
+          "string_field": {
+            "type": "string"
+          },
+          "int_field": {
+            "type": "integer"
+          },
+          "int32_field": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "int64_field": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "number_field": {
+            "type": "number"
+          },
+          "bool_field": {
+            "type": "boolean"
+          },
+          "array_field": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "object_field": {
+            "$ref": "#/components/schemas/SimpleUser"
+          }
+        }
+      },
+      "NestedObject": {
+        "type": "object",
+        "properties": {
+          "outer": {
+            "type": "object",
+            "properties": {
+              "inner": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SnakeCaseFields": {
+        "type": "object",
+        "properties": {
+          "my_field_name": {
+            "type": "string"
+          },
+          "another_field": {
+            "type": "integer"
+          }
+        }
+      },
+      "KebabCaseFields": {
+        "type": "object",
+        "properties": {
+          "my-field-name": {
+            "type": "string"
+          },
+          "another-field": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

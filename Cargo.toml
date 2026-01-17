@@ -1,0 +1,32 @@
+[package]
+name = "oapi_universal_gen"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[features]
+default = ["reqwest_backend", "ehttp_backend", "oapi_gen"]
+ehttp_backend = ["ehttp"]
+reqwest_backend = ["reqwest"]
+oapi_gen = ["openapiv3", "quote", "proc-macro2", "prettyplease", "syn", "derive_more"]
+
+[workspace]
+members = [
+    "tests/compile_test",
+]
+
+[dependencies]
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0"
+url = "2.5"
+ehttp = { version = "0.4", features= ["native-async"], optional = true }
+reqwest = { version = "^0.12", default-features = false, features = ["json", "multipart"], optional = true }
+openapiv3 = { version = "2.2.0", optional = true }
+quote = { version = "1.0", optional = true }
+proc-macro2 = { version = "1.0", optional = true }
+prettyplease = { version = "0.2.0", optional = true }
+syn = { version = "2.0", features = ["full"], optional = true }
+derive_more = { version = "1.0", optional = true, features = ["display"] }
+
+[dev-dependencies]
+openapiv3 = "2.2.0"

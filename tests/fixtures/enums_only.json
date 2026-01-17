@@ -1,0 +1,44 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Enums API",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "StringStatus": {
+        "type": "string",
+        "enum": ["pending", "active", "completed", "failed"]
+      },
+      "IntegerPriority": {
+        "type": "integer",
+        "enum": [1, 2, 3, 4, 5]
+      },
+      "NumberScore": {
+        "type": "number",
+        "enum": [0.5, 1.0, 1.5, 2.0]
+      },
+      "NegativeNumbers": {
+        "type": "integer",
+        "enum": [-1, -2, -3]
+      },
+      "MixedNumbers": {
+        "type": "integer",
+        "enum": [-5, 0, 5]
+      },
+      "BooleanFlag": {
+        "type": "boolean",
+        "enum": [true, false]
+      },
+      "StringWithSpaces": {
+        "type": "string",
+        "enum": ["hello world", "foo-bar", "baz_qux"]
+      },
+      "NumericStart": {
+        "type": "string",
+        "enum": ["123abc", "42answers"]
+      }
+    }
+  }
+}

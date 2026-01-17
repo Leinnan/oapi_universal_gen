@@ -1,0 +1,15 @@
+[package]
+name = "oapi_compile_test"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+oapi_universal_gen = { path = "../..", default-features = false, features = ["ehttp_backend"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+derive_more = "1.0"
+
+[build-dependencies]
+oapi_universal_gen = { path = "../..", features = ["oapi_gen"] }
+derive_more = "1.0"
