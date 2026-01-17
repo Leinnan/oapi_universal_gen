@@ -26,7 +26,7 @@ fn generate_code(openapi: &OpenApi) -> String {
     let enum_schemas: Vec<_> = cmp
         .schemas
         .iter()
-        .filter(|(_, schema)| is_enum_schema(schema))
+        .filter(|(_, schema_or_ref)| is_enum_schema(schema_or_ref))
         .collect();
 
     let enums = enum_schemas.iter().flat_map(|(name, schema)| {
@@ -123,9 +123,9 @@ fn generate_code(openapi: &OpenApi) -> String {
                 Schema::Object(box_obj) => box_obj.as_ref(),
                 _ => return None,
             };
-            if name.contains("Auth") {
-                eprintln!("{} -> {:#?}", name, schema_ref);
-            }
+            // if name.contains("Auth") {
+            //     eprintln!("{} -> {:#?}", name, schema_ref);
+            // }
 
             // Check if this schema is a tagged enum (anyOf with object variants with const tags)
             if let Some((tag_field, _variants)) = extract_discriminator_info(&cmp_2, schema_ref) {
@@ -1066,8 +1066,13 @@ fn type_to_tokens(ty: &str) -> proc_macro2::TokenStream {
 fn is_enum_schema(schema: &Schema) -> bool {
     let obj: &Object = match schema {
         Schema::Object(box_obj) => box_obj.as_ref(),
-        _ => return false,
+        _ => {
+            return false;
+        }
     };
+    if let Some(any_of) = &obj.any_of {
+        return !any_of.is_empty();
+    }
     if let Some(Types::Single(Type::String)) = obj.schema_type {
         return obj.enum_values.as_ref().map_or(false, |v| !v.is_empty());
     }
@@ -1079,9 +1084,6 @@ fn is_enum_schema(schema: &Schema) -> bool {
     }
     if let Some(Types::Single(Type::Boolean)) = obj.schema_type {
         return obj.enum_values.as_ref().map_or(false, |v| !v.is_empty());
-    }
-    if let Some(any_of) = &obj.any_of {
-        return !any_of.is_empty();
     }
     false
 }

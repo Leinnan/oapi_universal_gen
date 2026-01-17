@@ -8,5 +8,5 @@ fn main() {
     std::fs::write(&dest_path, &generated_code).expect("Failed to write generated_api.rs");
     println!("cargo:warning=Code saved to {}", dest_path.display());
 
-    println!("cargo:rerun-if-changed=../opencode.json");
+    println!("cargo:rerun-if-changed=../fixtures/opencode.json");
 }
