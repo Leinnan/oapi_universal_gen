@@ -1,3 +1,4 @@
+use crate::RequestType;
 use openapiv3::{OpenAPI, ReferenceOr, SchemaKind, Type};
 use quote::{format_ident, quote};
 use serde_json;
@@ -178,18 +179,9 @@ struct ParameterInfo {
 }
 
 #[derive(Debug, Clone)]
-enum HttpMethod {
-    Get,
-    Post,
-    Put,
-    Patch,
-    Delete,
-}
-
-#[derive(Debug, Clone)]
 struct MethodInfo {
     name: String,
-    http_method: HttpMethod,
+    http_method: RequestType,
     parameters: Vec<ParameterInfo>,
     request_body_type: Option<String>,
     response_type: Option<String>,
@@ -275,10 +267,36 @@ fn build_header_handling(params: &[ParameterInfo]) -> Vec<proc_macro2::TokenStre
 
 fn generate_method_body(path: &str, method_info: &MethodInfo) -> proc_macro2::TokenStream {
     let fn_name = format_ident!("{}", method_info.name);
-    let doc_comment = method_info
-        .description
-        .as_ref()
-        .map(|d| quote! { #[doc = #d] });
+    let mut docs = format!("ENDPOINT {:?} {}", &method_info.http_method, path);
+
+    if let Some(ref d) = method_info.description {
+        docs.push('\n');
+        docs.push_str(d.as_str());
+        docs.push('\n');
+    }
+    if !method_info.parameters.is_empty() {
+        docs.push('\n');
+        docs.push_str("# Arguments");
+        docs.push('\n');
+        docs.push('\n');
+    }
+    for p in &method_info.parameters {
+        let location_str = match p.param_location {
+            ParameterLocation::Path => "path",
+            ParameterLocation::Query => "query",
+            ParameterLocation::Header => "header",
+            ParameterLocation::Cookie => "cookie",
+        };
+        let param_name = to_valid_rust_field_name(&p.name);
+        if let Some(ref description) = p.description {
+            docs.push_str(&format!(
+                "- `{}` {} - {}\n",
+                location_str, param_name, description
+            ));
+        } else {
+            docs.push_str(&format!("- `{}` {}\n", location_str, param_name));
+        }
+    }
 
     let param_decls: Vec<_> = method_info
         .parameters
@@ -303,11 +321,11 @@ fn generate_method_body(path: &str, method_info: &MethodInfo) -> proc_macro2::To
     };
 
     let http_method = match method_info.http_method {
-        HttpMethod::Get => quote! { RequestType::Get },
-        HttpMethod::Post => quote! { RequestType::Post },
-        HttpMethod::Put => quote! { RequestType::Put },
-        HttpMethod::Patch => quote! { RequestType::Patch },
-        HttpMethod::Delete => quote! { RequestType::Delete },
+        RequestType::Get => quote! { RequestType::Get },
+        RequestType::Post => quote! { RequestType::Post },
+        RequestType::Put => quote! { RequestType::Put },
+        RequestType::Patch => quote! { RequestType::Patch },
+        RequestType::Delete => quote! { RequestType::Delete },
     };
 
     let (path_format, _path_replacements) = format_path_with_params(path, &method_info.parameters);
@@ -369,7 +387,7 @@ fn generate_method_body(path: &str, method_info: &MethodInfo) -> proc_macro2::To
     };
 
     quote! {
-        #doc_comment
+        #[doc = #docs]
         fn #fn_name(&self, #(#param_decls),*) -> impl Future<Output = #return_type> {
             async move {
                 #query_collect
@@ -409,11 +427,11 @@ fn generate_methods(
             path_item.parameters.iter().cloned().collect();
 
         let operations = [
-            ("get", HttpMethod::Get, path_item.get.as_ref()),
-            ("post", HttpMethod::Post, path_item.post.as_ref()),
-            ("put", HttpMethod::Put, path_item.put.as_ref()),
-            ("patch", HttpMethod::Patch, path_item.patch.as_ref()),
-            ("delete", HttpMethod::Delete, path_item.delete.as_ref()),
+            ("get", RequestType::Get, path_item.get.as_ref()),
+            ("post", RequestType::Post, path_item.post.as_ref()),
+            ("put", RequestType::Put, path_item.put.as_ref()),
+            ("patch", RequestType::Patch, path_item.patch.as_ref()),
+            ("delete", RequestType::Delete, path_item.delete.as_ref()),
         ];
 
         for (_method_name, http_method, operation) in operations {
@@ -440,7 +458,7 @@ fn generate_methods(
 
 fn build_method_info(
     path: &str,
-    http_method: HttpMethod,
+    http_method: RequestType,
     operation: &openapiv3::Operation,
     path_params: &[openapiv3::ReferenceOr<openapiv3::Parameter>],
     components: Option<&openapiv3::Components>,
@@ -872,13 +890,13 @@ fn clean_path_for_method_name(path: &str) -> String {
     output
 }
 
-fn method_suffix(method: &HttpMethod) -> String {
+fn method_suffix(method: &RequestType) -> String {
     match method {
-        HttpMethod::Get => "get",
-        HttpMethod::Post => "post",
-        HttpMethod::Put => "put",
-        HttpMethod::Patch => "patch",
-        HttpMethod::Delete => "delete",
+        RequestType::Get => "get",
+        RequestType::Post => "post",
+        RequestType::Put => "put",
+        RequestType::Patch => "patch",
+        RequestType::Delete => "delete",
     }
     .to_string()
 }

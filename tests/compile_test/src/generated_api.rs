@@ -2029,7 +2029,9 @@ pub enum StringEnum {
     Exited,
 }
 pub trait ApiService: ::oapi_universal_gen::OapiRequester {
-    ///Get health information about the OpenCode server.
+    /**ENDPOINT Get /global/health
+Get health information about the OpenCode server.
+*/
     fn global_health_get(
         &self,
     ) -> impl Future<Output = Option<GlobalHealthGetResponse>> {
@@ -2048,7 +2050,9 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<GlobalHealthGetResponse>(&content).ok()
         }
     }
-    ///Subscribe to global events from the OpenCode system using server-sent events.
+    /**ENDPOINT Get /global/event
+Subscribe to global events from the OpenCode system using server-sent events.
+*/
     fn global_event_get(&self) -> impl Future<Output = Option<()>> {
         async move {
             let query_params: Vec<(String, String)> = Vec::new();
@@ -2064,7 +2068,9 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             Some(())
         }
     }
-    ///Clean up and dispose all OpenCode instances, releasing all resources.
+    /**ENDPOINT Post /global/dispose
+Clean up and dispose all OpenCode instances, releasing all resources.
+*/
     fn global_dispose_post(&self) -> impl Future<Output = Option<bool>> {
         async move {
             let query_params: Vec<(String, String)> = Vec::new();
@@ -2081,7 +2087,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Get a list of projects that have been opened with OpenCode.
+    /**ENDPOINT Get /project
+Get a list of projects that have been opened with OpenCode.
+
+# Arguments
+
+- `query` directory
+*/
     fn project_get(
         &self,
         directory: Option<String>,
@@ -2104,7 +2116,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<Project>>(&content).ok()
         }
     }
-    ///Retrieve the currently active project that OpenCode is working with.
+    /**ENDPOINT Get /project/current
+Retrieve the currently active project that OpenCode is working with.
+
+# Arguments
+
+- `query` directory
+*/
     fn project_current_get(
         &self,
         directory: Option<String>,
@@ -2130,7 +2148,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Project>(&content).ok()
         }
     }
-    ///Update project properties such as name, icon and color.
+    /**ENDPOINT Patch /project/{projectID}
+Update project properties such as name, icon and color.
+
+# Arguments
+
+- `query` directory
+- `path` project_id
+*/
     fn project_projectid_patch(
         &self,
         directory: Option<String>,
@@ -2161,7 +2186,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Project>(&content).ok()
         }
     }
-    ///Get a list of all active pseudo-terminal (PTY) sessions managed by OpenCode.
+    /**ENDPOINT Get /pty
+Get a list of all active pseudo-terminal (PTY) sessions managed by OpenCode.
+
+# Arguments
+
+- `query` directory
+*/
     fn pty_get(
         &self,
         directory: Option<String>,
@@ -2184,7 +2215,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<Pty>>(&content).ok()
         }
     }
-    ///Create a new pseudo-terminal (PTY) session for running shell commands and processes.
+    /**ENDPOINT Post /pty
+Create a new pseudo-terminal (PTY) session for running shell commands and processes.
+
+# Arguments
+
+- `query` directory
+*/
     fn pty_post(&self, directory: Option<String>) -> impl Future<Output = Option<Pty>> {
         async move {
             let query_params: Vec<(String, String)> = vec![
@@ -2208,7 +2245,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Pty>(&content).ok()
         }
     }
-    ///Retrieve detailed information about a specific pseudo-terminal (PTY) session.
+    /**ENDPOINT Get /pty/{ptyID}
+Retrieve detailed information about a specific pseudo-terminal (PTY) session.
+
+# Arguments
+
+- `query` directory
+- `path` pty_id
+*/
     fn pty_ptyid_get(
         &self,
         directory: Option<String>,
@@ -2235,7 +2279,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Pty>(&content).ok()
         }
     }
-    ///Update properties of an existing pseudo-terminal (PTY) session.
+    /**ENDPOINT Put /pty/{ptyID}
+Update properties of an existing pseudo-terminal (PTY) session.
+
+# Arguments
+
+- `query` directory
+- `path` pty_id
+*/
     fn pty_ptyid_put(
         &self,
         directory: Option<String>,
@@ -2266,7 +2317,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Pty>(&content).ok()
         }
     }
-    ///Remove and terminate a specific pseudo-terminal (PTY) session.
+    /**ENDPOINT Delete /pty/{ptyID}
+Remove and terminate a specific pseudo-terminal (PTY) session.
+
+# Arguments
+
+- `query` directory
+- `path` pty_id
+*/
     fn pty_ptyid_delete(
         &self,
         directory: Option<String>,
@@ -2293,7 +2351,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Establish a WebSocket connection to interact with a pseudo-terminal (PTY) session in real-time.
+    /**ENDPOINT Get /pty/{ptyID}/connect
+Establish a WebSocket connection to interact with a pseudo-terminal (PTY) session in real-time.
+
+# Arguments
+
+- `query` directory
+- `path` pty_id
+*/
     fn pty_ptyid_connect_get(
         &self,
         directory: Option<String>,
@@ -2320,7 +2385,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Retrieve the current OpenCode configuration settings and preferences.
+    /**ENDPOINT Get /config
+Retrieve the current OpenCode configuration settings and preferences.
+
+# Arguments
+
+- `query` directory
+*/
     fn config_get(
         &self,
         directory: Option<String>,
@@ -2343,7 +2414,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Config>(&content).ok()
         }
     }
-    ///Update OpenCode configuration settings and preferences.
+    /**ENDPOINT Patch /config
+Update OpenCode configuration settings and preferences.
+
+# Arguments
+
+- `query` directory
+*/
     fn config_patch(
         &self,
         directory: Option<String>,
@@ -2369,7 +2446,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Config>(&content).ok()
         }
     }
-    ///Get a list of all available tool IDs, including both built-in tools and dynamically registered tools.
+    /**ENDPOINT Get /experimental/tool/ids
+Get a list of all available tool IDs, including both built-in tools and dynamically registered tools.
+
+# Arguments
+
+- `query` directory
+*/
     fn experimental_tool_ids_get(
         &self,
         directory: Option<String>,
@@ -2395,7 +2478,15 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<ToolIDs>(&content).ok()
         }
     }
-    ///Get a list of available tools with their JSON schema parameters for a specific provider and model combination.
+    /**ENDPOINT Get /experimental/tool
+Get a list of available tools with their JSON schema parameters for a specific provider and model combination.
+
+# Arguments
+
+- `query` directory
+- `query` provider
+- `query` model
+*/
     fn experimental_tool_get(
         &self,
         directory: Option<String>,
@@ -2424,7 +2515,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<ToolList>(&content).ok()
         }
     }
-    ///Clean up and dispose the current OpenCode instance, releasing all resources.
+    /**ENDPOINT Post /instance/dispose
+Clean up and dispose the current OpenCode instance, releasing all resources.
+
+# Arguments
+
+- `query` directory
+*/
     fn instance_dispose_post(
         &self,
         directory: Option<String>,
@@ -2450,7 +2547,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Retrieve the current working directory and related path information for the OpenCode instance.
+    /**ENDPOINT Get /path
+Retrieve the current working directory and related path information for the OpenCode instance.
+
+# Arguments
+
+- `query` directory
+*/
     fn path_get(&self, directory: Option<String>) -> impl Future<Output = Option<Path>> {
         async move {
             let query_params: Vec<(String, String)> = vec![
@@ -2470,7 +2573,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Path>(&content).ok()
         }
     }
-    ///List all sandbox worktrees for the current project.
+    /**ENDPOINT Get /experimental/worktree
+List all sandbox worktrees for the current project.
+
+# Arguments
+
+- `query` directory
+*/
     fn experimental_worktree_get(
         &self,
         directory: Option<String>,
@@ -2496,7 +2605,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<String>>(&content).ok()
         }
     }
-    ///Create a new git worktree for the current project.
+    /**ENDPOINT Post /experimental/worktree
+Create a new git worktree for the current project.
+
+# Arguments
+
+- `query` directory
+*/
     fn experimental_worktree_post(
         &self,
         directory: Option<String>,
@@ -2526,7 +2641,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Worktree>(&content).ok()
         }
     }
-    ///Retrieve version control system (VCS) information for the current project, such as git branch.
+    /**ENDPOINT Get /vcs
+Retrieve version control system (VCS) information for the current project, such as git branch.
+
+# Arguments
+
+- `query` directory
+*/
     fn vcs_get(
         &self,
         directory: Option<String>,
@@ -2549,7 +2670,16 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<VcsInfo>(&content).ok()
         }
     }
-    ///Get a list of all OpenCode sessions, sorted by most recently updated.
+    /**ENDPOINT Get /session
+Get a list of all OpenCode sessions, sorted by most recently updated.
+
+# Arguments
+
+- `query` directory
+- `query` start - Filter sessions updated on or after this timestamp (milliseconds since epoch)
+- `query` search - Filter sessions by title (case-insensitive)
+- `query` limit - Maximum number of sessions to return
+*/
     fn session_get(
         &self,
         directory: Option<String>,
@@ -2579,7 +2709,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<Session>>(&content).ok()
         }
     }
-    ///Create a new OpenCode session for interacting with AI assistants and managing conversations.
+    /**ENDPOINT Post /session
+Create a new OpenCode session for interacting with AI assistants and managing conversations.
+
+# Arguments
+
+- `query` directory
+*/
     fn session_post(
         &self,
         directory: Option<String>,
@@ -2606,7 +2742,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Session>(&content).ok()
         }
     }
-    ///Retrieve the current status of all sessions, including active, idle, and completed states.
+    /**ENDPOINT Get /session/status
+Retrieve the current status of all sessions, including active, idle, and completed states.
+
+# Arguments
+
+- `query` directory
+*/
     fn session_status_get(
         &self,
         directory: Option<String>,
@@ -2632,7 +2774,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<serde_json::Value>(&content).ok()
         }
     }
-    ///Retrieve detailed information about a specific OpenCode session.
+    /**ENDPOINT Get /session/{sessionID}
+Retrieve detailed information about a specific OpenCode session.
+
+# Arguments
+
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_get(
         &self,
         directory: Option<String>,
@@ -2659,7 +2808,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Session>(&content).ok()
         }
     }
-    ///Update properties of an existing session, such as title or other metadata.
+    /**ENDPOINT Patch /session/{sessionID}
+Update properties of an existing session, such as title or other metadata.
+
+# Arguments
+
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_patch(
         &self,
         directory: Option<String>,
@@ -2690,7 +2846,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Session>(&content).ok()
         }
     }
-    ///Delete a session and permanently remove all associated data, including messages and history.
+    /**ENDPOINT Delete /session/{sessionID}
+Delete a session and permanently remove all associated data, including messages and history.
+
+# Arguments
+
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_delete(
         &self,
         directory: Option<String>,
@@ -2717,7 +2880,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Retrieve all child sessions that were forked from the specified parent session.
+    /**ENDPOINT Get /session/{sessionID}/children
+Retrieve all child sessions that were forked from the specified parent session.
+
+# Arguments
+
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_children_get(
         &self,
         directory: Option<String>,
@@ -2746,7 +2916,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<Session>>(&content).ok()
         }
     }
-    ///Retrieve the todo list associated with a specific session, showing tasks and action items.
+    /**ENDPOINT Get /session/{sessionID}/todo
+Retrieve the todo list associated with a specific session, showing tasks and action items.
+
+# Arguments
+
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_todo_get(
         &self,
         directory: Option<String>,
@@ -2773,7 +2950,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<Todo>>(&content).ok()
         }
     }
-    ///Analyze the current application and create an AGENTS.md file with project-specific agent configurations.
+    /**ENDPOINT Post /session/{sessionID}/init
+Analyze the current application and create an AGENTS.md file with project-specific agent configurations.
+
+# Arguments
+
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_init_post(
         &self,
         directory: Option<String>,
@@ -2804,7 +2988,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Create a new session by forking an existing session at a specific message point.
+    /**ENDPOINT Post /session/{sessionID}/fork
+Create a new session by forking an existing session at a specific message point.
+
+# Arguments
+
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_fork_post(
         &self,
         directory: Option<String>,
@@ -2835,7 +3026,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Session>(&content).ok()
         }
     }
-    ///Abort an active session and stop any ongoing AI processing or command execution.
+    /**ENDPOINT Post /session/{sessionID}/abort
+Abort an active session and stop any ongoing AI processing or command execution.
+
+# Arguments
+
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_abort_post(
         &self,
         directory: Option<String>,
@@ -2864,7 +3062,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Create a shareable link for a session, allowing others to view the conversation.
+    /**ENDPOINT Post /session/{sessionID}/share
+Create a shareable link for a session, allowing others to view the conversation.
+
+# Arguments
+
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_share_post(
         &self,
         directory: Option<String>,
@@ -2893,7 +3098,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Session>(&content).ok()
         }
     }
-    ///Remove the shareable link for a session, making it private again.
+    /**ENDPOINT Delete /session/{sessionID}/share
+Remove the shareable link for a session, making it private again.
+
+# Arguments
+
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_share_delete(
         &self,
         directory: Option<String>,
@@ -2922,7 +3134,15 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Session>(&content).ok()
         }
     }
-    ///Get all file changes (diffs) made during this session.
+    /**ENDPOINT Get /session/{sessionID}/diff
+Get all file changes (diffs) made during this session.
+
+# Arguments
+
+- `query` directory
+- `path` session_id - Session ID
+- `query` message_id
+*/
     fn session_sessionid_diff_get(
         &self,
         directory: Option<String>,
@@ -2951,7 +3171,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<FileDiff>>(&content).ok()
         }
     }
-    ///Generate a concise summary of the session using AI compaction to preserve key information.
+    /**ENDPOINT Post /session/{sessionID}/summarize
+Generate a concise summary of the session using AI compaction to preserve key information.
+
+# Arguments
+
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_summarize_post(
         &self,
         directory: Option<String>,
@@ -2984,7 +3211,15 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Retrieve all messages in a session, including user prompts and AI responses.
+    /**ENDPOINT Get /session/{sessionID}/message
+Retrieve all messages in a session, including user prompts and AI responses.
+
+# Arguments
+
+- `query` directory
+- `path` session_id - Session ID
+- `query` limit
+*/
     fn session_sessionid_message_get(
         &self,
         directory: Option<String>,
@@ -3016,7 +3251,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .ok()
         }
     }
-    ///Create and send a new message to a session, streaming the AI response.
+    /**ENDPOINT Post /session/{sessionID}/message
+Create and send a new message to a session, streaming the AI response.
+
+# Arguments
+
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_message_post(
         &self,
         directory: Option<String>,
@@ -3049,7 +3291,15 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<SessionSessionidMessagePostResponse>(&content).ok()
         }
     }
-    ///Retrieve a specific message from a session by its message ID.
+    /**ENDPOINT Get /session/{sessionID}/message/{messageID}
+Retrieve a specific message from a session by its message ID.
+
+# Arguments
+
+- `query` directory
+- `path` session_id - Session ID
+- `path` message_id - Message ID
+*/
     fn session_sessionid_message_messageid_get(
         &self,
         directory: Option<String>,
@@ -3082,7 +3332,16 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .ok()
         }
     }
-    ///Update a part in a message
+    /**ENDPOINT Patch /session/{sessionID}/message/{messageID}/part/{partID}
+Update a part in a message
+
+# Arguments
+
+- `query` directory
+- `path` session_id - Session ID
+- `path` message_id - Message ID
+- `path` part_id - Part ID
+*/
     fn session_sessionid_message_messageid_part_partid_patch(
         &self,
         directory: Option<String>,
@@ -3119,7 +3378,16 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Part>(&content).ok()
         }
     }
-    ///Delete a part from a message
+    /**ENDPOINT Delete /session/{sessionID}/message/{messageID}/part/{partID}
+Delete a part from a message
+
+# Arguments
+
+- `query` directory
+- `path` session_id - Session ID
+- `path` message_id - Message ID
+- `path` part_id - Part ID
+*/
     fn session_sessionid_message_messageid_part_partid_delete(
         &self,
         directory: Option<String>,
@@ -3153,7 +3421,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Create and send a new message to a session asynchronously, starting the session if needed and returning immediately.
+    /**ENDPOINT Post /session/{sessionID}/prompt_async
+Create and send a new message to a session asynchronously, starting the session if needed and returning immediately.
+
+# Arguments
+
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_prompt_async_post(
         &self,
         directory: Option<String>,
@@ -3186,7 +3461,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             Some(())
         }
     }
-    ///Send a new command to a session for execution by the AI assistant.
+    /**ENDPOINT Post /session/{sessionID}/command
+Send a new command to a session for execution by the AI assistant.
+
+# Arguments
+
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_command_post(
         &self,
         directory: Option<String>,
@@ -3219,7 +3501,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<SessionSessionidCommandPostResponse>(&content).ok()
         }
     }
-    ///Execute a shell command within the session context and return the AI's response.
+    /**ENDPOINT Post /session/{sessionID}/shell
+Execute a shell command within the session context and return the AI's response.
+
+# Arguments
+
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_shell_post(
         &self,
         directory: Option<String>,
@@ -3252,7 +3541,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<AssistantMessage>(&content).ok()
         }
     }
-    ///Revert a specific message in a session, undoing its effects and restoring the previous state.
+    /**ENDPOINT Post /session/{sessionID}/revert
+Revert a specific message in a session, undoing its effects and restoring the previous state.
+
+# Arguments
+
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_revert_post(
         &self,
         directory: Option<String>,
@@ -3285,7 +3581,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Session>(&content).ok()
         }
     }
-    ///Restore all previously reverted messages in a session.
+    /**ENDPOINT Post /session/{sessionID}/unrevert
+Restore all previously reverted messages in a session.
+
+# Arguments
+
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_unrevert_post(
         &self,
         directory: Option<String>,
@@ -3314,7 +3617,15 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Session>(&content).ok()
         }
     }
-    ///Approve or deny a permission request from the AI assistant.
+    /**ENDPOINT Post /session/{sessionID}/permissions/{permissionID}
+Approve or deny a permission request from the AI assistant.
+
+# Arguments
+
+- `query` directory
+- `path` session_id
+- `path` permission_id
+*/
     fn session_sessionid_permissions_permissionid_post(
         &self,
         directory: Option<String>,
@@ -3350,7 +3661,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Approve or deny a permission request from the AI assistant.
+    /**ENDPOINT Post /permission/{requestID}/reply
+Approve or deny a permission request from the AI assistant.
+
+# Arguments
+
+- `query` directory
+- `path` request_id
+*/
     fn permission_requestid_reply_post(
         &self,
         directory: Option<String>,
@@ -3383,7 +3701,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Get all pending permission requests across all sessions.
+    /**ENDPOINT Get /permission
+Get all pending permission requests across all sessions.
+
+# Arguments
+
+- `query` directory
+*/
     fn permission_get(
         &self,
         directory: Option<String>,
@@ -3409,7 +3733,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<PermissionRequest>>(&content).ok()
         }
     }
-    ///Get all pending question requests across all sessions.
+    /**ENDPOINT Get /question
+Get all pending question requests across all sessions.
+
+# Arguments
+
+- `query` directory
+*/
     fn question_get(
         &self,
         directory: Option<String>,
@@ -3435,7 +3765,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<QuestionRequest>>(&content).ok()
         }
     }
-    ///Provide answers to a question request from the AI assistant.
+    /**ENDPOINT Post /question/{requestID}/reply
+Provide answers to a question request from the AI assistant.
+
+# Arguments
+
+- `query` directory
+- `path` request_id
+*/
     fn question_requestid_reply_post(
         &self,
         directory: Option<String>,
@@ -3468,7 +3805,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Reject a question request from the AI assistant.
+    /**ENDPOINT Post /question/{requestID}/reject
+Reject a question request from the AI assistant.
+
+# Arguments
+
+- `query` directory
+- `path` request_id
+*/
     fn question_requestid_reject_post(
         &self,
         directory: Option<String>,
@@ -3497,7 +3841,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Get a list of all available commands in the OpenCode system.
+    /**ENDPOINT Get /command
+Get a list of all available commands in the OpenCode system.
+
+# Arguments
+
+- `query` directory
+*/
     fn command_get(
         &self,
         directory: Option<String>,
@@ -3520,7 +3870,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<Command>>(&content).ok()
         }
     }
-    ///Get a list of all configured AI providers and their default models.
+    /**ENDPOINT Get /config/providers
+Get a list of all configured AI providers and their default models.
+
+# Arguments
+
+- `query` directory
+*/
     fn config_providers_get(
         &self,
         directory: Option<String>,
@@ -3546,7 +3902,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<ConfigProvidersGetResponse>(&content).ok()
         }
     }
-    ///Get a list of all available AI providers, including both available and connected ones.
+    /**ENDPOINT Get /provider
+Get a list of all available AI providers, including both available and connected ones.
+
+# Arguments
+
+- `query` directory
+*/
     fn provider_get(
         &self,
         directory: Option<String>,
@@ -3572,7 +3934,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<ProviderGetResponse>(&content).ok()
         }
     }
-    ///Retrieve available authentication methods for all AI providers.
+    /**ENDPOINT Get /provider/auth
+Retrieve available authentication methods for all AI providers.
+
+# Arguments
+
+- `query` directory
+*/
     fn provider_auth_get(
         &self,
         directory: Option<String>,
@@ -3598,7 +3966,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<serde_json::Value>(&content).ok()
         }
     }
-    ///Initiate OAuth authorization for a specific AI provider to get an authorization URL.
+    /**ENDPOINT Post /provider/{providerID}/oauth/authorize
+Initiate OAuth authorization for a specific AI provider to get an authorization URL.
+
+# Arguments
+
+- `query` directory
+- `path` provider_id - Provider ID
+*/
     fn provider_providerid_oauth_authorize_post(
         &self,
         directory: Option<String>,
@@ -3632,7 +4007,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<ProviderAuthAuthorization>(&content).ok()
         }
     }
-    ///Handle the OAuth callback from a provider after user authorization.
+    /**ENDPOINT Post /provider/{providerID}/oauth/callback
+Handle the OAuth callback from a provider after user authorization.
+
+# Arguments
+
+- `query` directory
+- `path` provider_id - Provider ID
+*/
     fn provider_providerid_oauth_callback_post(
         &self,
         directory: Option<String>,
@@ -3666,7 +4048,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Search for text patterns across files in the project using ripgrep.
+    /**ENDPOINT Get /find
+Search for text patterns across files in the project using ripgrep.
+
+# Arguments
+
+- `query` directory
+- `query` pattern
+*/
     fn find_get(
         &self,
         directory: Option<String>,
@@ -3691,7 +4080,17 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<FindGetResponse>>(&content).ok()
         }
     }
-    ///Search for files or directories by name or pattern in the project directory.
+    /**ENDPOINT Get /find/file
+Search for files or directories by name or pattern in the project directory.
+
+# Arguments
+
+- `query` directory
+- `query` query
+- `query` dirs
+- `query` type_field
+- `query` limit
+*/
     fn find_file_get(
         &self,
         directory: Option<String>,
@@ -3726,7 +4125,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<String>>(&content).ok()
         }
     }
-    ///Search for workspace symbols like functions, classes, and variables using LSP.
+    /**ENDPOINT Get /find/symbol
+Search for workspace symbols like functions, classes, and variables using LSP.
+
+# Arguments
+
+- `query` directory
+- `query` query
+*/
     fn find_symbol_get(
         &self,
         directory: Option<String>,
@@ -3754,7 +4160,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<Symbol>>(&content).ok()
         }
     }
-    ///List files and directories in a specified path.
+    /**ENDPOINT Get /file
+List files and directories in a specified path.
+
+# Arguments
+
+- `query` directory
+- `query` path
+*/
     fn file_get(
         &self,
         directory: Option<String>,
@@ -3779,7 +4192,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<FileNode>>(&content).ok()
         }
     }
-    ///Read the content of a specified file.
+    /**ENDPOINT Get /file/content
+Read the content of a specified file.
+
+# Arguments
+
+- `query` directory
+- `query` path
+*/
     fn file_content_get(
         &self,
         directory: Option<String>,
@@ -3807,7 +4227,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<FileContent>(&content).ok()
         }
     }
-    ///Get the git status of all files in the project.
+    /**ENDPOINT Get /file/status
+Get the git status of all files in the project.
+
+# Arguments
+
+- `query` directory
+*/
     fn file_status_get(
         &self,
         directory: Option<String>,
@@ -3833,7 +4259,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<File>>(&content).ok()
         }
     }
-    ///Write a log entry to the server logs with specified level and metadata.
+    /**ENDPOINT Post /log
+Write a log entry to the server logs with specified level and metadata.
+
+# Arguments
+
+- `query` directory
+*/
     fn log_post(&self, directory: Option<String>) -> impl Future<Output = Option<bool>> {
         async move {
             let query_params: Vec<(String, String)> = vec![
@@ -3857,7 +4289,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Get a list of all available AI agents in the OpenCode system.
+    /**ENDPOINT Get /agent
+Get a list of all available AI agents in the OpenCode system.
+
+# Arguments
+
+- `query` directory
+*/
     fn agent_get(
         &self,
         directory: Option<String>,
@@ -3880,7 +4318,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<Agent>>(&content).ok()
         }
     }
-    ///Get the status of all Model Context Protocol (MCP) servers.
+    /**ENDPOINT Get /mcp
+Get the status of all Model Context Protocol (MCP) servers.
+
+# Arguments
+
+- `query` directory
+*/
     fn mcp_get(
         &self,
         directory: Option<String>,
@@ -3903,7 +4347,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<serde_json::Value>(&content).ok()
         }
     }
-    ///Dynamically add a new Model Context Protocol (MCP) server to the system.
+    /**ENDPOINT Post /mcp
+Dynamically add a new Model Context Protocol (MCP) server to the system.
+
+# Arguments
+
+- `query` directory
+*/
     fn mcp_post(
         &self,
         directory: Option<String>,
@@ -3930,7 +4380,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<serde_json::Value>(&content).ok()
         }
     }
-    ///Start OAuth authentication flow for a Model Context Protocol (MCP) server.
+    /**ENDPOINT Post /mcp/{name}/auth
+Start OAuth authentication flow for a Model Context Protocol (MCP) server.
+
+# Arguments
+
+- `query` directory
+- `path` name
+*/
     fn mcp_name_auth_post(
         &self,
         directory: Option<String>,
@@ -3957,7 +4414,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<McpNameAuthPostResponse>(&content).ok()
         }
     }
-    ///Remove OAuth credentials for an MCP server
+    /**ENDPOINT Delete /mcp/{name}/auth
+Remove OAuth credentials for an MCP server
+
+# Arguments
+
+- `query` directory
+- `path` name
+*/
     fn mcp_name_auth_delete(
         &self,
         directory: Option<String>,
@@ -3984,7 +4448,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<McpNameAuthDeleteResponse>(&content).ok()
         }
     }
-    ///Complete OAuth authentication for a Model Context Protocol (MCP) server using the authorization code.
+    /**ENDPOINT Post /mcp/{name}/auth/callback
+Complete OAuth authentication for a Model Context Protocol (MCP) server using the authorization code.
+
+# Arguments
+
+- `query` directory
+- `path` name
+*/
     fn mcp_name_auth_callback_post(
         &self,
         directory: Option<String>,
@@ -4015,7 +4486,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<MCPStatus>(&content).ok()
         }
     }
-    ///Start OAuth flow and wait for callback (opens browser)
+    /**ENDPOINT Post /mcp/{name}/auth/authenticate
+Start OAuth flow and wait for callback (opens browser)
+
+# Arguments
+
+- `query` directory
+- `path` name
+*/
     fn mcp_name_auth_authenticate_post(
         &self,
         directory: Option<String>,
@@ -4044,7 +4522,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<MCPStatus>(&content).ok()
         }
     }
-    ///Connect an MCP server
+    /**ENDPOINT Post /mcp/{name}/connect
+Connect an MCP server
+
+# Arguments
+
+- `query` directory
+- `path` name
+*/
     fn mcp_name_connect_post(
         &self,
         directory: Option<String>,
@@ -4071,7 +4556,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Disconnect an MCP server
+    /**ENDPOINT Post /mcp/{name}/disconnect
+Disconnect an MCP server
+
+# Arguments
+
+- `query` directory
+- `path` name
+*/
     fn mcp_name_disconnect_post(
         &self,
         directory: Option<String>,
@@ -4098,7 +4590,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Get all available MCP resources from connected servers. Optionally filter by name.
+    /**ENDPOINT Get /experimental/resource
+Get all available MCP resources from connected servers. Optionally filter by name.
+
+# Arguments
+
+- `query` directory
+*/
     fn experimental_resource_get(
         &self,
         directory: Option<String>,
@@ -4124,7 +4622,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<serde_json::Value>(&content).ok()
         }
     }
-    ///Get LSP server status
+    /**ENDPOINT Get /lsp
+Get LSP server status
+
+# Arguments
+
+- `query` directory
+*/
     fn lsp_get(
         &self,
         directory: Option<String>,
@@ -4147,7 +4651,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<LSPStatus>>(&content).ok()
         }
     }
-    ///Get formatter status
+    /**ENDPOINT Get /formatter
+Get formatter status
+
+# Arguments
+
+- `query` directory
+*/
     fn formatter_get(
         &self,
         directory: Option<String>,
@@ -4173,7 +4683,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<Vec<FormatterStatus>>(&content).ok()
         }
     }
-    ///Append prompt to the TUI
+    /**ENDPOINT Post /tui/append-prompt
+Append prompt to the TUI
+
+# Arguments
+
+- `query` directory
+*/
     fn tui_append_prompt_post(
         &self,
         directory: Option<String>,
@@ -4203,7 +4719,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Open the help dialog in the TUI to display user assistance information.
+    /**ENDPOINT Post /tui/open-help
+Open the help dialog in the TUI to display user assistance information.
+
+# Arguments
+
+- `query` directory
+*/
     fn tui_open_help_post(
         &self,
         directory: Option<String>,
@@ -4229,7 +4751,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Open the session dialog
+    /**ENDPOINT Post /tui/open-sessions
+Open the session dialog
+
+# Arguments
+
+- `query` directory
+*/
     fn tui_open_sessions_post(
         &self,
         directory: Option<String>,
@@ -4255,7 +4783,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Open the theme dialog
+    /**ENDPOINT Post /tui/open-themes
+Open the theme dialog
+
+# Arguments
+
+- `query` directory
+*/
     fn tui_open_themes_post(
         &self,
         directory: Option<String>,
@@ -4281,7 +4815,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Open the model dialog
+    /**ENDPOINT Post /tui/open-models
+Open the model dialog
+
+# Arguments
+
+- `query` directory
+*/
     fn tui_open_models_post(
         &self,
         directory: Option<String>,
@@ -4307,7 +4847,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Submit the prompt
+    /**ENDPOINT Post /tui/submit-prompt
+Submit the prompt
+
+# Arguments
+
+- `query` directory
+*/
     fn tui_submit_prompt_post(
         &self,
         directory: Option<String>,
@@ -4333,7 +4879,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Clear the prompt
+    /**ENDPOINT Post /tui/clear-prompt
+Clear the prompt
+
+# Arguments
+
+- `query` directory
+*/
     fn tui_clear_prompt_post(
         &self,
         directory: Option<String>,
@@ -4359,7 +4911,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Execute a TUI command (e.g. agent_cycle)
+    /**ENDPOINT Post /tui/execute-command
+Execute a TUI command (e.g. agent_cycle)
+
+# Arguments
+
+- `query` directory
+*/
     fn tui_execute_command_post(
         &self,
         directory: Option<String>,
@@ -4389,7 +4947,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Show a toast notification in the TUI
+    /**ENDPOINT Post /tui/show-toast
+Show a toast notification in the TUI
+
+# Arguments
+
+- `query` directory
+*/
     fn tui_show_toast_post(
         &self,
         directory: Option<String>,
@@ -4419,7 +4983,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Publish a TUI event
+    /**ENDPOINT Post /tui/publish
+Publish a TUI event
+
+# Arguments
+
+- `query` directory
+*/
     fn tui_publish_post(
         &self,
         directory: Option<String>,
@@ -4449,7 +5019,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Navigate the TUI to display the specified session.
+    /**ENDPOINT Post /tui/select-session
+Navigate the TUI to display the specified session.
+
+# Arguments
+
+- `query` directory
+*/
     fn tui_select_session_post(
         &self,
         directory: Option<String>,
@@ -4479,7 +5055,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Retrieve the next TUI (Terminal User Interface) request from the queue for processing.
+    /**ENDPOINT Get /tui/control/next
+Retrieve the next TUI (Terminal User Interface) request from the queue for processing.
+
+# Arguments
+
+- `query` directory
+*/
     fn tui_control_next_get(
         &self,
         directory: Option<String>,
@@ -4505,7 +5087,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<TuiControlNextGetResponse>(&content).ok()
         }
     }
-    ///Submit a response to the TUI request queue to complete a pending request.
+    /**ENDPOINT Post /tui/control/response
+Submit a response to the TUI request queue to complete a pending request.
+
+# Arguments
+
+- `query` directory
+*/
     fn tui_control_response_post(
         &self,
         directory: Option<String>,
@@ -4535,7 +5123,14 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Set authentication credentials
+    /**ENDPOINT Put /auth/{providerID}
+Set authentication credentials
+
+# Arguments
+
+- `query` directory
+- `path` provider_id
+*/
     fn auth_providerid_put(
         &self,
         directory: Option<String>,
@@ -4565,7 +5160,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             serde_json::from_str::<bool>(&content).ok()
         }
     }
-    ///Get events
+    /**ENDPOINT Get /event
+Get events
+
+# Arguments
+
+- `query` directory
+*/
     fn event_get(&self, directory: Option<String>) -> impl Future<Output = Option<()>> {
         async move {
             let query_params: Vec<(String, String)> = vec![

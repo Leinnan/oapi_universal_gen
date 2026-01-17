@@ -477,3 +477,22 @@ fn test_comprehensive_api_has_all_methods() {
     assert!(output.contains("fn users_user_id_delete"));
     assert!(output.contains("fn items_get"));
 }
+
+#[test]
+fn test_parameter_docs_generated() {
+    let json = load_fixture("with_parameters");
+    let output = generate_from_json(&json);
+
+    assert!(output.contains("Maximum number of users to return"));
+    assert!(output.contains("Number of users to skip"));
+    assert!(output.contains("Search query for filtering users"));
+    assert!(output.contains("The user ID"));
+    assert!(output.contains("Include additional user details"));
+
+    let parsed = syn::parse_file(&output);
+    assert!(
+        parsed.is_ok(),
+        "Generated code is not valid Rust: {:?}",
+        parsed.err()
+    );
+}
