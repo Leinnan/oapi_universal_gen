@@ -216,9 +216,7 @@ pub trait OapiRequester: Sized {
             RequestType::Patch => Self::Requester::patch_request(uri, body),
             RequestType::Delete => Self::Requester::delete_request(uri, body),
         }?;
-        for (header, value) in self.get_configuration().get_default_headers() {
-            request.with_header(header, value);
-        }
+        self.get_configuration().add_default_headers(&mut request);
         Ok(request)
     }
 }
@@ -254,16 +252,15 @@ pub trait ConfigExt {
     /// The base URL as a string slice
     fn get_base_url(&self) -> &str;
 
-    /// Returns the default headers for API requests.
+    /// Adds the default headers for API requests.
     ///
     /// These headers are added to every request made using this configuration.
     ///
     /// # Returns
     ///
-    /// A slice of tuples containing header names and values
-    fn get_default_headers(&self) -> &[(&str, &str)] {
-        &[]
-    }
+    /// * `requester` - A mutable reference to the request helper
+    #[allow(unused_variables)]
+    fn add_default_headers(&self, requester: &mut impl RequestHelperExt) {}
 }
 
 /// A trait providing helper methods for inspecting HTTP responses.
