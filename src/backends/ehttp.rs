@@ -23,7 +23,10 @@ impl ResponseHelperExt for ehttp::Response {
         self.text().map(|text| text.to_string())
     }
 
-    /// Checks if the response indicates a client error (4xx status codes).
+    fn status(&self) -> u16 {
+        self.status
+    }
+
     fn is_client_error(&self) -> bool {
         self.status >= 400 && self.status < 500
     }

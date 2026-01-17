@@ -101,9 +101,6 @@ impl Clone for ReqwestHelper {
 
 /// Implementation of [`ResponseHelperExt`] for [`reqwest::Response`].
 impl ResponseHelperExt for reqwest::Response {
-    /// Returns the Content-Type header value of the response.
-    ///
-    /// Defaults to an empty string if the header is not present.
     fn response_content_type(&self) -> String {
         self.headers()
             .get("content-type")
@@ -112,19 +109,18 @@ impl ResponseHelperExt for reqwest::Response {
             .to_string()
     }
 
-    /// Returns the response body as a String, if present.
-    ///
-    /// Attempts to decode the response body as text.
     async fn response_content(self) -> Option<String> {
         self.text().await.ok()
     }
 
-    /// Checks if the response indicates a client error (4xx status codes).
+    fn status(&self) -> u16 {
+        self.status().as_u16()
+    }
+
     fn is_client_error(&self) -> bool {
         self.status().is_client_error()
     }
 
-    /// Checks if the response indicates a server error (5xx status codes).
     fn is_server_error(&self) -> bool {
         self.status().is_server_error()
     }

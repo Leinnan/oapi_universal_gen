@@ -50,6 +50,53 @@ pub enum RequestType {
     Delete,
 }
 
+#[derive(Debug)]
+pub enum OapiRequesterError {
+    ClientOrServerError(u16),
+    ResponseContentError,
+    SerializationError,
+}
+
+impl std::fmt::Display for OapiRequesterError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            OapiRequesterError::ClientOrServerError(status) => {
+                write!(f, "HTTP error: {}", status)
+            }
+            OapiRequesterError::ResponseContentError => {
+                write!(f, "Failed to get response content")
+            }
+            OapiRequesterError::SerializationError => {
+                write!(f, "JSON serialization/deserialization error")
+            }
+        }
+    }
+}
+
+impl std::error::Error for OapiRequesterError {}
+
+pub trait FromHttpError {
+    fn from_http_error(status_code: u16) -> Self;
+}
+
+impl<T: From<OapiRequesterError>> FromHttpError for T {
+    fn from_http_error(status_code: u16) -> Self {
+        OapiRequesterError::ClientOrServerError(status_code).into()
+    }
+}
+
+impl From<serde_json::Error> for OapiRequesterError {
+    fn from(_e: serde_json::Error) -> Self {
+        OapiRequesterError::SerializationError
+    }
+}
+
+impl From<OapiRequesterError> for String {
+    fn from(e: OapiRequesterError) -> Self {
+        e.to_string()
+    }
+}
+
 /// A trait for creating HTTP requests with a configuration.
 ///
 /// This trait provides a unified interface for creating HTTP requests
@@ -224,20 +271,14 @@ pub trait ConfigExt {
 /// This trait extends `ehttp::Response` with convenient methods to extract
 /// response metadata such as content type, content body, and error status checks.
 pub trait ResponseHelperExt: Sized {
-    /// Returns the Content-Type header value of the response.
-    ///
-    /// Defaults to `"application/json"` if the header is not present.
     fn response_content_type(&self) -> String;
 
-    /// Returns the response body as a String, if present.
-    ///
-    /// Returns `None` if the response has no body.
     fn response_content(self) -> impl Future<Output = Option<String>>;
 
-    /// Checks if the response indicates a client error (4xx status codes).
+    fn status(&self) -> u16;
+
     fn is_client_error(&self) -> bool;
 
-    /// Checks if the response indicates a server error (5xx status codes).
     fn is_server_error(&self) -> bool;
 }
 /// A trait providing helper methods for constructing and sending HTTP requests.

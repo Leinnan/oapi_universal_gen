@@ -315,10 +315,12 @@ fn generate_method_body(path: &str, method_info: &MethodInfo) -> proc_macro2::To
     let return_type = match &method_info.response_type {
         Some(rt) => {
             let rt_type = type_to_tokens(rt);
-            quote! { Option<#rt_type> }
+            quote! { Result<#rt_type, Self::RequesterErrorType> }
         }
-        None => quote! { Option<()> },
+        None => quote! { Result<(), Self::RequesterErrorType> },
     };
+
+    let where_clause = quote! { where Self::RequesterErrorType: From<OapiRequesterError> };
 
     let http_method = match method_info.http_method {
         RequestType::Get => quote! { RequestType::Get },
@@ -365,13 +367,14 @@ fn generate_method_body(path: &str, method_info: &MethodInfo) -> proc_macro2::To
         quote! {
             let body: #body_ty = serde_json::from_value(serde_json::json!({
                 #(#request_body_fields)*
-            })).ok()?;
+            }))
+            .map_err(|_e| OapiRequesterError::SerializationError.into())?;
 
-            let request = self.create_request_with_body(#http_method, &uri, &body).ok()?;
+            let request = self.create_request_with_body(#http_method, &uri, &body)?;
         }
     } else {
         quote! {
-            let request = self.create_request(#http_method, &uri).ok()?;
+            let request = self.create_request(#http_method, &uri)?;
         }
     };
 
@@ -379,16 +382,18 @@ fn generate_method_body(path: &str, method_info: &MethodInfo) -> proc_macro2::To
         Some(rt) => {
             let rt_type = type_to_tokens(rt);
             quote! {
-                let content = response.response_content().await?;
-                serde_json::from_str::<#rt_type>(&content).ok()
+                let content = response.response_content().await
+                    .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
+                Ok(serde_json::from_str::<#rt_type>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?)
             }
         }
-        None => quote! { Some(()) },
+        None => quote! { Ok(()) },
     };
 
     quote! {
         #[doc = #docs]
-        fn #fn_name(&self, #(#param_decls),*) -> impl Future<Output = #return_type> {
+        fn #fn_name(&self, #(#param_decls),*) -> impl Future<Output = #return_type> #where_clause {
             async move {
                 #query_collect
 
@@ -398,10 +403,10 @@ fn generate_method_body(path: &str, method_info: &MethodInfo) -> proc_macro2::To
 
                 #(#header_handling)*
 
-                let response = request.send_request().await.ok()?;
+                let response = request.send_request().await?;
 
                 if response.is_client_error() || response.is_server_error() {
-                    return None;
+                    return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
                 }
 
                 #response_handling
