@@ -1,12 +1,107 @@
 use oapi_universal_gen::*;
 use serde::{Deserialize, Serialize};
 use std::future::Future;
+///
+#[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+#[serde(tag = "type")]
+pub enum SessionStatus {
+    Idle,
+    Retry {
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub attempt: Option<f64>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub message: Option<String>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub next: Option<f64>,
+    },
+    Busy,
+}
+///
+#[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+pub enum Message {
+    UserMessage(UserMessage),
+    AssistantMessage(AssistantMessage),
+}
+///
+#[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+pub enum FilePartSource {
+    FileSource(FileSource),
+    SymbolSource(SymbolSource),
+    ResourceSource(ResourceSource),
+}
+///
+#[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+pub enum ToolState {
+    ToolStatePending(ToolStatePending),
+    ToolStateRunning(ToolStateRunning),
+    ToolStateCompleted(ToolStateCompleted),
+    ToolStateError(ToolStateError),
+}
+///
+#[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+pub enum Part {
+    TextPart(TextPart),
+    ReasoningPart(ReasoningPart),
+    FilePart(FilePart),
+    ToolPart(ToolPart),
+    StepStartPart(StepStartPart),
+    StepFinishPart(StepFinishPart),
+    SnapshotPart(SnapshotPart),
+    PatchPart(PatchPart),
+    AgentPart(AgentPart),
+    RetryPart(RetryPart),
+    CompactionPart(CompactionPart),
+}
+///
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(rename_all = "snake_case")]
 pub enum PermissionAction {
     Allow,
     Deny,
     Ask,
+}
+///
+#[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+pub enum Event {
+    EventTuiPromptAppend(EventTuiPromptAppend),
+    EventTuiCommandExecute(EventTuiCommandExecute),
+    EventTuiToastShow(EventTuiToastShow),
+    EventTuiSessionSelect(EventTuiSessionSelect),
+    EventInstallationUpdated(EventInstallationUpdated),
+    EventInstallationUpdateAvailable(EventInstallationUpdateAvailable),
+    EventProjectUpdated(EventProjectUpdated),
+    EventServerInstanceDisposed(EventServerInstanceDisposed),
+    EventFileEdited(EventFileEdited),
+    EventLspClientDiagnostics(EventLspClientDiagnostics),
+    EventPermissionAsked(EventPermissionAsked),
+    EventPermissionReplied(EventPermissionReplied),
+    EventSessionStatus(EventSessionStatus),
+    EventSessionIdle(EventSessionIdle),
+    EventQuestionAsked(EventQuestionAsked),
+    EventQuestionReplied(EventQuestionReplied),
+    EventQuestionRejected(EventQuestionRejected),
+    EventTodoUpdated(EventTodoUpdated),
+    EventPtyCreated(EventPtyCreated),
+    EventPtyUpdated(EventPtyUpdated),
+    EventPtyExited(EventPtyExited),
+    EventPtyDeleted(EventPtyDeleted),
+    EventMcpToolsChanged(EventMcpToolsChanged),
+    EventFileWatcherUpdated(EventFileWatcherUpdated),
+    EventLspUpdated(EventLspUpdated),
+    EventCommandExecuted(EventCommandExecuted),
+    EventVcsBranchUpdated(EventVcsBranchUpdated),
+    EventMessageUpdated(EventMessageUpdated),
+    EventMessageRemoved(EventMessageRemoved),
+    EventMessagePartUpdated(EventMessagePartUpdated),
+    EventMessagePartRemoved(EventMessagePartRemoved),
+    EventSessionCompacted(EventSessionCompacted),
+    EventSessionCreated(EventSessionCreated),
+    EventSessionUpdated(EventSessionUpdated),
+    EventSessionDeleted(EventSessionDeleted),
+    EventSessionDiff(EventSessionDiff),
+    EventSessionError(EventSessionError),
+    EventServerConnected(EventServerConnected),
+    EventGlobalDisposed(EventGlobalDisposed),
 }
 ///Log level
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
@@ -17,12 +112,24 @@ pub enum LogLevel {
     WARN,
     ERROR,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(rename_all = "snake_case")]
 pub enum PermissionActionConfig {
     Ask,
     Allow,
     Deny,
+}
+///
+#[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+pub enum PermissionRuleConfig {
+    PermissionActionConfig(PermissionActionConfig),
+    PermissionObjectConfig(PermissionObjectConfig),
+}
+///
+#[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+pub enum PermissionConfig {
+    PermissionActionConfig(PermissionActionConfig),
 }
 ///@deprecated Always uses stretch layout.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
@@ -31,6 +138,23 @@ pub enum LayoutConfig {
     Auto,
     Stretch,
 }
+///
+#[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+pub enum MCPStatus {
+    MCPStatusConnected(MCPStatusConnected),
+    MCPStatusDisabled(MCPStatusDisabled),
+    MCPStatusFailed(MCPStatusFailed),
+    MCPStatusNeedsAuth(MCPStatusNeedsAuth),
+    MCPStatusNeedsClientRegistration(MCPStatusNeedsClientRegistration),
+}
+///
+#[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+pub enum Auth {
+    OAuth(OAuth),
+    ApiAuth(ApiAuth),
+    WellKnownAuth(WellKnownAuth),
+}
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventTuiPromptAppend {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -38,6 +162,7 @@ pub struct EventTuiPromptAppend {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventTuiCommandExecute {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -45,6 +170,7 @@ pub struct EventTuiCommandExecute {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventTuiToastShow {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -52,6 +178,7 @@ pub struct EventTuiToastShow {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventTuiSessionSelect {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -59,6 +186,7 @@ pub struct EventTuiSessionSelect {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventInstallationUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -66,6 +194,7 @@ pub struct EventInstallationUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventInstallationUpdateAvailable {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -73,6 +202,7 @@ pub struct EventInstallationUpdateAvailable {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Project {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -90,6 +220,7 @@ pub struct Project {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sandboxes: Option<Vec<Option<String>>>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventProjectUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -97,6 +228,7 @@ pub struct EventProjectUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<Project>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventServerInstanceDisposed {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -104,6 +236,7 @@ pub struct EventServerInstanceDisposed {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventFileEdited {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -111,6 +244,7 @@ pub struct EventFileEdited {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventLspClientDiagnostics {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -118,6 +252,7 @@ pub struct EventLspClientDiagnostics {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PermissionRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -135,6 +270,7 @@ pub struct PermissionRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tool: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPermissionAsked {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -142,6 +278,7 @@ pub struct EventPermissionAsked {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<PermissionRequest>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPermissionReplied {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -149,8 +286,7 @@ pub struct EventPermissionReplied {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SessionStatus {}
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionStatus {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -158,6 +294,7 @@ pub struct EventSessionStatus {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionIdle {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -165,6 +302,7 @@ pub struct EventSessionIdle {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QuestionOption {
     ///Display text (1-5 words, concise)
@@ -174,6 +312,7 @@ pub struct QuestionOption {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QuestionInfo {
     ///Complete question
@@ -189,6 +328,7 @@ pub struct QuestionInfo {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub multiple: Option<bool>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QuestionRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -201,6 +341,7 @@ pub struct QuestionRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tool: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventQuestionAsked {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -208,8 +349,10 @@ pub struct EventQuestionAsked {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<QuestionRequest>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QuestionAnswer {}
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventQuestionReplied {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -217,6 +360,7 @@ pub struct EventQuestionReplied {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventQuestionRejected {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -224,6 +368,7 @@ pub struct EventQuestionRejected {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Todo {
     ///Brief description of the task
@@ -239,6 +384,7 @@ pub struct Todo {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventTodoUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -246,6 +392,7 @@ pub struct EventTodoUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Pty {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -263,6 +410,7 @@ pub struct Pty {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub pid: Option<f64>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPtyCreated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -270,6 +418,7 @@ pub struct EventPtyCreated {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPtyUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -277,6 +426,7 @@ pub struct EventPtyUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPtyExited {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -284,6 +434,7 @@ pub struct EventPtyExited {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPtyDeleted {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -291,6 +442,7 @@ pub struct EventPtyDeleted {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventMcpToolsChanged {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -298,6 +450,7 @@ pub struct EventMcpToolsChanged {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventFileWatcherUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -305,6 +458,7 @@ pub struct EventFileWatcherUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventLspUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -312,6 +466,7 @@ pub struct EventLspUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventCommandExecuted {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -319,6 +474,7 @@ pub struct EventCommandExecuted {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventVcsBranchUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -326,6 +482,7 @@ pub struct EventVcsBranchUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FileDiff {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -339,6 +496,7 @@ pub struct FileDiff {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub deletions: Option<f64>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UserMessage {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -362,6 +520,7 @@ pub struct UserMessage {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub variant: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderAuthError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -369,6 +528,7 @@ pub struct ProviderAuthError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub data: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UnknownError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -376,6 +536,7 @@ pub struct UnknownError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub data: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MessageOutputLengthError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -383,6 +544,7 @@ pub struct MessageOutputLengthError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub data: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MessageAbortedError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -390,6 +552,7 @@ pub struct MessageAbortedError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub data: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct APIError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -397,6 +560,7 @@ pub struct APIError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub data: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AssistantMessage {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -434,8 +598,7 @@ pub struct AssistantMessage {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub finish: Option<String>,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Message {}
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventMessageUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -443,6 +606,7 @@ pub struct EventMessageUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventMessageRemoved {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -450,6 +614,7 @@ pub struct EventMessageRemoved {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TextPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -471,6 +636,7 @@ pub struct TextPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ReasoningPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -488,6 +654,7 @@ pub struct ReasoningPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub time: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FilePartSourceText {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -497,6 +664,7 @@ pub struct FilePartSourceText {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub end: Option<i64>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FileSource {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -506,6 +674,7 @@ pub struct FileSource {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub path: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Range {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -513,6 +682,7 @@ pub struct Range {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub end: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SymbolSource {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -528,6 +698,7 @@ pub struct SymbolSource {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub kind: Option<i64>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ResourceSource {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -543,8 +714,7 @@ pub struct ResourceSource {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub uri: Option<String>,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FilePartSource {}
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FilePart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -564,6 +734,7 @@ pub struct FilePart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub source: Option<FilePartSource>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolStatePending {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -573,6 +744,7 @@ pub struct ToolStatePending {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub raw: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolStateRunning {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -586,6 +758,7 @@ pub struct ToolStateRunning {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub time: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolStateCompleted {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -603,6 +776,7 @@ pub struct ToolStateCompleted {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub attachments: Option<Vec<Option<FilePart>>>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolStateError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -616,8 +790,7 @@ pub struct ToolStateError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub time: Option<serde_json::Value>,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ToolState {}
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -637,6 +810,7 @@ pub struct ToolPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StepStartPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -650,6 +824,7 @@ pub struct StepStartPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub snapshot: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StepFinishPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -669,6 +844,7 @@ pub struct StepFinishPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tokens: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SnapshotPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -682,6 +858,7 @@ pub struct SnapshotPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub snapshot: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PatchPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -697,6 +874,7 @@ pub struct PatchPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub files: Option<Vec<Option<String>>>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -712,6 +890,7 @@ pub struct AgentPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub source: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RetryPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -729,6 +908,7 @@ pub struct RetryPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub time: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CompactionPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -742,8 +922,7 @@ pub struct CompactionPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub auto: Option<bool>,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Part {}
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventMessagePartUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -751,6 +930,7 @@ pub struct EventMessagePartUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventMessagePartRemoved {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -758,6 +938,7 @@ pub struct EventMessagePartRemoved {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionCompacted {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -765,6 +946,7 @@ pub struct EventSessionCompacted {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PermissionRule {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -774,8 +956,10 @@ pub struct PermissionRule {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub action: Option<PermissionAction>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PermissionRuleset {}
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Session {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -801,6 +985,7 @@ pub struct Session {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub revert: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionCreated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -808,6 +993,7 @@ pub struct EventSessionCreated {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -815,6 +1001,7 @@ pub struct EventSessionUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionDeleted {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -822,6 +1009,7 @@ pub struct EventSessionDeleted {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionDiff {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -829,6 +1017,7 @@ pub struct EventSessionDiff {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionError {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -836,6 +1025,7 @@ pub struct EventSessionError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventServerConnected {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -843,6 +1033,7 @@ pub struct EventServerConnected {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventGlobalDisposed {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -850,8 +1041,7 @@ pub struct EventGlobalDisposed {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub properties: Option<serde_json::Value>,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Event {}
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GlobalEvent {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -859,6 +1049,7 @@ pub struct GlobalEvent {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub payload: Option<Event>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BadRequestError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -868,6 +1059,7 @@ pub struct BadRequestError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub success: Option<bool>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NotFoundError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1156,12 +1348,10 @@ pub struct ServerConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cors: Option<Vec<Option<String>>>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PermissionObjectConfig {}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct PermissionRuleConfig {}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct PermissionConfig {}
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1199,6 +1389,7 @@ pub struct AgentConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub permission: Option<PermissionConfig>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1220,6 +1411,7 @@ pub struct ProviderConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub options: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpLocalConfig {
     ///Type of MCP server connection
@@ -1238,6 +1430,7 @@ pub struct McpLocalConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timeout: Option<i64>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpOAuthConfig {
     ///OAuth client ID. If not provided, dynamic client registration (RFC 7591) will be attempted.
@@ -1254,6 +1447,7 @@ pub struct McpOAuthConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub scope: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpRemoteConfig {
     ///Type of MCP server connection
@@ -1275,6 +1469,7 @@ pub struct McpRemoteConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timeout: Option<i64>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
     ///JSON schema reference for configuration validation
@@ -1360,8 +1555,10 @@ pub struct Config {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub experimental: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolIDs {}
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolListItem {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1371,8 +1568,10 @@ pub struct ToolListItem {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parameters: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolList {}
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Path {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1386,6 +1585,7 @@ pub struct Path {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub directory: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Worktree {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1395,6 +1595,7 @@ pub struct Worktree {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub directory: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorktreeCreateInput {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1406,11 +1607,13 @@ pub struct WorktreeCreateInput {
     )]
     pub start_command: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct VcsInfo {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub branch: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TextPartInput {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1428,6 +1631,7 @@ pub struct TextPartInput {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FilePartInput {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1443,6 +1647,7 @@ pub struct FilePartInput {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub source: Option<FilePartSource>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentPartInput {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1454,6 +1659,7 @@ pub struct AgentPartInput {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub source: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SubtaskPartInput {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1469,6 +1675,7 @@ pub struct SubtaskPartInput {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub command: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Command {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1488,6 +1695,7 @@ pub struct Command {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub hints: Option<Vec<Option<String>>>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Model {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1521,6 +1729,7 @@ pub struct Model {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub variants: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Provider {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1538,6 +1747,7 @@ pub struct Provider {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub models: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderAuthMethod {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -1545,6 +1755,7 @@ pub struct ProviderAuthMethod {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderAuthAuthorization {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1554,6 +1765,7 @@ pub struct ProviderAuthAuthorization {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub instructions: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Symbol {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1563,6 +1775,7 @@ pub struct Symbol {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub location: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FileNode {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1576,6 +1789,7 @@ pub struct FileNode {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub ignored: Option<bool>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FileContent {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -1591,6 +1805,7 @@ pub struct FileContent {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "mimeType")]
     pub mime_type: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct File {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1602,6 +1817,7 @@ pub struct File {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub status: Option<StringEnum>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Agent {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1631,16 +1847,19 @@ pub struct Agent {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub steps: Option<i64>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MCPStatusConnected {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub status: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MCPStatusDisabled {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub status: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MCPStatusFailed {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1648,11 +1867,13 @@ pub struct MCPStatusFailed {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub error: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MCPStatusNeedsAuth {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub status: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MCPStatusNeedsClientRegistration {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1660,8 +1881,7 @@ pub struct MCPStatusNeedsClientRegistration {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub error: Option<String>,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct MCPStatus {}
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpResource {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1675,6 +1895,7 @@ pub struct McpResource {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub client: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LSPStatus {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1686,6 +1907,7 @@ pub struct LSPStatus {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub status: Option<serde_json::Value>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FormatterStatus {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1695,6 +1917,7 @@ pub struct FormatterStatus {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OAuth {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -1714,6 +1937,7 @@ pub struct OAuth {
     )]
     pub enterprise_url: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ApiAuth {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -1721,6 +1945,7 @@ pub struct ApiAuth {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub key: Option<String>,
 }
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WellKnownAuth {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
@@ -1730,8 +1955,6 @@ pub struct WellKnownAuth {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub token: Option<String>,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Auth {}
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GlobalHealthGetResponse {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1889,7 +2112,7 @@ pub struct RequestInline10 {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub variant: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub parts: Option<Vec<Option<serde_json::Value>>>,
+    pub parts: Option<Vec<Option<Type>>>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidCommandPostResponse {
@@ -2060,6 +2283,22 @@ pub enum StringEnum {
     Running,
     Exited,
 }
+#[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+#[serde(tag = "type")]
+pub enum Type {
+    File {
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub id: Option<String>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub mime: Option<String>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub filename: Option<String>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub url: Option<String>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub source: Option<FilePartSource>,
+    },
+}
 pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     /**ENDPOINT Get /global/health
     Get health information about the OpenCode server.
@@ -2137,7 +2376,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn project_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<Project>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2159,7 +2398,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Project>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2173,7 +2412,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn project_current_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Project, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2195,7 +2434,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Project>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2211,7 +2450,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         project_id: String,
-    ) -> impl Future<Output = Result<Project, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2238,7 +2477,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Project>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2252,7 +2491,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn pty_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<Pty>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2274,7 +2513,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Pty>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2288,7 +2527,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn pty_post(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Pty, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2312,7 +2551,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Pty>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2328,7 +2567,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         pty_id: String,
-    ) -> impl Future<Output = Result<Pty, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2353,7 +2592,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Pty>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2369,7 +2608,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         pty_id: String,
-    ) -> impl Future<Output = Result<Pty, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2396,7 +2635,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Pty>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2492,7 +2731,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn config_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Config, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2514,7 +2753,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Config>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2528,7 +2767,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn config_patch(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Config, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2541,7 +2780,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             .flatten()
             .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/config", &query_params);
-            let body: Config = serde_json::from_value(serde_json::json!({}))
+            let body: serde_json::Value = serde_json::from_value(serde_json::json!({}))
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?;
             let request = self.create_request_with_body(RequestType::Patch, &uri, &body)?;
             let response = request.send_request().await?;
@@ -2552,7 +2791,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Config>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2566,7 +2805,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn experimental_tool_ids_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<ToolIDs, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2589,7 +2828,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<ToolIDs>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2607,7 +2846,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         directory: Option<String>,
         provider: String,
         model: String,
-    ) -> impl Future<Output = Result<ToolList, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2633,7 +2872,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<ToolList>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2683,7 +2922,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn path_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Path, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2705,7 +2944,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Path>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2756,7 +2995,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn experimental_worktree_post(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Worktree, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2770,7 +3009,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             .collect();
             let uri =
                 ::oapi_universal_gen::UrlBuilder::build("/experimental/worktree", &query_params);
-            let body: WorktreeCreateInput = serde_json::from_value(serde_json::json!({}))
+            let body: serde_json::Value = serde_json::from_value(serde_json::json!({}))
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?;
             let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
             let response = request.send_request().await?;
@@ -2781,7 +3020,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Worktree>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2795,7 +3034,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn vcs_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<VcsInfo, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2817,7 +3056,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<VcsInfo>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2837,7 +3076,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         start: Option<f64>,
         search: Option<String>,
         limit: Option<f64>,
-    ) -> impl Future<Output = Result<Vec<Session>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2873,7 +3112,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Session>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2887,7 +3126,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn session_post(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2911,7 +3150,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -2963,7 +3202,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -2988,7 +3227,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -3004,7 +3243,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3031,7 +3270,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -3088,7 +3327,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<Vec<Session>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3116,7 +3355,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Session>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -3132,7 +3371,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<Vec<Todo>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3160,7 +3399,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Todo>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -3222,7 +3461,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3252,7 +3491,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -3312,7 +3551,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3340,7 +3579,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -3356,7 +3595,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3384,7 +3623,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -3402,7 +3641,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         directory: Option<String>,
         session_id: String,
         message_id: Option<String>,
-    ) -> impl Future<Output = Result<Vec<FileDiff>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3436,7 +3675,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<FileDiff>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -3655,7 +3894,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         session_id: String,
         message_id: String,
         part_id: String,
-    ) -> impl Future<Output = Result<Part, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3676,7 +3915,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 ),
                 &query_params,
             );
-            let body: Part = serde_json::from_value(serde_json::json!({}))
+            let body: serde_json::Value = serde_json::from_value(serde_json::json!({}))
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?;
             let request = self.create_request_with_body(RequestType::Patch, &uri, &body)?;
             let response = request.send_request().await?;
@@ -3687,7 +3926,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Part>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -3842,7 +4081,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<AssistantMessage, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3872,7 +4111,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<AssistantMessage>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -3888,7 +4127,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3918,7 +4157,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -3934,7 +4173,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3962,7 +4201,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -4071,7 +4310,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn permission_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<PermissionRequest>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4093,7 +4332,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<PermissionRequest>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -4107,7 +4346,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn question_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<QuestionRequest>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4129,7 +4368,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<QuestionRequest>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -4233,7 +4472,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn command_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<Command>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4255,7 +4494,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Command>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -4379,7 +4618,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         provider_id: String,
-    ) -> impl Future<Output = Result<ProviderAuthAuthorization, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4409,7 +4648,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<ProviderAuthAuthorization>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -4571,7 +4810,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         query: String,
-    ) -> impl Future<Output = Result<Vec<Symbol>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4596,7 +4835,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Symbol>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -4612,7 +4851,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         path: String,
-    ) -> impl Future<Output = Result<Vec<FileNode>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4637,7 +4876,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<FileNode>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -4653,7 +4892,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         path: String,
-    ) -> impl Future<Output = Result<FileContent, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4678,7 +4917,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<FileContent>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -4692,7 +4931,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn file_status_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<File>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4714,7 +4953,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<File>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -4766,7 +5005,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn agent_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<Agent>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4788,7 +5027,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Agent>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -4960,7 +5199,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         name: String,
-    ) -> impl Future<Output = Result<MCPStatus, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4990,7 +5229,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<MCPStatus>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -5006,7 +5245,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         name: String,
-    ) -> impl Future<Output = Result<MCPStatus, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -5034,7 +5273,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<MCPStatus>(&content)
+            Ok(serde_json::from_str::<serde_json::Value>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -5167,7 +5406,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn lsp_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<LSPStatus>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -5189,7 +5428,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<LSPStatus>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -5203,7 +5442,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn formatter_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<FormatterStatus>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -5225,7 +5464,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<FormatterStatus>>(&content)
+            Ok(serde_json::from_str::<Vec<serde_json::Value>>(&content)
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?)
         }
     }
@@ -5739,7 +5978,7 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 format!("/auth/{}", ::oapi_universal_gen::urlencode(provider_id)),
                 &query_params,
             );
-            let body: Auth = serde_json::from_value(serde_json::json!({}))
+            let body: serde_json::Value = serde_json::from_value(serde_json::json!({}))
                 .map_err(|_e| OapiRequesterError::SerializationError.into())?;
             let request = self.create_request_with_body(RequestType::Put, &uri, &body)?;
             let response = request.send_request().await?;

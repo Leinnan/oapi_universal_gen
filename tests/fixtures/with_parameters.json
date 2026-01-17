@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.1.0",
   "info": {
     "title": "Parameters API",
     "version": "1.0.0"
@@ -17,7 +17,8 @@
               "type": "integer",
               "format": "int32"
             },
-            "description": "Maximum number of users to return"
+            "description": "Maximum number of users to return",
+            "required": false
           },
           {
             "in": "query",
@@ -26,7 +27,8 @@
               "type": "integer",
               "format": "int32"
             },
-            "description": "Number of users to skip"
+            "description": "Number of users to skip",
+            "required": false
           },
           {
             "in": "query",
@@ -34,7 +36,8 @@
             "schema": {
               "type": "string"
             },
-            "description": "Search query for filtering users"
+            "description": "Search query for filtering users",
+            "required": false
           }
         ],
         "responses": {
@@ -74,7 +77,8 @@
             "schema": {
               "type": "boolean"
             },
-            "description": "Include additional user details"
+            "description": "Include additional user details",
+            "required": false
           }
         ],
         "responses": {
@@ -138,8 +142,13 @@
             "name": "format",
             "schema": {
               "type": "string",
-              "enum": ["short", "full", "extended"]
-            }
+              "enum": [
+                "short",
+                "full",
+                "extended"
+              ]
+            },
+            "required": false
           }
         ],
         "responses": {
@@ -171,7 +180,8 @@
           "email": {
             "type": "string"
           }
-        }
+        },
+        "required": []
       },
       "ItemDetails": {
         "type": "object",
@@ -185,7 +195,8 @@
           "description": {
             "type": "string"
           }
-        }
+        },
+        "required": []
       },
       "Error": {
         "type": "object",
@@ -196,7 +207,8 @@
           "message": {
             "type": "string"
           }
-        }
+        },
+        "required": []
       }
     }
   }

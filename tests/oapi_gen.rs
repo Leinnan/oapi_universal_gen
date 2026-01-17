@@ -287,7 +287,7 @@ fn test_comprehensive_api_generates_valid_rust() {
 #[test]
 fn test_empty_components() {
     let json = r#"{
-        "openapi": "3.0.3",
+        "openapi": "3.1.0",
         "info": {"title": "Test", "version": "1.0.0"},
         "paths": {}
     }"#;
@@ -331,7 +331,7 @@ fn test_struct_serde_attr() {
 #[test]
 fn test_doc_comments_generated() {
     let json = r#"{
-        "openapi": "3.0.3",
+        "openapi": "3.1.0",
         "info": {"title": "Test", "version": "1.0.0"},
         "paths": {
             "/test": {
@@ -349,7 +349,8 @@ fn test_doc_comments_generated() {
                     "description": "A test schema description",
                     "properties": {
                         "name": {"type": "string", "description": "The name field"}
-                    }
+                    },
+                    "required": []
                 }
             }
         }
@@ -387,6 +388,32 @@ fn test_opencode() {
     assert!(
         parsed.is_ok(),
         "Generated code from opencode.json is not valid Rust"
+    );
+}
+
+#[test]
+fn test_any_of_schema_generation() {
+    let json = load_fixture("opencode");
+    let output = generate_from_json(&json);
+
+    assert!(
+        output.contains("pub enum Message"),
+        "Should generate Message enum"
+    );
+    assert!(
+        output.contains("UserMessage(UserMessage)"),
+        "Should have UserMessage tuple variant"
+    );
+    assert!(
+        output.contains("AssistantMessage(AssistantMessage)"),
+        "Should have AssistantMessage tuple variant"
+    );
+
+    let parsed = syn::parse_file(&output);
+    assert!(
+        parsed.is_ok(),
+        "Generated code is not valid Rust: {:?}",
+        parsed.err()
     );
 }
 

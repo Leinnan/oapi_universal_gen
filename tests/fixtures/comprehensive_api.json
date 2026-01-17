@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.1.0",
   "info": {
     "title": "Comprehensive API Test",
     "version": "1.0.0"
@@ -24,9 +24,13 @@
             "name": "format",
             "schema": {
               "type": "string",
-              "enum": ["json", "xml"]
+              "enum": [
+                "json",
+                "xml"
+              ]
             },
-            "description": "Response format"
+            "description": "Response format",
+            "required": false
           },
           {
             "in": "header",
@@ -34,7 +38,8 @@
             "schema": {
               "type": "string"
             },
-            "description": "Request tracking ID"
+            "description": "Request tracking ID",
+            "required": false
           }
         ],
         "requestBody": {
@@ -129,7 +134,8 @@
             "schema": {
               "type": "integer",
               "format": "int32"
-            }
+            },
+            "required": false
           },
           {
             "in": "query",
@@ -137,7 +143,8 @@
             "schema": {
               "type": "integer",
               "format": "int32"
-            }
+            },
+            "required": false
           }
         ],
         "responses": {
@@ -169,10 +176,13 @@
           },
           "params": {
             "type": "object",
-            "description": "Command parameters"
+            "description": "Command parameters",
+            "required": []
           }
         },
-        "required": ["command"]
+        "required": [
+          "command"
+        ]
       },
       "CommandResult": {
         "type": "object",
@@ -183,7 +193,8 @@
           "output": {
             "type": "string"
           }
-        }
+        },
+        "required": []
       },
       "Error": {
         "type": "object",
@@ -194,7 +205,8 @@
           "message": {
             "type": "string"
           }
-        }
+        },
+        "required": []
       },
       "User": {
         "type": "object",
@@ -208,7 +220,8 @@
           "email": {
             "type": "string"
           }
-        }
+        },
+        "required": []
       },
       "Item": {
         "type": "object",
@@ -219,7 +232,8 @@
           "name": {
             "type": "string"
           }
-        }
+        },
+        "required": []
       }
     }
   }

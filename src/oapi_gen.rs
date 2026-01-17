@@ -1,10 +1,15 @@
 use crate::RequestType;
-use openapiv3::{OpenAPI, ReferenceOr, SchemaKind, Type};
+use openapiv3_1::{
+    Components, Object, OpenApi, Ref, RefOr, Schema, Type,
+    path::{Operation, Parameter, ParameterIn},
+    request_body::RequestBody,
+    schema::Types,
+};
 use quote::{format_ident, quote};
 use serde_json;
 
 pub fn generate_from_json(json: &str) -> String {
-    let openapi: OpenAPI = serde_json::from_str(json).expect("Could not deserialize input");
+    let openapi: OpenApi = serde_json::from_str(json).expect("Could not deserialize input");
     generate_code(&openapi)
 }
 
@@ -14,37 +19,89 @@ pub fn generate_openapi_spec() {
     println!("{}", output);
 }
 
-fn generate_code(openapi: &OpenAPI) -> String {
+fn generate_code(openapi: &OpenApi) -> String {
     let cmp = openapi.components.clone().unwrap_or_default();
 
     let enum_schemas: Vec<_> = cmp
         .schemas
         .iter()
-        .filter(|(_, schema)| is_enum_schema(*schema))
+        .filter(|(_, schema)| is_enum_schema(schema))
         .collect();
 
     let enums = enum_schemas.iter().flat_map(|(name, schema)| {
-        let schema_ref = schema.as_item()?;
+        let schema_ref = match schema {
+            Schema::Object(box_obj) => box_obj.as_ref(),
+            _ => return None,
+        };
         let enum_name = format_ident!("{}", to_pascal_case(name.as_str()));
-        let doc = schema_ref
-            .schema_data
-            .description
-            .as_ref()
-            .map(|d| quote! { #[doc = #d] });
+        let d = schema_ref.description.clone();
+        let doc = quote! { #[doc = #d] };
 
-        let variants = extract_enum_values(schema_ref).into_iter().map(|val| {
-            let variant_name = enum_value_to_variant_name(&val);
-            quote! { #variant_name, }
-        });
+        // Check if this is a tagged enum
+        if let Some((tag_field, variants)) = extract_discriminator_info(schema_ref) {
+            let variant_defs: Vec<_> = variants
+                .into_iter()
+                .map(|(tag_value, variant_schema)| {
+                    let variant_name = to_valid_enum_variant(&tag_value);
+                    let ident = format_ident!("{}", variant_name);
+                    let (fields, has_fields) =
+                        generate_struct_fields_for_tagged_variant(&variant_schema, &tag_field);
+                    if !has_fields {
+                        quote! { #ident, }
+                    } else {
+                        quote! {
+                            #[display(#variant_name)]
+                            #ident { #(#fields)* },
+                        }
+                    }
+                })
+                .collect();
 
-        Some(quote! {
-            #doc
-            #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
-            #[serde(rename_all = "snake_case")]
-            pub enum #enum_name {
-                #(#variants)*
-            }
-        })
+            let tag_field_str = tag_field.as_str();
+            return Some(quote! {
+                #doc
+                #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+                #[serde(tag = #tag_field_str)]
+                pub enum #enum_name {
+                    #(#variant_defs)*
+                }
+            });
+        }
+
+        let enum_values = extract_enum_values(schema_ref);
+
+        if schema_ref.any_of.is_some() {
+            let variants = enum_values.iter().map(|val| match val {
+                serde_json::Value::String(ref_name) => {
+                    let variant_name = format_ident!("{}", ref_name);
+                    let type_name = format_ident!("{}", ref_name);
+                    quote! { #variant_name(#type_name), }
+                }
+                _ => quote! { Unknown, },
+            });
+
+            Some(quote! {
+                #doc
+                #[derive(Debug, Clone, Serialize, Deserialize)]
+                pub enum #enum_name {
+                    #(#variants)*
+                }
+            })
+        } else {
+            let variants = enum_values.into_iter().map(|val| {
+                let variant_name = enum_value_to_variant_name(&val);
+                quote! { #variant_name, }
+            });
+
+            Some(quote! {
+                #doc
+                #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+                #[serde(rename_all = "snake_case")]
+                pub enum #enum_name {
+                    #(#variants)*
+                }
+            })
+        }
     });
 
     let mut inline_enums: Vec<InlineEnumInfo> = Vec::new();
@@ -52,20 +109,48 @@ fn generate_code(openapi: &OpenAPI) -> String {
     let struct_schemas: Vec<_> = cmp
         .schemas
         .iter()
-        .filter(|(_, schema_or_ref)| !is_enum_schema(*schema_or_ref))
+        .filter(|(_, schema_or_ref)| !is_enum_schema(schema_or_ref))
         .collect();
 
     let structs: Vec<_> = struct_schemas
         .iter()
         .flat_map(|(name, schema_or_ref)| {
-            let schema_ref = schema_or_ref.as_item()?;
+            let schema_ref = match schema_or_ref {
+                Schema::Object(box_obj) => box_obj.as_ref(),
+                _ => return None,
+            };
+            if name.contains("Auth") {
+                eprintln!("{} -> {:#?}", name, schema_ref);
+            }
+
+            // Check if this schema is a tagged enum (anyOf with object variants with const tags)
+            if let Some((tag_field, _variants)) = extract_discriminator_info(schema_ref) {
+                let enum_name_str = to_pascal_case(name);
+                let description = if schema_ref.description.is_empty() {
+                    None
+                } else {
+                    Some(schema_ref.description.clone())
+                };
+                inline_enums.push(InlineEnumInfo {
+                    name: enum_name_str.clone(),
+                    schema: schema_ref.clone(),
+                    description,
+                    is_tagged: true,
+                    tag_field: Some(tag_field),
+                });
+                let enum_ident = format_ident!("{}", enum_name_str);
+                let doc = quote! { #[doc = {}] };
+                return Some(quote! {
+                    #doc
+                    #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+                    pub enum #enum_ident {}
+                });
+            }
+
             let schema_name = format_ident!("{}", to_pascal_case(name.as_str()));
-            let doc = schema_ref
-                .schema_data
-                .description
-                .as_ref()
-                .map(|d| quote! { #[doc = #d] });
-            let fields = generate_struct_fields(schema_ref, &mut inline_enums);
+            let d = schema_ref.description.clone();
+            let doc = quote! { #[doc = #d] };
+            let fields = generate_struct_fields(schema_or_ref, &mut inline_enums);
             Some(quote! {
                 #doc
                 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -95,21 +180,56 @@ fn generate_code(openapi: &OpenAPI) -> String {
                 .description
                 .as_ref()
                 .map(|d| quote! { #[doc = #d] });
-            let variants = extract_enum_values(&enum_info.schema)
-                .into_iter()
-                .map(|val| {
-                    let variant_name = enum_value_to_variant_name(&val);
-                    quote! { #variant_name, }
-                });
 
-            Some(quote! {
-                #doc
-                #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
-                #[serde(rename_all = "snake_case")]
-                pub enum #enum_name {
-                    #(#variants)*
-                }
-            })
+            if enum_info.is_tagged {
+                let tag_field = enum_info.tag_field.as_ref().unwrap();
+                let discriminator_info = extract_discriminator_info(&enum_info.schema)?;
+                let (_, variants) = discriminator_info;
+
+                let variant_defs: Vec<_> = variants
+                    .into_iter()
+                    .map(|(tag_value, variant_schema)| {
+                        let variant_name = to_valid_enum_variant(&tag_value);
+                        let ident = format_ident!("{}", variant_name);
+                        let (fields, has_fields) =
+                            generate_struct_fields_for_tagged_variant(&variant_schema, tag_field);
+                        if !has_fields {
+                            quote! { #ident, }
+                        } else {
+                            quote! {
+                                #[display(#variant_name)]
+                                #ident { #(#fields)* },
+                            }
+                        }
+                    })
+                    .collect();
+
+                let tag_field_str = tag_field.as_str();
+                Some(quote! {
+                    #doc
+                    #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+                    #[serde(tag = #tag_field_str)]
+                    pub enum #enum_name {
+                        #(#variant_defs)*
+                    }
+                })
+            } else {
+                let variants = extract_enum_values(&enum_info.schema)
+                    .into_iter()
+                    .map(|val| {
+                        let variant_name = enum_value_to_variant_name(&val);
+                        quote! { #variant_name, }
+                    });
+
+                Some(quote! {
+                    #doc
+                    #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
+                    #[serde(rename_all = "snake_case")]
+                    pub enum #enum_name {
+                        #(#variants)*
+                    }
+                })
+            }
         })
         .collect();
 
@@ -137,7 +257,6 @@ fn generate_code(openapi: &OpenAPI) -> String {
         Err(e) => {
             eprintln!("Syn parse error: {:?}", e);
             let raw_code = raw_tokens_clone.to_string();
-            // Write full generated code to file for debugging
             std::fs::write("generated_code_debug.txt", &raw_code).ok();
             eprintln!(
                 "Generated code written to generated_code_debug.txt ({} chars)",
@@ -147,7 +266,6 @@ fn generate_code(openapi: &OpenAPI) -> String {
                 "First 3000 chars:\n{}",
                 &raw_code[..raw_code.len().min(3000)]
             );
-            // Find position near error
             if let Some(pos) = raw_code.find("pub fn") {
                 eprintln!(
                     "\nLast few functions before error:\n{}",
@@ -416,20 +534,18 @@ fn generate_method_body(path: &str, method_info: &MethodInfo) -> proc_macro2::To
 }
 
 fn generate_methods(
-    openapi: &OpenAPI,
+    openapi: &OpenApi,
     inline_enums: &mut Vec<InlineEnumInfo>,
 ) -> (Vec<proc_macro2::TokenStream>, Vec<proc_macro2::TokenStream>) {
     let mut inline_input_structs = Vec::new();
     let mut methods = Vec::new();
 
-    for (path, path_item_ref) in openapi.paths.iter() {
-        let path_item = match path_item_ref {
-            ReferenceOr::Item(item) => item,
-            ReferenceOr::Reference { .. } => continue,
-        };
-
-        let path_params: Vec<openapiv3::ReferenceOr<openapiv3::Parameter>> =
-            path_item.parameters.iter().cloned().collect();
+    for (path, path_item) in openapi.paths.paths.iter() {
+        let path_params: Vec<Parameter> = path_item
+            .parameters
+            .as_ref()
+            .map(|p| p.clone())
+            .unwrap_or_default();
 
         let operations = [
             ("get", RequestType::Get, path_item.get.as_ref()),
@@ -445,7 +561,7 @@ fn generate_methods(
                 let method_info = build_method_info(
                     path,
                     http_method,
-                    op,
+                    Some(op),
                     &path_params,
                     components,
                     &mut inline_input_structs,
@@ -464,9 +580,9 @@ fn generate_methods(
 fn build_method_info(
     path: &str,
     http_method: RequestType,
-    operation: &openapiv3::Operation,
-    path_params: &[openapiv3::ReferenceOr<openapiv3::Parameter>],
-    components: Option<&openapiv3::Components>,
+    operation: Option<&Operation>,
+    path_params: &[Parameter],
+    components: Option<&Components>,
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
 ) -> MethodInfo {
@@ -479,144 +595,153 @@ fn build_method_info(
     let mut parameters: Vec<ParameterInfo> = Vec::new();
 
     for param in path_params {
-        if let openapiv3::ReferenceOr::Item(p) = param {
-            add_parameter(&mut parameters, p);
-        }
+        add_parameter(&mut parameters, param);
     }
-
-    for param in &operation.parameters {
-        if let openapiv3::ReferenceOr::Item(p) = param {
-            add_parameter(&mut parameters, p);
+    if let Some(oper) = operation {
+        if let Some(params) = &oper.parameters {
+            for param in params {
+                add_parameter(&mut parameters, param);
+            }
         }
-    }
+        let request_body_type = oper.request_body.as_ref().and_then(|rb| {
+            extract_request_body_type(
+                &RefOr::T(rb.clone()),
+                components,
+                inline_structs,
+                inline_enums,
+            )
+        });
 
-    let request_body_type = operation
-        .request_body
-        .as_ref()
-        .and_then(|rb| extract_request_body_type(rb, components, inline_structs, inline_enums));
+        let response_type = extract_response_type(
+            &oper.responses,
+            components,
+            inline_structs,
+            inline_enums,
+            &method_name,
+        );
 
-    let response_type = extract_response_type(
-        &operation.responses,
-        components,
-        inline_structs,
-        inline_enums,
-        &method_name,
-    );
+        let description = oper.description.clone().or(oper.summary.clone());
 
-    let description = operation.description.clone().or(operation.summary.clone());
-
-    MethodInfo {
-        name: method_name,
-        http_method,
-        parameters,
-        request_body_type,
-        response_type,
-        description,
+        MethodInfo {
+            name: method_name,
+            http_method,
+            parameters,
+            request_body_type,
+            response_type,
+            description,
+        }
+    } else {
+        MethodInfo {
+            name: method_name,
+            http_method,
+            parameters,
+            request_body_type: None,
+            response_type: None,
+            description: None,
+        }
     }
 }
 
-fn add_parameter(params: &mut Vec<ParameterInfo>, param: &openapiv3::Parameter) {
-    let pd = match param {
-        openapiv3::Parameter::Query { parameter_data, .. } => parameter_data,
-        openapiv3::Parameter::Path { parameter_data, .. } => parameter_data,
-        openapiv3::Parameter::Header { parameter_data, .. } => parameter_data,
-        openapiv3::Parameter::Cookie { parameter_data, .. } => parameter_data,
+fn add_parameter(params: &mut Vec<ParameterInfo>, param: &Parameter) {
+    let param_location = match param.parameter_in {
+        ParameterIn::Query => ParameterLocation::Query,
+        ParameterIn::Path => ParameterLocation::Path,
+        ParameterIn::Header => ParameterLocation::Header,
+        ParameterIn::Cookie => ParameterLocation::Cookie,
     };
 
-    let param_location = match param {
-        openapiv3::Parameter::Query { .. } => ParameterLocation::Query,
-        openapiv3::Parameter::Path { .. } => ParameterLocation::Path,
-        openapiv3::Parameter::Header { .. } => ParameterLocation::Header,
-        openapiv3::Parameter::Cookie { .. } => ParameterLocation::Cookie,
-    };
-
-    let param_type = extract_parameter_type(pd);
+    let param_type = extract_parameter_type(param);
 
     params.push(ParameterInfo {
-        name: pd.name.clone(),
+        name: param.name.clone(),
         ty: param_type,
-        required: pd.required,
-        description: pd.description.clone(),
+        required: param.required,
+        description: param.description.clone(),
         param_location,
     });
 }
 
-fn extract_parameter_type(pd: &openapiv3::ParameterData) -> String {
-    match &pd.format {
-        openapiv3::ParameterSchemaOrContent::Schema(schema) => schema_type_to_string(schema),
-        openapiv3::ParameterSchemaOrContent::Content(_) => "serde_json::Value".to_string(),
+fn extract_parameter_type(pd: &Parameter) -> String {
+    match &pd.schema {
+        Some(Schema::Object(box_schema)) => schema_type_to_string(box_schema.as_ref()),
+        _ => "serde_json::Value".to_string(),
     }
 }
 
-fn schema_type_to_string(schema: &ReferenceOr<openapiv3::Schema>) -> String {
-    match schema {
-        ReferenceOr::Item(s) => {
-            if let Some(enum_name) = get_enum_type_name(s) {
-                return enum_name;
-            }
-            match &s.schema_kind {
-                SchemaKind::Type(Type::String(_)) => "String".to_string(),
-                SchemaKind::Type(Type::Integer(int_type)) => match &int_type.format {
-                    openapiv3::VariantOrUnknownOrEmpty::Item(openapiv3::IntegerFormat::Int32) => {
-                        "i32".to_string()
-                    }
-                    openapiv3::VariantOrUnknownOrEmpty::Item(openapiv3::IntegerFormat::Int64) => {
-                        "i64".to_string()
-                    }
-                    _ => "i64".to_string(),
-                },
-                SchemaKind::Type(Type::Number(_)) => "f64".to_string(),
-                SchemaKind::Type(Type::Boolean(_)) => "bool".to_string(),
-                SchemaKind::Type(Type::Array(_)) => "Vec<serde_json::Value>".to_string(),
-                SchemaKind::Type(Type::Object(_)) => {
-                    if let Some(title) = &s.schema_data.title {
-                        title.clone()
-                    } else {
-                        "serde_json::Value".to_string()
-                    }
+fn schema_type_to_string(schema: &Object) -> String {
+    if let Some(enum_name) = get_enum_type_name(schema) {
+        return enum_name;
+    }
+    if let Some(Types::Single(schema_kind)) = &schema.schema_type {
+        match schema_kind {
+            Type::String => "String".to_string(),
+            Type::Integer => {
+                if schema.format == "int32" {
+                    "i32".to_string()
+                } else {
+                    "i64".to_string()
                 }
-                _ => "serde_json::Value".to_string(),
             }
+            Type::Number => "f64".to_string(),
+            Type::Boolean => "bool".to_string(),
+            Type::Array => "Vec<serde_json::Value>".to_string(),
+            Type::Object => {
+                if !schema.title.is_empty() {
+                    schema.title.clone()
+                } else {
+                    "serde_json::Value".to_string()
+                }
+            }
+            _ => "serde_json::Value".to_string(),
         }
-        ReferenceOr::Reference { reference } => extract_ref_name(reference),
+    } else {
+        "object".to_string()
     }
 }
 
 fn extract_request_body_type(
-    rb: &ReferenceOr<openapiv3::RequestBody>,
-    components: Option<&openapiv3::Components>,
+    rb: &RefOr<RequestBody>,
+    _components: Option<&Components>,
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
 ) -> Option<String> {
     match rb {
-        ReferenceOr::Item(request_body) => {
+        RefOr::T(request_body) => {
             for (media_type, mt) in &request_body.content {
                 if media_type == "application/json" || media_type == "*/*" {
-                    if let Some(schema_ref) = mt.schema.as_ref() {
-                        return match schema_ref {
-                            ReferenceOr::Item(schema) => match &schema.schema_kind {
-                                SchemaKind::Type(Type::Object(obj)) => {
+                    if let Some(schema) = &mt.schema {
+                        return match schema {
+                            Schema::Object(box_schema) => match &box_schema.schema_type {
+                                Some(Types::Single(Type::Object)) => {
                                     let struct_name =
                                         generate_inline_struct_name(inline_structs, "Request");
-                                    let fields = obj.properties.iter().flat_map(|(name, prop)| {
-                                            let rust_name = to_valid_rust_field_name(name);
-                                            let field_name = format_ident!("{}", rust_name);
-                                            let ty = property_type(prop, inline_enums);
-                                            let doc = prop
-                                                .as_item()
-                                                .and_then(|s| s.schema_data.description.as_ref())
-                                                .map(|d| quote! { #[doc = #d] });
-                                            let serde_attr = if rust_name.as_str() != name {
-                                                quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
-                                            } else {
-                                                quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
-                                            };
-                                            vec![
-                                                doc.into_iter().collect::<Vec<_>>(),
-                                                vec![serde_attr],
-                                                vec![quote! { pub #field_name: #ty, }],
-                                            ]
-                                        }).flatten().collect::<Vec<_>>();
+                                    let fields = box_schema.properties.iter().flat_map(|(name, prop)| {
+                                        let rust_name = to_valid_rust_field_name(name);
+                                        let field_name = format_ident!("{}", rust_name);
+            let ty = property_type(prop, inline_enums);
+                                        let doc: Option<proc_macro2::TokenStream> = match prop {
+                                            Schema::Object(box_prop) => {
+                                                let prop_ref = box_prop.as_ref();
+                                                let desc = &prop_ref.description;
+                                                if !desc.is_empty() {
+                                                    Some(quote! { #[doc = #desc] })
+                                                } else {
+                                                    None
+                                                }
+                                            }
+                                            _ => None,
+                                        };
+                                        let serde_attr = if rust_name.as_str() != name {
+                                            quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+                                        } else {
+                                            quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+                                        };
+                                        vec![
+                                            doc.into_iter().collect::<Vec<_>>(),
+                                            vec![serde_attr],
+                                            vec![quote! { pub #field_name: #ty, }],
+                                        ]
+                                    }).flatten().collect::<Vec<_>>();
 
                                     let struct_ident = format_ident!("{}", struct_name);
                                     inline_structs.push(quote! {
@@ -627,28 +752,22 @@ fn extract_request_body_type(
                                     });
                                     Some(struct_name)
                                 }
-                                SchemaKind::Type(Type::Array(_)) => {
+                                Some(Types::Single(Type::Array)) => {
                                     Some("serde_json::Value".to_string())
                                 }
                                 _ => Some("serde_json::Value".to_string()),
                             },
-                            ReferenceOr::Reference { reference } => {
-                                Some(extract_ref_name(reference))
-                            }
+                            _ => Some("serde_json::Value".to_string()),
                         };
                     }
                 }
             }
             None
         }
-        ReferenceOr::Reference { reference } => {
-            if let Some(path) = reference.strip_prefix("#/components/requestBodies/") {
+        RefOr::Ref(Ref { ref_location, .. }) => {
+            if let Some(path) = ref_location.strip_prefix("#/components/requestBodies/") {
                 let body_name = to_pascal_case(path);
-                if let Some(rb) = components.and_then(|c| c.request_bodies.get(path)) {
-                    extract_request_body_type(rb, components, inline_structs, inline_enums)
-                } else {
-                    Some(body_name)
-                }
+                Some(body_name)
             } else {
                 None
             }
@@ -657,8 +776,8 @@ fn extract_request_body_type(
 }
 
 fn extract_response_type(
-    responses: &openapiv3::Responses,
-    components: Option<&openapiv3::Components>,
+    responses: &openapiv3_1::Responses,
+    components: Option<&openapiv3_1::Components>,
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
     endpoint_name: &str,
@@ -667,12 +786,12 @@ fn extract_response_type(
         if !is_success_status_code(status_code) {
             continue;
         }
-        if let ReferenceOr::Item(response) = response_ref {
+        if let RefOr::T(response) = response_ref {
             for (media_type, mt) in &response.content {
                 if media_type == "application/json" || media_type == "*/*" {
-                    if let Some(schema_ref) = mt.schema.as_ref() {
+                    if let Some(schema) = &mt.schema {
                         return Some(response_schema_to_string(
-                            schema_ref,
+                            schema,
                             components,
                             inline_structs,
                             inline_enums,
@@ -686,35 +805,49 @@ fn extract_response_type(
     None
 }
 
-fn is_success_status_code(status_code: &openapiv3::StatusCode) -> bool {
-    match status_code {
-        openapiv3::StatusCode::Code(code) => *code >= 200 && *code < 300,
-        openapiv3::StatusCode::Range(code) => *code >= 200 && *code < 300,
+fn is_success_status_code(status_code: &str) -> bool {
+    if status_code == "*" {
+        return true;
     }
+    if let Ok(code) = status_code.parse::<u16>() {
+        return code >= 200 && code < 300;
+    }
+    if status_code.starts_with('2') {
+        return true;
+    }
+    false
 }
 
 fn response_schema_to_string(
-    schema: &ReferenceOr<openapiv3::Schema>,
-    components: Option<&openapiv3::Components>,
+    schema: &Schema,
+    components: Option<&Components>,
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
     endpoint_name: &str,
 ) -> String {
     match schema {
-        ReferenceOr::Item(schema) => match &schema.schema_kind {
-            SchemaKind::Type(Type::Object(obj)) => {
-                if obj.properties.is_empty() {
+        Schema::Object(box_schema) => match &box_schema.schema_type {
+            Some(Types::Single(Type::Object)) => {
+                if box_schema.properties.is_empty() {
                     return "serde_json::Value".to_string();
                 }
                 let struct_name = format!("{}{}", to_pascal_case(endpoint_name), "Response");
-                let fields = obj.properties.iter().flat_map(|(name, prop)| {
+                let fields = box_schema.properties.iter().flat_map(|(name, prop)| {
                     let rust_name = to_valid_rust_field_name(name);
                     let field_name = format_ident!("{}", rust_name);
                     let ty = property_type(prop, inline_enums);
-                    let doc = prop
-                        .as_item()
-                        .and_then(|s| s.schema_data.description.as_ref())
-                        .map(|d| quote! { #[doc = #d] });
+                    let doc: Option<proc_macro2::TokenStream> = match prop {
+                        Schema::Object(box_prop) => {
+                            let prop_ref = box_prop.as_ref();
+                            let desc = &prop_ref.description;
+                            if !desc.is_empty() {
+                                Some(quote! { #[doc = #desc] })
+                            } else {
+                                None
+                            }
+                        }
+                        _ => None,
+                    };
                     let serde_attr = if rust_name.as_str() != name {
                         quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
                     } else {
@@ -736,62 +869,70 @@ fn response_schema_to_string(
                 });
                 struct_name
             }
-            SchemaKind::Type(Type::Array(arr)) => {
-                let inner_type = arr
+            Some(Types::Single(Type::Array)) => {
+                let inner_type = box_schema
                     .items
                     .as_ref()
                     .map(|item| match item {
-                        ReferenceOr::Item(box_schema) => response_schema_to_string_item(
-                            &box_schema,
+                        Schema::Object(inner_box_schema) => response_schema_to_string_item(
+                            &inner_box_schema,
                             components,
                             inline_structs,
                             inline_enums,
                             endpoint_name,
                         ),
-                        ReferenceOr::Reference { reference } => extract_ref_name(reference),
+                        _ => "serde_json::Value".to_string(),
                     })
                     .unwrap_or_else(|| "serde_json::Value".to_string());
                 format!("Vec<{}>", inner_type)
             }
-            SchemaKind::Type(Type::String(_)) => "String".to_string(),
-            SchemaKind::Type(Type::Integer(int_type)) => match &int_type.format {
-                openapiv3::VariantOrUnknownOrEmpty::Item(openapiv3::IntegerFormat::Int32) => {
+            Some(Types::Single(Type::String)) => "String".to_string(),
+            Some(Types::Single(Type::Integer)) => {
+                if box_schema.format == "int32" {
                     "i32".to_string()
-                }
-                openapiv3::VariantOrUnknownOrEmpty::Item(openapiv3::IntegerFormat::Int64) => {
+                } else if box_schema.format == "int64" {
+                    "i64".to_string()
+                } else {
                     "i64".to_string()
                 }
-                _ => "i64".to_string(),
-            },
-            SchemaKind::Type(Type::Number(_)) => "f64".to_string(),
-            SchemaKind::Type(Type::Boolean(_)) => "bool".to_string(),
+            }
+            Some(Types::Single(Type::Number)) => "f64".to_string(),
+            Some(Types::Single(Type::Boolean)) => "bool".to_string(),
             _ => "serde_json::Value".to_string(),
         },
-        ReferenceOr::Reference { reference } => extract_ref_name(reference),
+        _ => "serde_json::Value".to_string(),
     }
 }
 
 fn response_schema_to_string_item(
-    schema: &openapiv3::Schema,
-    components: Option<&openapiv3::Components>,
+    schema: &Object,
+    components: Option<&Components>,
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
     endpoint_name: &str,
 ) -> String {
-    match &schema.schema_kind {
-        SchemaKind::Type(Type::Object(obj)) => {
-            if obj.properties.is_empty() {
+    match &schema.schema_type {
+        Some(Types::Single(Type::Object)) => {
+            if schema.properties.is_empty() {
                 return "serde_json::Value".to_string();
             }
             let struct_name = format!("{}{}", to_pascal_case(endpoint_name), "Response");
-            let fields = obj.properties.iter().flat_map(|(name, prop)| {
+            let fields = schema.properties.iter().flat_map(|(name, prop)| {
                 let rust_name = to_valid_rust_field_name(name);
                 let field_name = format_ident!("{}", rust_name);
                 let ty = property_type(prop, inline_enums);
-                let doc = prop
-                    .as_item()
-                    .and_then(|s| s.schema_data.description.as_ref())
-                    .map(|d| quote! { #[doc = #d] });
+                let doc: Option<proc_macro2::TokenStream> = match prop {
+                    Schema::Object(box_prop) => {
+                        let prop_ref = box_prop.as_ref();
+                        let desc = &prop_ref.description;
+                        if !desc.is_empty() {
+                            Some(quote! { #[doc = #desc] })
+                        } else {
+                            None
+                        }
+                    }
+                    _ => None,
+                };
                 let serde_attr = if rust_name.as_str() != name {
                     quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
                 } else {
@@ -813,35 +954,35 @@ fn response_schema_to_string_item(
             });
             struct_name
         }
-        SchemaKind::Type(Type::Array(arr)) => {
-            let inner_type = arr
+        Some(Types::Single(Type::Array)) => {
+            let inner_type = schema
                 .items
                 .as_ref()
                 .map(|item| match item {
-                    ReferenceOr::Item(box_schema) => response_schema_to_string_item(
-                        &box_schema,
+                    Schema::Object(inner_box_schema) => response_schema_to_string_item(
+                        &inner_box_schema,
                         components,
                         inline_structs,
                         inline_enums,
                         endpoint_name,
                     ),
-                    ReferenceOr::Reference { reference } => extract_ref_name(reference),
+                    _ => "serde_json::Value".to_string(),
                 })
                 .unwrap_or_else(|| "serde_json::Value".to_string());
             format!("Vec<{}>", inner_type)
         }
-        SchemaKind::Type(Type::String(_)) => "String".to_string(),
-        SchemaKind::Type(Type::Integer(int_type)) => match &int_type.format {
-            openapiv3::VariantOrUnknownOrEmpty::Item(openapiv3::IntegerFormat::Int32) => {
+        Some(Types::Single(Type::String)) => "String".to_string(),
+        Some(Types::Single(Type::Integer)) => {
+            if schema.format == "int32" {
                 "i32".to_string()
-            }
-            openapiv3::VariantOrUnknownOrEmpty::Item(openapiv3::IntegerFormat::Int64) => {
+            } else if schema.format == "int64" {
+                "i64".to_string()
+            } else {
                 "i64".to_string()
             }
-            _ => "i64".to_string(),
-        },
-        SchemaKind::Type(Type::Number(_)) => "f64".to_string(),
-        SchemaKind::Type(Type::Boolean(_)) => "bool".to_string(),
+        }
+        Some(Types::Single(Type::Number)) => "f64".to_string(),
+        Some(Types::Single(Type::Boolean)) => "bool".to_string(),
         _ => "serde_json::Value".to_string(),
     }
 }
@@ -915,81 +1056,92 @@ fn type_to_tokens(ty: &str) -> proc_macro2::TokenStream {
     }
 }
 
-fn is_enum_schema(schema: &ReferenceOr<openapiv3::Schema>) -> bool {
-    if let ReferenceOr::Item(s) = schema {
-        if let SchemaKind::Type(Type::String(type_s)) = &s.schema_kind {
-            return !type_s.enumeration.is_empty();
-        }
-        if let SchemaKind::Type(Type::Integer(type_i)) = &s.schema_kind {
-            return !type_i.enumeration.is_empty();
-        }
-        if let SchemaKind::Type(Type::Number(type_n)) = &s.schema_kind {
-            return !type_n.enumeration.is_empty();
-        }
-        if let SchemaKind::Type(Type::Boolean(type_b)) = &s.schema_kind {
-            return !type_b.enumeration.is_empty();
-        }
+fn is_enum_schema(schema: &Schema) -> bool {
+    let obj: &Object = match schema {
+        Schema::Object(box_obj) => box_obj.as_ref(),
+        _ => return false,
+    };
+    if let Some(Types::Single(Type::String)) = obj.schema_type {
+        return obj.enum_values.as_ref().map_or(false, |v| !v.is_empty());
+    }
+    if let Some(Types::Single(Type::Integer)) = obj.schema_type {
+        return obj.enum_values.as_ref().map_or(false, |v| !v.is_empty());
+    }
+    if let Some(Types::Single(Type::Number)) = obj.schema_type {
+        return obj.enum_values.as_ref().map_or(false, |v| !v.is_empty());
+    }
+    if let Some(Types::Single(Type::Boolean)) = obj.schema_type {
+        return obj.enum_values.as_ref().map_or(false, |v| !v.is_empty());
+    }
+    if obj.any_of.is_some() {
+        return !obj.any_of.as_ref().unwrap().is_empty();
     }
     false
 }
 
-fn extract_enum_values(schema: &openapiv3::Schema) -> Vec<serde_json::Value> {
-    match &schema.schema_kind {
-        SchemaKind::Type(Type::String(s)) => s
-            .enumeration
-            .iter()
-            .filter_map(|v| v.clone().map(serde_json::Value::String))
-            .collect(),
-        SchemaKind::Type(Type::Integer(s)) => s
-            .enumeration
-            .iter()
-            .filter_map(|v| v.map(serde_json::Value::from))
-            .collect(),
-        SchemaKind::Type(Type::Number(s)) => s
-            .enumeration
-            .iter()
-            .filter_map(|v| v.map(serde_json::Value::from))
-            .collect(),
-        SchemaKind::Type(Type::Boolean(s)) => s
-            .enumeration
-            .iter()
-            .filter_map(|v| v.map(serde_json::Value::Bool))
-            .collect(),
-        _ => vec![],
+fn extract_enum_values(obj: &Object) -> Vec<serde_json::Value> {
+    if let Some(values) = &obj.enum_values {
+        return values.clone();
     }
+    if let Some(any_of) = &obj.any_of {
+        return any_of
+            .iter()
+            .filter_map(|schema| {
+                if let Schema::Object(box_schema) = schema {
+                    if !box_schema.reference.is_empty() {
+                        let ref_location = &box_schema.reference;
+                        Some(serde_json::Value::String(extract_ref_name(ref_location)))
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            })
+            .collect();
+    }
+    vec![]
 }
 
 fn generate_struct_fields(
-    schema: &openapiv3::Schema,
+    schema: &Schema,
     inline_enums: &mut Vec<InlineEnumInfo>,
 ) -> Vec<proc_macro2::TokenStream> {
-    match &schema.schema_kind {
-        SchemaKind::Type(Type::Object(obj)) => obj
-            .properties
-            .iter()
-            .flat_map(|(name, prop)| {
-                let rust_name = to_valid_rust_field_name(name);
-                let field_name = format_ident!("{}", rust_name);
-                let ty = property_type(prop, inline_enums);
-                let doc = prop
-                    .as_item()
-                    .and_then(|s| s.schema_data.description.as_ref())
-                    .map(|d| quote! { #[doc = #d] });
-                let serde_attr = if rust_name.as_str() != name {
-                    quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
-                } else {
-                    quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
-                };
-                vec![
-                    doc.into_iter().collect::<Vec<_>>(),
-                    vec![serde_attr],
-                    vec![quote! { pub #field_name: #ty, }],
-                ]
-            })
-            .flatten()
-            .collect(),
-        _ => vec![],
-    }
+    let obj: &Object = match schema {
+        Schema::Object(box_obj) => box_obj.as_ref(),
+        _ => return vec![],
+    };
+    obj.properties
+        .iter()
+        .flat_map(|(name, prop)| {
+            let rust_name = to_valid_rust_field_name(name);
+            let field_name = format_ident!("{}", rust_name);
+            let ty = property_type(prop, inline_enums);
+            let doc: Option<proc_macro2::TokenStream> = match prop {
+                Schema::Object(box_prop) => {
+                    let prop_ref = box_prop.as_ref();
+                    let desc = &prop_ref.description;
+                    if !desc.is_empty() {
+                        Some(quote! { #[doc = #desc] })
+                    } else {
+                        None
+                    }
+                }
+                _ => None,
+            };
+            let serde_attr = if rust_name.as_str() != name {
+                quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+            } else {
+                quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+            };
+            vec![
+                doc.into_iter().collect::<Vec<_>>(),
+                vec![serde_attr],
+                vec![quote! { pub #field_name: #ty, }],
+            ]
+        })
+        .flatten()
+        .collect()
 }
 
 fn to_valid_rust_field_name(name: &str) -> String {
@@ -1011,49 +1163,70 @@ fn to_valid_rust_field_name(name: &str) -> String {
 
 struct InlineEnumInfo {
     name: String,
-    schema: openapiv3::Schema,
+    schema: Object,
     description: Option<String>,
+    is_tagged: bool,
+    tag_field: Option<String>,
 }
 
 fn property_type(
-    prop: &ReferenceOr<Box<openapiv3::Schema>>,
+    schema: &Schema,
     inline_enums: &mut Vec<InlineEnumInfo>,
 ) -> proc_macro2::TokenStream {
-    match prop {
-        ReferenceOr::Item(schema) => {
-            if let Some(enum_name) = get_enum_type_name(schema) {
-                let schema_ref = schema.as_ref();
-                let description = schema_ref.schema_data.description.clone();
+    match schema {
+        Schema::Object(box_schema) => {
+            if !box_schema.reference.is_empty() {
+                let ref_name = extract_ref_name(&box_schema.reference);
+                let ident = format_ident!("{}", ref_name);
+                return quote! { Option<#ident> };
+            }
+            if let Some(enum_name) = get_enum_type_name(box_schema) {
+                let description = if box_schema.description.is_empty() {
+                    None
+                } else {
+                    Some(box_schema.description.clone())
+                };
                 inline_enums.push(InlineEnumInfo {
                     name: enum_name.clone(),
-                    schema: schema_ref.clone(),
+                    schema: box_schema.as_ref().clone(),
                     description,
+                    is_tagged: false,
+                    tag_field: None,
                 });
                 let ident = format_ident!("{}", enum_name);
                 return quote! { Option<#ident> };
             }
-            match &schema.schema_kind {
-                SchemaKind::Type(Type::String(_)) => quote! { Option<String> },
-                SchemaKind::Type(Type::Integer(int_type)) => {
-                    let format = match &int_type.format {
-                        openapiv3::VariantOrUnknownOrEmpty::Item(
-                            openapiv3::IntegerFormat::Int32,
-                        ) => "int32",
-                        openapiv3::VariantOrUnknownOrEmpty::Item(
-                            openapiv3::IntegerFormat::Int64,
-                        ) => "int64",
-                        _ => "int64",
-                    };
-                    match format {
+            if let Some((tag_field, _variants)) = extract_discriminator_info(box_schema) {
+                let description = if box_schema.description.is_empty() {
+                    None
+                } else {
+                    Some(box_schema.description.clone())
+                };
+                let enum_name_str = to_pascal_case(&tag_field);
+                inline_enums.push(InlineEnumInfo {
+                    name: enum_name_str.clone(),
+                    schema: box_schema.as_ref().clone(),
+                    description,
+                    is_tagged: true,
+                    tag_field: Some(tag_field),
+                });
+                let enum_name = format_ident!("{}", enum_name_str);
+                return quote! { Option<#enum_name> };
+            }
+            match &box_schema.schema_type {
+                Some(Types::Single(Type::String)) => quote! { Option<String> },
+                Some(Types::Single(Type::Integer)) => {
+                    let format = &box_schema.format;
+                    match format.as_str() {
                         "int32" => quote! { Option<i32> },
                         "int64" => quote! { Option<i64> },
                         _ => quote! { Option<i64> },
                     }
                 }
-                SchemaKind::Type(Type::Number(_)) => quote! { Option<f64> },
-                SchemaKind::Type(Type::Boolean(_)) => quote! { Option<bool> },
-                SchemaKind::Type(Type::Array(arr)) => {
-                    let inner = arr.items.as_ref();
+                Some(Types::Single(Type::Number)) => quote! { Option<f64> },
+                Some(Types::Single(Type::Boolean)) => quote! { Option<bool> },
+                Some(Types::Single(Type::Array)) => {
+                    let inner = box_schema.items.as_ref();
                     let inner_ty = if let Some(item_ref) = inner {
                         property_type(item_ref, inline_enums)
                     } else {
@@ -1061,12 +1234,12 @@ fn property_type(
                     };
                     quote! { Option<Vec<#inner_ty>> }
                 }
-                SchemaKind::Type(Type::Object(_)) => {
-                    let type_name = schema
-                        .schema_data
-                        .title
-                        .clone()
-                        .unwrap_or_else(|| "serde_json::Value".to_string());
+                Some(Types::Single(Type::Object)) => {
+                    let type_name = if box_schema.title.is_empty() {
+                        "serde_json::Value".to_string()
+                    } else {
+                        box_schema.title.clone()
+                    };
                     if type_name == "serde_json::Value" {
                         quote! { Option<serde_json::Value> }
                     } else {
@@ -1077,46 +1250,102 @@ fn property_type(
                 _ => quote! { Option<serde_json::Value> },
             }
         }
-        ReferenceOr::Reference { reference } => {
-            let ref_name = extract_ref_name(reference);
-            let ident = format_ident!("{}", ref_name);
-            quote! { Option<#ident> }
-        }
+        _ => quote! { Option<serde_json::Value> },
     }
 }
 
-fn get_enum_type_name(schema: &openapiv3::Schema) -> Option<String> {
-    match &schema.schema_kind {
-        SchemaKind::Type(Type::String(s)) if !s.enumeration.is_empty() => Some(
-            schema
-                .schema_data
-                .title
-                .clone()
-                .unwrap_or_else(|| "StringEnum".to_string()),
-        ),
-        SchemaKind::Type(Type::Integer(s)) if !s.enumeration.is_empty() => Some(
-            schema
-                .schema_data
-                .title
-                .clone()
-                .unwrap_or_else(|| "IntEnum".to_string()),
-        ),
-        SchemaKind::Type(Type::Number(s)) if !s.enumeration.is_empty() => Some(
-            schema
-                .schema_data
-                .title
-                .clone()
-                .unwrap_or_else(|| "NumberEnum".to_string()),
-        ),
-        SchemaKind::Type(Type::Boolean(s)) if !s.enumeration.is_empty() => Some(
-            schema
-                .schema_data
-                .title
-                .clone()
-                .unwrap_or_else(|| "BoolEnum".to_string()),
-        ),
-        _ => None,
+fn get_enum_type_name(schema: &Object) -> Option<String> {
+    if let Some(values) = &schema.enum_values {
+        if !values.is_empty() {
+            return Some(if schema.title.is_empty() {
+                "StringEnum".to_string()
+            } else {
+                schema.title.clone()
+            });
+        }
     }
+    None
+}
+
+fn extract_discriminator_info(obj: &Object) -> Option<(String, Vec<(String, Object)>)> {
+    let any_of = obj.any_of.as_ref()?;
+    if any_of.is_empty() {
+        return None;
+    }
+
+    let mut tag_field = None;
+    let mut variants = Vec::new();
+
+    for schema in any_of {
+        let box_schema = match schema {
+            Schema::Object(box_schema) => box_schema.as_ref(),
+            _ => return None,
+        };
+
+        if !box_schema.reference.is_empty() {
+            let _ref_name = extract_ref_name(&box_schema.reference);
+            return None;
+        }
+
+        let props = match &box_schema.schema_type {
+            Some(Types::Single(Type::Object)) => &box_schema.properties,
+            _ => return None,
+        };
+
+        let mut found_tag = None;
+        for (name, prop) in props {
+            if let Schema::Object(box_prop) = prop {
+                let object_prop = box_prop.as_ref();
+                if let Some(const_val) = &object_prop.const_value {
+                    if tag_field.is_none() {
+                        tag_field = Some(name.clone());
+                    } else if tag_field.as_ref() != Some(name) {
+                        return None;
+                    }
+                    found_tag = Some((name.clone(), const_val.clone()));
+                    break;
+                }
+            }
+        }
+
+        if let Some((_name, const_val)) = found_tag {
+            variants.push((
+                const_val.as_str().unwrap_or_default().to_string(),
+                box_schema.clone(),
+            ));
+        } else {
+            return None;
+        }
+    }
+
+    Some((tag_field?, variants))
+}
+
+fn generate_struct_fields_for_tagged_variant(
+    schema: &Object,
+    tag_field: &str,
+) -> (Vec<proc_macro2::TokenStream>, bool) {
+    let fields: Vec<_> = schema
+        .properties
+        .iter()
+        .filter(|(name, _)| *name != tag_field)
+        .map(|(name, prop)| {
+            let rust_name = to_valid_rust_field_name(name);
+            let field_name = format_ident!("{}", rust_name);
+            let ty = property_type(prop, &mut Vec::new());
+            let serde_attr = if rust_name.as_str() != name {
+                quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+            } else {
+                quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+            };
+            quote! {
+                #serde_attr
+                #field_name: #ty,
+            }
+        })
+        .collect();
+    let has_fields = !fields.is_empty();
+    (fields, has_fields)
 }
 
 fn extract_ref_name(reference: &str) -> String {

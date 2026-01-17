@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.1.0",
   "info": {
     "title": "Buildomat",
     "version": "1.0"
@@ -14,7 +14,9 @@
             "content": {
               "application/json; charset=utf-8": {
                 "schema": {
-                  "enum": [null]
+                  "enum": [
+                    null
+                  ]
                 }
               }
             }
@@ -127,7 +129,8 @@
               "format": "uint",
               "minimum": 0
             },
-            "style": "form"
+            "style": "form",
+            "required": false
           }
         ],
         "responses": {
@@ -203,7 +206,11 @@
             "style": "simple"
           }
         ],
-        "responses": {}
+        "responses": {
+          "default": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/v1/users": {
@@ -490,8 +497,10 @@
                     "type": "string"
                   }
                 }
-              ]
-            }
+              ],
+              "type": "object"
+            },
+            "required": false
           }
         ],
         "responses": {
@@ -519,7 +528,10 @@
             "schema": {
               "type": "string",
               "default": "en",
-              "enum": ["de", "en"]
+              "enum": [
+                "de",
+                "en"
+              ]
             }
           }
         ],
@@ -555,7 +567,13 @@
             "type": "string"
           }
         },
-        "required": ["id", "name", "output_rules", "script", "state"]
+        "required": [
+          "id",
+          "name",
+          "output_rules",
+          "script",
+          "state"
+        ]
       },
       "TaskEvent": {
         "type": "object",
@@ -576,7 +594,12 @@
             "format": "date-time"
           }
         },
-        "required": ["payload", "seq", "stream", "time"]
+        "required": [
+          "payload",
+          "seq",
+          "stream",
+          "time"
+        ]
       },
       "TaskOutput": {
         "type": "object",
@@ -593,7 +616,11 @@
             "minimum": 0
           }
         },
-        "required": ["id", "path", "size"]
+        "required": [
+          "id",
+          "path",
+          "size"
+        ]
       },
       "TaskSubmit": {
         "type": "object",
@@ -614,7 +641,11 @@
             "type": "boolean"
           }
         },
-        "required": ["default", "name", "script"]
+        "required": [
+          "default",
+          "name",
+          "script"
+        ]
       },
       "TaskSubmitResult": {
         "type": "object",
@@ -623,7 +654,9 @@
             "type": "string"
           }
         },
-        "required": ["id"]
+        "required": [
+          "id"
+        ]
       },
       "UploadedChunk": {
         "type": "object",
@@ -632,7 +665,9 @@
             "type": "string"
           }
         },
-        "required": ["id"]
+        "required": [
+          "id"
+        ]
       },
       "UserCreate": {
         "type": "object",
@@ -641,7 +676,9 @@
             "type": "string"
           }
         },
-        "required": ["name"]
+        "required": [
+          "name"
+        ]
       },
       "UserCreateResult": {
         "type": "object",
@@ -656,7 +693,11 @@
             "type": "string"
           }
         },
-        "required": ["id", "name", "token"]
+        "required": [
+          "id",
+          "name",
+          "token"
+        ]
       },
       "WhoamiResult": {
         "type": "object",
@@ -668,7 +709,10 @@
             "type": "string"
           }
         },
-        "required": ["id", "name"]
+        "required": [
+          "id",
+          "name"
+        ]
       },
       "Worker": {
         "type": "object",
@@ -696,7 +740,12 @@
             }
           }
         },
-        "required": ["deleted", "id", "recycle", "tasks"]
+        "required": [
+          "deleted",
+          "id",
+          "recycle",
+          "tasks"
+        ]
       },
       "WorkerAddOutput": {
         "type": "object",
@@ -715,7 +764,11 @@
             "format": "int64"
           }
         },
-        "required": ["chunks", "path", "size"]
+        "required": [
+          "chunks",
+          "path",
+          "size"
+        ]
       },
       "WorkerAppendTask": {
         "type": "object",
@@ -731,7 +784,11 @@
             "format": "date-time"
           }
         },
-        "required": ["payload", "stream", "time"]
+        "required": [
+          "payload",
+          "stream",
+          "time"
+        ]
       },
       "WorkerBootstrap": {
         "type": "object",
@@ -743,7 +800,10 @@
             "type": "string"
           }
         },
-        "required": ["bootstrap", "token"]
+        "required": [
+          "bootstrap",
+          "token"
+        ]
       },
       "WorkerBootstrapResult": {
         "type": "object",
@@ -752,7 +812,9 @@
             "type": "string"
           }
         },
-        "required": ["id"]
+        "required": [
+          "id"
+        ]
       },
       "WorkerCompleteTask": {
         "type": "object",
@@ -761,7 +823,9 @@
             "type": "boolean"
           }
         },
-        "required": ["failed"]
+        "required": [
+          "failed"
+        ]
       },
       "WorkerPingResult": {
         "type": "object",
@@ -773,7 +837,9 @@
             "$ref": "#/components/schemas/WorkerPingTask"
           }
         },
-        "required": ["poweroff"]
+        "required": [
+          "poweroff"
+        ]
       },
       "WorkerPingTask": {
         "type": "object",
@@ -791,7 +857,11 @@
             "type": "string"
           }
         },
-        "required": ["id", "output_rules", "script"]
+        "required": [
+          "id",
+          "output_rules",
+          "script"
+        ]
       },
       "WorkerTask": {
         "type": "object",
@@ -806,7 +876,11 @@
             "type": "string"
           }
         },
-        "required": ["id", "name", "owner"]
+        "required": [
+          "id",
+          "name",
+          "owner"
+        ]
       },
       "WorkersResult": {
         "type": "object",
@@ -818,7 +892,9 @@
             }
           }
         },
-        "required": ["workers"]
+        "required": [
+          "workers"
+        ]
       },
       "ObjWithOptionArray": {
         "type": "object",
@@ -826,28 +902,36 @@
           "things": {
             "type": "array",
             "items": {
-              "nullable": true,
               "allOf": [
                 {
                   "$ref": "#/components/schemas/Task"
                 }
+              ],
+              "type": [
+                "object",
+                "null"
               ]
             }
           },
           "stranger-things": {
             "type": "array",
             "items": {
-              "nullable": true,
               "allOf": [
                 {
                   "$ref": "#/components/schemas/Task"
                 }
               ],
-              "oneOf": [{}]
+              "type": [
+                "object",
+                "null"
+              ]
             }
           }
         },
-        "required": ["things", "stranger-things"]
+        "required": [
+          "things",
+          "stranger-things"
+        ]
       }
     }
   }
