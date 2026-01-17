@@ -13,3 +13,4 @@ derive_more = {version = "1.0", features = ["full"]}
 [build-dependencies]
 oapi_universal_gen = { path = "../..", features = ["oapi_gen"] }
 derive_more = {version = "1.0", features = ["full"]}
+serde = { version = "1.0", features = ["derive"] }

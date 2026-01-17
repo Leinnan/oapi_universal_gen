@@ -21,6 +21,7 @@ pub fn generate_openapi_spec() {
 
 fn generate_code(openapi: &OpenApi) -> String {
     let cmp = openapi.components.clone().unwrap_or_default();
+    let cmp_2 = cmp.clone();
 
     let enum_schemas: Vec<_> = cmp
         .schemas
@@ -38,14 +39,17 @@ fn generate_code(openapi: &OpenApi) -> String {
         let doc = quote! { #[doc = #d] };
 
         // Check if this is a tagged enum
-        if let Some((tag_field, variants)) = extract_discriminator_info(schema_ref) {
+        if let Some((tag_field, variants)) = extract_discriminator_info(&cmp_2, schema_ref) {
             let variant_defs: Vec<_> = variants
                 .into_iter()
                 .map(|(tag_value, variant_schema)| {
                     let variant_name = to_valid_enum_variant(&tag_value);
                     let ident = format_ident!("{}", variant_name);
-                    let (fields, has_fields) =
-                        generate_struct_fields_for_tagged_variant(&variant_schema, &tag_field);
+                    let (fields, has_fields) = generate_struct_fields_for_tagged_variant(
+                        &cmp_2,
+                        &variant_schema,
+                        &tag_field,
+                    );
                     if !has_fields {
                         quote! { #ident, }
                     } else {
@@ -124,7 +128,7 @@ fn generate_code(openapi: &OpenApi) -> String {
             }
 
             // Check if this schema is a tagged enum (anyOf with object variants with const tags)
-            if let Some((tag_field, _variants)) = extract_discriminator_info(schema_ref) {
+            if let Some((tag_field, _variants)) = extract_discriminator_info(&cmp_2, schema_ref) {
                 let enum_name_str = to_pascal_case(name);
                 let description = if schema_ref.description.is_empty() {
                     None
@@ -150,7 +154,7 @@ fn generate_code(openapi: &OpenApi) -> String {
             let schema_name = format_ident!("{}", to_pascal_case(name.as_str()));
             let d = schema_ref.description.clone();
             let doc = quote! { #[doc = #d] };
-            let fields = generate_struct_fields(schema_or_ref, &mut inline_enums);
+            let fields = generate_struct_fields(&cmp_2, schema_or_ref, &mut inline_enums);
             Some(quote! {
                 #doc
                 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -161,7 +165,7 @@ fn generate_code(openapi: &OpenApi) -> String {
         })
         .collect();
 
-    let (inline_input_structs, methods) = generate_methods(openapi, &mut inline_enums);
+    let (inline_input_structs, methods) = generate_methods(openapi, &cmp_2, &mut inline_enums);
 
     let mut seen_enum_names = std::collections::HashSet::new();
     let inline_enum_defs: Vec<_> = inline_enums
@@ -183,7 +187,7 @@ fn generate_code(openapi: &OpenApi) -> String {
 
             if enum_info.is_tagged {
                 let tag_field = enum_info.tag_field.as_ref().unwrap();
-                let discriminator_info = extract_discriminator_info(&enum_info.schema)?;
+                let discriminator_info = extract_discriminator_info(&cmp_2, &enum_info.schema)?;
                 let (_, variants) = discriminator_info;
 
                 let variant_defs: Vec<_> = variants
@@ -191,8 +195,11 @@ fn generate_code(openapi: &OpenApi) -> String {
                     .map(|(tag_value, variant_schema)| {
                         let variant_name = to_valid_enum_variant(&tag_value);
                         let ident = format_ident!("{}", variant_name);
-                        let (fields, has_fields) =
-                            generate_struct_fields_for_tagged_variant(&variant_schema, tag_field);
+                        let (fields, has_fields) = generate_struct_fields_for_tagged_variant(
+                            &cmp_2,
+                            &variant_schema,
+                            tag_field,
+                        );
                         if !has_fields {
                             quote! { #ident, }
                         } else {
@@ -535,6 +542,7 @@ fn generate_method_body(path: &str, method_info: &MethodInfo) -> proc_macro2::To
 
 fn generate_methods(
     openapi: &OpenApi,
+    components: &Components,
     inline_enums: &mut Vec<InlineEnumInfo>,
 ) -> (Vec<proc_macro2::TokenStream>, Vec<proc_macro2::TokenStream>) {
     let mut inline_input_structs = Vec::new();
@@ -557,7 +565,6 @@ fn generate_methods(
 
         for (_method_name, http_method, operation) in operations {
             if let Some(op) = operation {
-                let components = openapi.components.as_ref();
                 let method_info = build_method_info(
                     path,
                     http_method,
@@ -582,7 +589,7 @@ fn build_method_info(
     http_method: RequestType,
     operation: Option<&Operation>,
     path_params: &[Parameter],
-    components: Option<&Components>,
+    components: &Components,
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
 ) -> MethodInfo {
@@ -701,7 +708,7 @@ fn schema_type_to_string(schema: &Object) -> String {
 
 fn extract_request_body_type(
     rb: &RefOr<RequestBody>,
-    _components: Option<&Components>,
+    components: &Components,
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
 ) -> Option<String> {
@@ -716,10 +723,10 @@ fn extract_request_body_type(
                                     let struct_name =
                                         generate_inline_struct_name(inline_structs, "Request");
                                     let fields = box_schema.properties.iter().flat_map(|(name, prop)| {
-                                        let rust_name = to_valid_rust_field_name(name);
-                                        let field_name = format_ident!("{}", rust_name);
-            let ty = property_type(prop, inline_enums);
-                                        let doc: Option<proc_macro2::TokenStream> = match prop {
+                                    let rust_name = to_valid_rust_field_name(name);
+                                    let field_name = format_ident!("{}", rust_name);
+                                    let ty = property_type(components, prop, inline_enums);
+                                    let doc: Option<proc_macro2::TokenStream> = match prop {
                                             Schema::Object(box_prop) => {
                                                 let prop_ref = box_prop.as_ref();
                                                 let desc = &prop_ref.description;
@@ -777,7 +784,7 @@ fn extract_request_body_type(
 
 fn extract_response_type(
     responses: &openapiv3_1::Responses,
-    components: Option<&openapiv3_1::Components>,
+    components: &openapiv3_1::Components,
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
     endpoint_name: &str,
@@ -820,7 +827,7 @@ fn is_success_status_code(status_code: &str) -> bool {
 
 fn response_schema_to_string(
     schema: &Schema,
-    components: Option<&Components>,
+    components: &Components,
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
     endpoint_name: &str,
@@ -835,7 +842,7 @@ fn response_schema_to_string(
                 let fields = box_schema.properties.iter().flat_map(|(name, prop)| {
                     let rust_name = to_valid_rust_field_name(name);
                     let field_name = format_ident!("{}", rust_name);
-                    let ty = property_type(prop, inline_enums);
+                    let ty = property_type(components, prop, inline_enums);
                     let doc: Option<proc_macro2::TokenStream> = match prop {
                         Schema::Object(box_prop) => {
                             let prop_ref = box_prop.as_ref();
@@ -906,7 +913,7 @@ fn response_schema_to_string(
 
 fn response_schema_to_string_item(
     schema: &Object,
-    components: Option<&Components>,
+    components: &Components,
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
     endpoint_name: &str,
@@ -920,7 +927,7 @@ fn response_schema_to_string_item(
             let fields = schema.properties.iter().flat_map(|(name, prop)| {
                 let rust_name = to_valid_rust_field_name(name);
                 let field_name = format_ident!("{}", rust_name);
-                let ty = property_type(prop, inline_enums);
+                let ty = property_type(components, prop, inline_enums);
                 let doc: Option<proc_macro2::TokenStream> = match prop {
                     Schema::Object(box_prop) => {
                         let prop_ref = box_prop.as_ref();
@@ -1073,8 +1080,8 @@ fn is_enum_schema(schema: &Schema) -> bool {
     if let Some(Types::Single(Type::Boolean)) = obj.schema_type {
         return obj.enum_values.as_ref().map_or(false, |v| !v.is_empty());
     }
-    if obj.any_of.is_some() {
-        return !obj.any_of.as_ref().unwrap().is_empty();
+    if let Some(any_of) = &obj.any_of {
+        return !any_of.is_empty();
     }
     false
 }
@@ -1104,6 +1111,7 @@ fn extract_enum_values(obj: &Object) -> Vec<serde_json::Value> {
 }
 
 fn generate_struct_fields(
+    components: &Components,
     schema: &Schema,
     inline_enums: &mut Vec<InlineEnumInfo>,
 ) -> Vec<proc_macro2::TokenStream> {
@@ -1116,7 +1124,7 @@ fn generate_struct_fields(
         .flat_map(|(name, prop)| {
             let rust_name = to_valid_rust_field_name(name);
             let field_name = format_ident!("{}", rust_name);
-            let ty = property_type(prop, inline_enums);
+            let ty = property_type(components, prop, inline_enums);
             let doc: Option<proc_macro2::TokenStream> = match prop {
                 Schema::Object(box_prop) => {
                     let prop_ref = box_prop.as_ref();
@@ -1170,6 +1178,7 @@ struct InlineEnumInfo {
 }
 
 fn property_type(
+    components: &Components,
     schema: &Schema,
     inline_enums: &mut Vec<InlineEnumInfo>,
 ) -> proc_macro2::TokenStream {
@@ -1196,7 +1205,8 @@ fn property_type(
                 let ident = format_ident!("{}", enum_name);
                 return quote! { Option<#ident> };
             }
-            if let Some((tag_field, _variants)) = extract_discriminator_info(box_schema) {
+            if let Some((tag_field, _variants)) = extract_discriminator_info(components, box_schema)
+            {
                 let description = if box_schema.description.is_empty() {
                     None
                 } else {
@@ -1228,7 +1238,7 @@ fn property_type(
                 Some(Types::Single(Type::Array)) => {
                     let inner = box_schema.items.as_ref();
                     let inner_ty = if let Some(item_ref) = inner {
-                        property_type(item_ref, inline_enums)
+                        property_type(components, item_ref, inline_enums)
                     } else {
                         quote! { String }
                     };
@@ -1267,7 +1277,10 @@ fn get_enum_type_name(schema: &Object) -> Option<String> {
     None
 }
 
-fn extract_discriminator_info(obj: &Object) -> Option<(String, Vec<(String, Object)>)> {
+fn extract_discriminator_info(
+    components: &Components,
+    obj: &Object,
+) -> Option<(String, Vec<(String, Object)>)> {
     let any_of = obj.any_of.as_ref()?;
     if any_of.is_empty() {
         return None;
@@ -1277,14 +1290,18 @@ fn extract_discriminator_info(obj: &Object) -> Option<(String, Vec<(String, Obje
     let mut variants = Vec::new();
 
     for schema in any_of {
-        let box_schema = match schema {
+        let mut box_schema = match schema {
             Schema::Object(box_schema) => box_schema.as_ref(),
             _ => return None,
         };
-
         if !box_schema.reference.is_empty() {
-            let _ref_name = extract_ref_name(&box_schema.reference);
-            return None;
+            let ref_name = extract_ref_name(&box_schema.reference);
+            eprintln!("Search for {}", ref_name);
+            if let Some(Schema::Object(s)) = components.schemas.get(&ref_name) {
+                box_schema = s.as_ref();
+            } else {
+                return None;
+            }
         }
 
         let props = match &box_schema.schema_type {
@@ -1322,6 +1339,7 @@ fn extract_discriminator_info(obj: &Object) -> Option<(String, Vec<(String, Obje
 }
 
 fn generate_struct_fields_for_tagged_variant(
+    components: &Components,
     schema: &Object,
     tag_field: &str,
 ) -> (Vec<proc_macro2::TokenStream>, bool) {
@@ -1332,7 +1350,7 @@ fn generate_struct_fields_for_tagged_variant(
         .map(|(name, prop)| {
             let rust_name = to_valid_rust_field_name(name);
             let field_name = format_ident!("{}", rust_name);
-            let ty = property_type(prop, &mut Vec::new());
+            let ty = property_type(components, prop, &mut Vec::new());
             let serde_attr = if rust_name.as_str() != name {
                 quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
             } else {
