@@ -90,6 +90,11 @@ fn generate_code(openapi: &OpenApi) -> String {
                 .map(|(tag_value, ref_name, variant_schema)| {
                     let variant_name = to_valid_enum_variant(&tag_value);
                     let ident = format_ident!("{}", variant_name);
+                    let rename_attr = if variant_name != tag_value {
+                        quote! { #[serde(rename = #tag_value)] }
+                    } else {
+                        quote! {}
+                    };
                     let enum_name = to_pascal_case(name);
                     let variant_parent_name = if !ref_name.is_empty() {
                         ref_name.clone()
@@ -104,9 +109,13 @@ fn generate_code(openapi: &OpenApi) -> String {
                         Some(&variant_parent_name),
                     );
                     if !has_fields {
-                        quote! { #ident, }
+                        quote! {
+                            #rename_attr
+                            #ident,
+                        }
                     } else {
                         quote! {
+                            #rename_attr
                             #[display(#variant_name)]
                             #ident { #(#fields)* },
                         }
@@ -269,6 +278,11 @@ fn generate_code(openapi: &OpenApi) -> String {
                     .map(|(tag_value, ref_name, variant_schema)| {
                         let variant_name = to_valid_enum_variant(&tag_value);
                         let ident = format_ident!("{}", variant_name);
+                        let rename_attr = if variant_name != tag_value {
+                            quote! { #[serde(rename = #tag_value)] }
+                        } else {
+                            quote! {}
+                        };
                         let variant_parent_name = if !ref_name.is_empty() {
                             ref_name.clone()
                         } else {
@@ -282,9 +296,13 @@ fn generate_code(openapi: &OpenApi) -> String {
                             Some(&variant_parent_name),
                         );
                         if !has_fields {
-                            quote! { #ident, }
+                            quote! {
+                                #rename_attr
+                                #ident,
+                            }
                         } else {
                             quote! {
+                                #rename_attr
                                 #[display(#variant_name)]
                                 #ident { #(#fields)* },
                             }
