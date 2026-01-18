@@ -785,7 +785,8 @@ fn extract_request_body_type(
                                     let fields = box_schema.properties.iter().flat_map(|(name, prop)| {
                                     let rust_name = to_valid_rust_field_name(name);
                                     let field_name = format_ident!("{}", rust_name);
-                                    let ty = property_type(components, prop, inline_enums, &mut nested_inline_structs, None, name);
+                                    let is_required = is_field_required(name, &box_schema.required);
+                                    let ty = property_type(components, prop, inline_enums, &mut nested_inline_structs, None, name, is_required);
                                     let doc: Option<proc_macro2::TokenStream> = match prop {
                                             Schema::Object(box_prop) => {
                                                 let prop_ref = box_prop.as_ref();
@@ -798,10 +799,18 @@ fn extract_request_body_type(
                                             }
                                             _ => None,
                                         };
-                                        let serde_attr = if rust_name.as_str() != name {
-                                            quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+                                        let serde_attr = if is_required {
+                                            if rust_name.as_str() != name {
+                                                quote! { #[serde(rename = #name)] }
+                                            } else {
+                                                quote! {}
+                                            }
                                         } else {
-                                            quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+                                            if rust_name.as_str() != name {
+                                                quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+                                            } else {
+                                                quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+                                            }
                                         };
                                         vec![
                                             doc.into_iter().collect::<Vec<_>>(),
@@ -911,7 +920,8 @@ fn response_schema_to_string(
                     let fields = box_schema.properties.iter().flat_map(|(name, prop)| {
                         let rust_name = to_valid_rust_field_name(name);
                         let field_name = format_ident!("{}", rust_name);
-                        let ty = property_type(components, prop, inline_enums, &mut nested_inline_structs, Some(&struct_name), name);
+                        let is_required = is_field_required(name, &box_schema.required);
+                        let ty = property_type(components, prop, inline_enums, &mut nested_inline_structs, Some(&struct_name), name, is_required);
                         let doc: Option<proc_macro2::TokenStream> = match prop {
                             Schema::Object(box_prop) => {
                                 let prop_ref = box_prop.as_ref();
@@ -924,10 +934,18 @@ fn response_schema_to_string(
                             }
                             _ => None,
                         };
-                        let serde_attr = if rust_name.as_str() != name {
-                            quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+                        let serde_attr = if is_required {
+                            if rust_name.as_str() != name {
+                                quote! { #[serde(rename = #name)] }
+                            } else {
+                                quote! {}
+                            }
                         } else {
-                            quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+                            if rust_name.as_str() != name {
+                                quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+                            } else {
+                                quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+                            }
                         };
                         vec![
                             doc.into_iter().collect::<Vec<_>>(),
@@ -1004,7 +1022,8 @@ fn response_schema_to_string_item(
                 let fields = schema.properties.iter().flat_map(|(name, prop)| {
                     let rust_name = to_valid_rust_field_name(name);
                     let field_name = format_ident!("{}", rust_name);
-                    let ty = property_type(components, prop, inline_enums, &mut nested_inline_structs, Some(&struct_name), name);
+                    let is_required = is_field_required(name, &schema.required);
+                    let ty = property_type(components, prop, inline_enums, &mut nested_inline_structs, Some(&struct_name), name, is_required);
                     let doc: Option<proc_macro2::TokenStream> = match prop {
                         Schema::Object(box_prop) => {
                             let prop_ref = box_prop.as_ref();
@@ -1017,10 +1036,19 @@ fn response_schema_to_string_item(
                         }
                         _ => None,
                     };
-                    let serde_attr = if rust_name.as_str() != name {
-                        quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+                    let is_required = is_field_required(name, &schema.required);
+                    let serde_attr = if is_required {
+                        if rust_name.as_str() != name {
+                            quote! { #[serde(rename = #name)] }
+                        } else {
+                            quote! {}
+                        }
                     } else {
-                        quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+                        if rust_name.as_str() != name {
+                            quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+                        } else {
+                            quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+                        }
                     };
                     vec![
                         doc.into_iter().collect::<Vec<_>>(),
@@ -1211,7 +1239,8 @@ fn generate_struct_fields(
         .flat_map(|(name, prop)| {
             let rust_name = to_valid_rust_field_name(name);
             let field_name = format_ident!("{}", rust_name);
-            let ty = property_type(components, prop, inline_enums, inline_structs, parent_name, name);
+            let is_required = is_field_required(name, &obj.required);
+            let ty = property_type(components, prop, inline_enums, inline_structs, parent_name, name, is_required);
             let doc: Option<proc_macro2::TokenStream> = match prop {
                 Schema::Object(box_prop) => {
                     let prop_ref = box_prop.as_ref();
@@ -1224,10 +1253,18 @@ fn generate_struct_fields(
                 }
                 _ => None,
             };
-            let serde_attr = if rust_name.as_str() != name {
-                quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+            let serde_attr = if is_required {
+                if rust_name.as_str() != name {
+                    quote! { #[serde(rename = #name)] }
+                } else {
+                    quote! {}
+                }
             } else {
-                quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+                if rust_name.as_str() != name {
+                    quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+                } else {
+                    quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+                }
             };
             vec![
                 doc.into_iter().collect::<Vec<_>>(),
@@ -1256,6 +1293,10 @@ fn to_valid_rust_field_name(name: &str) -> String {
     to_snake_case(&result)
 }
 
+fn is_field_required(name: &str, required: &[String]) -> bool {
+    required.contains(&name.to_string())
+}
+
 struct InlineEnumInfo {
     name: String,
     schema: Object,
@@ -1276,15 +1317,19 @@ fn property_type(
     inline_structs: &mut Vec<InlineStructInfo>,
     parent_name: Option<&str>,
     field_name: &str,
+    is_required: bool,
 ) -> proc_macro2::TokenStream {
     match schema {
         Schema::Object(box_schema) => {
             if !box_schema.reference.is_empty() {
                 let ref_name = extract_ref_name(&box_schema.reference);
                 let ident = format_ident!("{}", ref_name);
-                return quote! { Option<#ident> };
-            }
-            if let Some(enum_name) = get_enum_type_name(box_schema) {
+                if is_required {
+                    quote! { #ident }
+                } else {
+                    quote! { Option<#ident> }
+                }
+            } else if let Some(enum_name) = get_enum_type_name(box_schema) {
                 let description = if box_schema.description.is_empty() {
                     None
                 } else {
@@ -1298,9 +1343,13 @@ fn property_type(
                     tag_field: None,
                 });
                 let ident = format_ident!("{}", enum_name);
-                return quote! { Option<#ident> };
-            }
-            if let Some((tag_field, variants)) = extract_discriminator_info(components, box_schema)
+                if is_required {
+                    quote! { #ident }
+                } else {
+                    quote! { Option<#ident> }
+                }
+            } else if let Some((tag_field, variants)) =
+                extract_discriminator_info(components, box_schema)
             {
                 let description = if box_schema.description.is_empty() {
                     None
@@ -1316,84 +1365,150 @@ fn property_type(
                     tag_field: Some(tag_field),
                 });
                 let enum_name = format_ident!("{}", enum_name_str);
-                return quote! { Option<#enum_name> };
-            }
-            match &box_schema.schema_type {
-                Some(Types::Single(Type::String)) => quote! { Option<String> },
-                Some(Types::Single(Type::Integer)) => {
-                    let format = &box_schema.format;
-                    match format.as_str() {
-                        "int32" => quote! { Option<i32> },
-                        "int64" => quote! { Option<i64> },
-                        _ => quote! { Option<i64> },
-                    }
+                if is_required {
+                    quote! { #enum_name }
+                } else {
+                    quote! { Option<#enum_name> }
                 }
-                Some(Types::Single(Type::Number)) => quote! { Option<f64> },
-                Some(Types::Single(Type::Boolean)) => quote! { Option<bool> },
-                Some(Types::Single(Type::Array)) => {
-                    let inner = box_schema.items.as_ref();
-                    let inner_ty = if let Some(item_ref) = inner {
-                        property_type(
-                            components,
-                            item_ref,
-                            inline_enums,
-                            inline_structs,
-                            None,
-                            "Item",
-                        )
-                    } else {
-                        quote! { String }
-                    };
-                    quote! { Option<Vec<#inner_ty>> }
-                }
-                Some(Types::Single(Type::Object)) => {
-                    if box_schema.properties.is_empty() {
-                        quote! { Option<serde_json::Value> }
-                    } else {
-                        let base_name = match parent_name {
-                            Some(parent) => {
-                                format!("{}{}", to_pascal_case(parent), to_pascal_case(field_name))
-                            }
-                            None => "InlineObject".to_string(),
-                        };
-                        let mut struct_name = base_name.clone();
-                        let mut counter = 0;
-                        loop {
-                            let exists = inline_structs.iter().any(|s| s.name == struct_name);
-                            if !exists {
-                                break;
-                            }
-                            counter += 1;
-                            struct_name = format!("{}{}", base_name, counter);
+            } else {
+                match &box_schema.schema_type {
+                    Some(Types::Single(Type::String)) => {
+                        if is_required {
+                            quote! { String }
+                        } else {
+                            quote! { Option<String> }
                         }
-                        let fields: Vec<_> = box_schema.properties.iter()
-                            .map(|(name, prop)| {
-                                let rust_name = to_valid_rust_field_name(name);
-                                let field_name = format_ident!("{}", rust_name);
-                                let ty = property_type(components, prop, inline_enums, inline_structs, Some(&struct_name), name);
-                                let serde_attr = if rust_name.as_str() != name {
-                                    quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
-                                } else {
-                                    quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
-                                };
-                                quote! {
-                                    #serde_attr
-                                    pub #field_name: #ty,
+                    }
+                    Some(Types::Single(Type::Integer)) => {
+                        let format = &box_schema.format;
+                        let ty = match format.as_str() {
+                            "int32" => quote! { i32 },
+                            "int64" => quote! { i64 },
+                            _ => quote! { i64 },
+                        };
+                        if is_required {
+                            ty
+                        } else {
+                            quote! { Option<#ty> }
+                        }
+                    }
+                    Some(Types::Single(Type::Number)) => {
+                        if is_required {
+                            quote! { f64 }
+                        } else {
+                            quote! { Option<f64> }
+                        }
+                    }
+                    Some(Types::Single(Type::Boolean)) => {
+                        if is_required {
+                            quote! { bool }
+                        } else {
+                            quote! { Option<bool> }
+                        }
+                    }
+                    Some(Types::Single(Type::Array)) => {
+                        let inner = box_schema.items.as_ref();
+                        let inner_ty = if let Some(item_ref) = inner {
+                            property_type(
+                                components,
+                                item_ref,
+                                inline_enums,
+                                inline_structs,
+                                None,
+                                "Item",
+                                true,
+                            )
+                        } else {
+                            quote! { String }
+                        };
+                        if is_required {
+                            quote! { Vec<#inner_ty> }
+                        } else {
+                            quote! { Option<Vec<#inner_ty>> }
+                        }
+                    }
+                    Some(Types::Single(Type::Object)) => {
+                        if box_schema.properties.is_empty() {
+                            if is_required {
+                                quote! { serde_json::Value }
+                            } else {
+                                quote! { Option<serde_json::Value> }
+                            }
+                        } else {
+                            let base_name = match parent_name {
+                                Some(parent) => {
+                                    format!(
+                                        "{}{}",
+                                        to_pascal_case(parent),
+                                        to_pascal_case(field_name)
+                                    )
                                 }
-                            })
-                            .collect();
-                        inline_structs.push(InlineStructInfo {
-                            name: struct_name.clone(),
-                            fields: fields.clone(),
-                        });
-                        let ident = format_ident!("{}", struct_name);
-                        quote! { Option<#ident> }
+                                None => "InlineObject".to_string(),
+                            };
+                            let mut struct_name = base_name.clone();
+                            let mut counter = 0;
+                            loop {
+                                let exists = inline_structs.iter().any(|s| s.name == struct_name);
+                                if !exists {
+                                    break;
+                                }
+                                counter += 1;
+                                struct_name = format!("{}{}", base_name, counter);
+                            }
+                            let fields: Vec<_> = box_schema.properties.iter()
+                                .map(|(name, prop)| {
+                                    let rust_name = to_valid_rust_field_name(name);
+                                    let field_name = format_ident!("{}", rust_name);
+                                    let is_required = is_field_required(name, &box_schema.required);
+                                    let ty = property_type(components, prop, inline_enums, inline_structs, Some(&struct_name), name, is_required);
+                                    let serde_attr = if is_required {
+                                        if rust_name.as_str() != name {
+                                            quote! { #[serde(rename = #name)] }
+                                        } else {
+                                            quote! {}
+                                        }
+                                    } else {
+                                        if rust_name.as_str() != name {
+                                            quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+                                        } else {
+                                            quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+                                        }
+                                    };
+                                    quote! {
+                                        #serde_attr
+                                        pub #field_name: #ty,
+                                    }
+                                })
+                                .collect();
+                            inline_structs.push(InlineStructInfo {
+                                name: struct_name.clone(),
+                                fields: fields.clone(),
+                            });
+                            let ident = format_ident!("{}", struct_name);
+                            if is_required {
+                                quote! { #ident }
+                            } else {
+                                quote! { Option<#ident> }
+                            }
+                        }
+                    }
+                    _ => {
+                        if is_required {
+                            quote! { serde_json::Value }
+                        } else {
+                            quote! { Option<serde_json::Value> }
+                        }
                     }
                 }
-                _ => quote! { Option<serde_json::Value> },
             }
         }
-        _ => quote! { Option<serde_json::Value> },
+        _ => {
+            if is_required {
+                quote! { serde_json::Value }
+            } else {
+                quote! { Option<serde_json::Value> }
+            }
+        }
     }
 }
 
@@ -1489,11 +1604,20 @@ fn generate_struct_fields_for_tagged_variant(
         .map(|(name, prop)| {
             let rust_name = to_valid_rust_field_name(name);
             let field_name = format_ident!("{}", rust_name);
-            let ty = property_type(components, prop, &mut Vec::new(), inline_structs, parent_name, name);
-            let serde_attr = if rust_name.as_str() != name {
-                quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+            let is_required = is_field_required(name, &schema.required);
+            let ty = property_type(components, prop, &mut Vec::new(), inline_structs, parent_name, name, is_required);
+            let serde_attr = if is_required {
+                if rust_name.as_str() != name {
+                    quote! { #[serde(rename = #name)] }
+                } else {
+                    quote! {}
+                }
             } else {
-                quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+                if rust_name.as_str() != name {
+                    quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+                } else {
+                    quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+                }
             };
             quote! {
                 #serde_attr

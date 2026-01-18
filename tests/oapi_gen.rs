@@ -148,8 +148,8 @@ fn test_struct_generation() {
     let output = generate_from_json(&json);
 
     assert!(output.contains("pub struct SimpleUser"));
-    assert!(output.contains("pub id: Option<String>"));
-    assert!(output.contains("pub name: Option<String>"));
+    assert!(output.contains("pub id: String"));
+    assert!(output.contains("pub name: String"));
     assert!(output.contains("pub age: Option<i32>"));
     let parsed = syn::parse_file(&output);
     assert!(
@@ -170,7 +170,7 @@ fn test_struct_with_all_types() {
     assert!(output.contains("pub int64_field: Option<i64>"));
     assert!(output.contains("pub number_field: Option<f64>"));
     assert!(output.contains("pub bool_field: Option<bool>"));
-    assert!(output.contains("pub array_field: Option<Vec<Option<String>>>"));
+    assert!(output.contains("pub array_field: Option<Vec<String>>"));
     let parsed = syn::parse_file(&output);
     assert!(
         parsed.is_ok(),
@@ -234,7 +234,7 @@ fn test_from_original_schema() {
     assert!(output.contains("task: String"));
     assert!(output.contains("fn v1_tasks_get(&self)"));
     assert!(output.contains("pub struct Task"));
-    assert!(output.contains("pub state: Option<String>"));
+    assert!(output.contains("pub state: String"));
 }
 
 #[test]
@@ -400,13 +400,10 @@ fn test_any_of_schema_generation() {
         output.contains("pub enum Message"),
         "Should generate Message enum"
     );
+    assert!(output.contains("User {"), "Should have User struct variant");
     assert!(
-        output.contains("UserMessage(UserMessage)"),
-        "Should have UserMessage tuple variant"
-    );
-    assert!(
-        output.contains("AssistantMessage(AssistantMessage)"),
-        "Should have AssistantMessage tuple variant"
+        output.contains("Assistant {"),
+        "Should have Assistant struct variant"
     );
 
     let parsed = syn::parse_file(&output);
@@ -515,6 +512,37 @@ fn test_parameter_docs_generated() {
     assert!(output.contains("Search query for filtering users"));
     assert!(output.contains("The user ID"));
     assert!(output.contains("Include additional user details"));
+
+    let parsed = syn::parse_file(&output);
+    assert!(
+        parsed.is_ok(),
+        "Generated code is not valid Rust: {:?}",
+        parsed.err()
+    );
+}
+
+#[test]
+fn test_mixed_required_optional_fields() {
+    let json = load_fixture("mixed_required_optional");
+    let output = generate_from_json(&json);
+
+    assert!(output.contains("pub struct Project"));
+    assert!(output.contains("pub id: String"));
+    assert!(output.contains("pub worktree: String"));
+    assert!(output.contains("pub vcs: Option<String>"));
+    assert!(output.contains("pub name: Option<String>"));
+    assert!(output.contains("pub icon: Option<ProjectIcon>"));
+    assert!(output.contains("pub time: ProjectTime"));
+    assert!(output.contains("pub sandboxes: Vec<String>"));
+
+    assert!(output.contains("pub struct ProjectIcon"));
+    assert!(output.contains("pub url: Option<String>"));
+    assert!(output.contains("pub color: Option<String>"));
+
+    assert!(output.contains("pub struct ProjectTime"));
+    assert!(output.contains("pub created: f64"));
+    assert!(output.contains("pub updated: f64"));
+    assert!(output.contains("pub initialized: Option<f64>"));
 
     let parsed = syn::parse_file(&output);
     assert!(
