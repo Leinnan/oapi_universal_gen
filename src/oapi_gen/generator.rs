@@ -4,13 +4,13 @@
 //! OpenAPI specifications. It orchestrates the entire generation process
 //! including schema parsing, type generation, and method implementation.
 
-use openapiv3_1::{OpenApi, Schema};
+use openapiv3_1::{OpenApi, Schema, Type, schema::Types};
 use quote::{format_ident, quote};
 
 use super::methods::generate_methods;
 use super::schemas::{
     extract_discriminator_info, extract_enum_values, generate_struct_fields,
-    generate_struct_fields_for_tagged_variant, is_enum_schema,
+    generate_struct_fields_for_tagged_variant, is_enum_schema, property_type,
 };
 use super::types::{InlineEnumInfo, InlineStructInfo};
 use super::utils::{enum_value_to_variant_name, to_pascal_case, to_valid_enum_variant};
@@ -201,6 +201,26 @@ fn generate_code(openapi: &OpenApi) -> String {
             let schema_name = format_ident!("{}", to_pascal_case(name.as_str()));
             let d = schema_ref.description.clone();
             let doc = quote! { #[doc = #d] };
+
+            if let Some(Types::Single(Type::Array)) = &schema_ref.schema_type {
+                if let Some(items) = &schema_ref.items {
+                    let item_type = property_type(
+                        &cmp_2,
+                        items,
+                        &mut inline_enums,
+                        &mut *inline_structs.borrow_mut(),
+                        Some(name),
+                        "Item",
+                        true,
+                    );
+                    return Some(quote! {
+                        #doc
+                        #[derive(Debug, Clone, Serialize, Deserialize)]
+                        pub struct #schema_name(pub Vec<#item_type>);
+                    });
+                }
+            }
+
             let fields = generate_struct_fields(
                 &cmp_2,
                 schema_or_ref,
