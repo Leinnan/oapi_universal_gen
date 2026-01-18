@@ -23,6 +23,9 @@ fn generate_code(openapi: &OpenApi) -> String {
     let cmp = openapi.components.clone().unwrap_or_default();
     let cmp_2 = cmp.clone();
 
+    let mut inline_enums: Vec<InlineEnumInfo> = Vec::new();
+    let inline_structs = std::rc::Rc::new(std::cell::RefCell::new(Vec::<InlineStructInfo>::new()));
+
     let enum_schemas: Vec<_> = cmp
         .schemas
         .iter()
@@ -49,6 +52,7 @@ fn generate_code(openapi: &OpenApi) -> String {
                         &cmp_2,
                         &variant_schema,
                         &tag_field,
+                        &mut *inline_structs.borrow_mut(),
                     );
                     if !has_fields {
                         quote! { #ident, }
@@ -154,7 +158,12 @@ fn generate_code(openapi: &OpenApi) -> String {
             let schema_name = format_ident!("{}", to_pascal_case(name.as_str()));
             let d = schema_ref.description.clone();
             let doc = quote! { #[doc = #d] };
-            let fields = generate_struct_fields(&cmp_2, schema_or_ref, &mut inline_enums);
+            let fields = generate_struct_fields(
+                &cmp_2,
+                schema_or_ref,
+                &mut inline_enums,
+                &mut *inline_structs.borrow_mut(),
+            );
             Some(quote! {
                 #doc
                 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -199,6 +208,7 @@ fn generate_code(openapi: &OpenApi) -> String {
                             &cmp_2,
                             &variant_schema,
                             tag_field,
+                            &mut *inline_structs.borrow_mut(),
                         );
                         if !has_fields {
                             quote! { #ident, }
@@ -240,6 +250,30 @@ fn generate_code(openapi: &OpenApi) -> String {
         })
         .collect();
 
+    let mut seen_struct_names = std::collections::HashSet::new();
+    let inline_struct_defs: Vec<proc_macro2::TokenStream> = inline_structs
+        .borrow_mut()
+        .drain(..)
+        .filter(|struct_info| {
+            if seen_struct_names.contains(&struct_info.name) {
+                false
+            } else {
+                seen_struct_names.insert(struct_info.name.clone());
+                true
+            }
+        })
+        .map(|struct_info| {
+            let struct_ident = format_ident!("{}", struct_info.name);
+            let fields = struct_info.fields;
+            quote! {
+                #[derive(Debug, Clone, Serialize, Deserialize)]
+                pub struct #struct_ident {
+                    #(#fields)*
+                }
+            }
+        })
+        .collect();
+
     let raw_tokens = quote! {
         use serde::{Serialize, Deserialize};
         use oapi_universal_gen::*;
@@ -252,6 +286,8 @@ fn generate_code(openapi: &OpenApi) -> String {
         #( #inline_input_structs )*
 
         #( #inline_enum_defs )*
+
+        #( #inline_struct_defs )*
 
         pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             #( #methods )*
@@ -712,6 +748,7 @@ fn extract_request_body_type(
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
 ) -> Option<String> {
+    let mut nested_inline_structs: Vec<InlineStructInfo> = Vec::new();
     match rb {
         RefOr::T(request_body) => {
             for (media_type, mt) in &request_body.content {
@@ -725,7 +762,7 @@ fn extract_request_body_type(
                                     let fields = box_schema.properties.iter().flat_map(|(name, prop)| {
                                     let rust_name = to_valid_rust_field_name(name);
                                     let field_name = format_ident!("{}", rust_name);
-                                    let ty = property_type(components, prop, inline_enums);
+                                    let ty = property_type(components, prop, inline_enums, &mut nested_inline_structs);
                                     let doc: Option<proc_macro2::TokenStream> = match prop {
                                             Schema::Object(box_prop) => {
                                                 let prop_ref = box_prop.as_ref();
@@ -832,6 +869,7 @@ fn response_schema_to_string(
     inline_enums: &mut Vec<InlineEnumInfo>,
     endpoint_name: &str,
 ) -> String {
+    let mut nested_inline_structs: Vec<InlineStructInfo> = Vec::new();
     match schema {
         Schema::Object(box_schema) => match &box_schema.schema_type {
             Some(Types::Single(Type::Object)) => {
@@ -842,7 +880,7 @@ fn response_schema_to_string(
                 let fields = box_schema.properties.iter().flat_map(|(name, prop)| {
                     let rust_name = to_valid_rust_field_name(name);
                     let field_name = format_ident!("{}", rust_name);
-                    let ty = property_type(components, prop, inline_enums);
+                    let ty = property_type(components, prop, inline_enums, &mut nested_inline_structs);
                     let doc: Option<proc_macro2::TokenStream> = match prop {
                         Schema::Object(box_prop) => {
                             let prop_ref = box_prop.as_ref();
@@ -918,6 +956,7 @@ fn response_schema_to_string_item(
     inline_enums: &mut Vec<InlineEnumInfo>,
     endpoint_name: &str,
 ) -> String {
+    let mut nested_inline_structs: Vec<InlineStructInfo> = Vec::new();
     match &schema.schema_type {
         Some(Types::Single(Type::Object)) => {
             if schema.properties.is_empty() {
@@ -927,7 +966,7 @@ fn response_schema_to_string_item(
             let fields = schema.properties.iter().flat_map(|(name, prop)| {
                 let rust_name = to_valid_rust_field_name(name);
                 let field_name = format_ident!("{}", rust_name);
-                let ty = property_type(components, prop, inline_enums);
+                let ty = property_type(components, prop, inline_enums, &mut nested_inline_structs);
                 let doc: Option<proc_macro2::TokenStream> = match prop {
                     Schema::Object(box_prop) => {
                         let prop_ref = box_prop.as_ref();
@@ -1116,6 +1155,7 @@ fn generate_struct_fields(
     components: &Components,
     schema: &Schema,
     inline_enums: &mut Vec<InlineEnumInfo>,
+    inline_structs: &mut Vec<InlineStructInfo>,
 ) -> Vec<proc_macro2::TokenStream> {
     let obj: &Object = match schema {
         Schema::Object(box_obj) => box_obj.as_ref(),
@@ -1126,7 +1166,7 @@ fn generate_struct_fields(
         .flat_map(|(name, prop)| {
             let rust_name = to_valid_rust_field_name(name);
             let field_name = format_ident!("{}", rust_name);
-            let ty = property_type(components, prop, inline_enums);
+            let ty = property_type(components, prop, inline_enums, inline_structs);
             let doc: Option<proc_macro2::TokenStream> = match prop {
                 Schema::Object(box_prop) => {
                     let prop_ref = box_prop.as_ref();
@@ -1179,10 +1219,16 @@ struct InlineEnumInfo {
     tag_field: Option<String>,
 }
 
+struct InlineStructInfo {
+    name: String,
+    fields: Vec<proc_macro2::TokenStream>,
+}
+
 fn property_type(
     components: &Components,
     schema: &Schema,
     inline_enums: &mut Vec<InlineEnumInfo>,
+    inline_structs: &mut Vec<InlineStructInfo>,
 ) -> proc_macro2::TokenStream {
     match schema {
         Schema::Object(box_schema) => {
@@ -1240,22 +1286,48 @@ fn property_type(
                 Some(Types::Single(Type::Array)) => {
                     let inner = box_schema.items.as_ref();
                     let inner_ty = if let Some(item_ref) = inner {
-                        property_type(components, item_ref, inline_enums)
+                        property_type(components, item_ref, inline_enums, inline_structs)
                     } else {
                         quote! { String }
                     };
                     quote! { Option<Vec<#inner_ty>> }
                 }
                 Some(Types::Single(Type::Object)) => {
-                    let type_name = if box_schema.title.is_empty() {
-                        "serde_json::Value".to_string()
-                    } else {
-                        box_schema.title.clone()
-                    };
-                    if type_name == "serde_json::Value" {
+                    if box_schema.properties.is_empty() {
                         quote! { Option<serde_json::Value> }
                     } else {
-                        let ident = format_ident!("{}", type_name);
+                        let base_name = "InlineObject";
+                        let mut struct_name = base_name.to_string();
+                        let mut counter = 0;
+                        loop {
+                            let exists = inline_structs.iter().any(|s| s.name == struct_name);
+                            if !exists {
+                                break;
+                            }
+                            counter += 1;
+                            struct_name = format!("{}{}", base_name, counter);
+                        }
+                        let fields: Vec<_> = box_schema.properties.iter()
+                            .map(|(name, prop)| {
+                                let rust_name = to_valid_rust_field_name(name);
+                                let field_name = format_ident!("{}", rust_name);
+                                let ty = property_type(components, prop, inline_enums, inline_structs);
+                                let serde_attr = if rust_name.as_str() != name {
+                                    quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
+                                } else {
+                                    quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
+                                };
+                                quote! {
+                                    #serde_attr
+                                    pub #field_name: #ty,
+                                }
+                            })
+                            .collect();
+                        inline_structs.push(InlineStructInfo {
+                            name: struct_name.clone(),
+                            fields: fields.clone(),
+                        });
+                        let ident = format_ident!("{}", struct_name);
                         quote! { Option<#ident> }
                     }
                 }
@@ -1344,6 +1416,7 @@ fn generate_struct_fields_for_tagged_variant(
     components: &Components,
     schema: &Object,
     tag_field: &str,
+    inline_structs: &mut Vec<InlineStructInfo>,
 ) -> (Vec<proc_macro2::TokenStream>, bool) {
     let fields: Vec<_> = schema
         .properties
@@ -1352,7 +1425,7 @@ fn generate_struct_fields_for_tagged_variant(
         .map(|(name, prop)| {
             let rust_name = to_valid_rust_field_name(name);
             let field_name = format_ident!("{}", rust_name);
-            let ty = property_type(components, prop, &mut Vec::new());
+            let ty = property_type(components, prop, &mut Vec::new(), inline_structs);
             let serde_attr = if rust_name.as_str() != name {
                 quote! { #[serde(default, skip_serializing_if = "Option::is_none", rename = #name)] }
             } else {

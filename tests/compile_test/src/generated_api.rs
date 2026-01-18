@@ -28,13 +28,13 @@ pub enum Message {
         #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
         session_id: Option<String>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        time: Option<serde_json::Value>,
+        time: Option<InlineObject>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        summary: Option<serde_json::Value>,
+        summary: Option<InlineObject1>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         agent: Option<String>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        model: Option<serde_json::Value>,
+        model: Option<InlineObject2>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         system: Option<String>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -49,7 +49,7 @@ pub enum Message {
         #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
         session_id: Option<String>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        time: Option<serde_json::Value>,
+        time: Option<InlineObject3>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         error: Option<Name>,
         #[serde(default, skip_serializing_if = "Option::is_none", rename = "parentID")]
@@ -63,13 +63,13 @@ pub enum Message {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         agent: Option<String>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        path: Option<serde_json::Value>,
+        path: Option<InlineObject4>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         summary: Option<bool>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         cost: Option<f64>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        tokens: Option<serde_json::Value>,
+        tokens: Option<InlineObject5>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         finish: Option<String>,
     },
@@ -128,7 +128,7 @@ pub enum ToolState {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        time: Option<serde_json::Value>,
+        time: Option<InlineObject6>,
     },
     #[display("Completed")]
     Completed {
@@ -141,7 +141,7 @@ pub enum ToolState {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        time: Option<serde_json::Value>,
+        time: Option<InlineObject7>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         attachments: Option<Vec<Option<FilePart>>>,
     },
@@ -154,7 +154,7 @@ pub enum ToolState {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        time: Option<serde_json::Value>,
+        time: Option<InlineObject8>,
     },
 }
 ///
@@ -176,7 +176,7 @@ pub enum Part {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         ignored: Option<bool>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        time: Option<serde_json::Value>,
+        time: Option<InlineObject9>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
     },
@@ -210,7 +210,7 @@ pub enum Part {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        time: Option<serde_json::Value>,
+        time: Option<InlineObject10>,
     },
     #[display("File")]
     File {
@@ -272,7 +272,7 @@ pub enum Part {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         cost: Option<f64>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        tokens: Option<serde_json::Value>,
+        tokens: Option<InlineObject11>,
     },
     #[display("Snapshot")]
     Snapshot {
@@ -309,7 +309,7 @@ pub enum Part {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         name: Option<String>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        source: Option<serde_json::Value>,
+        source: Option<InlineObject12>,
     },
     #[display("Retry")]
     Retry {
@@ -324,7 +324,7 @@ pub enum Part {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         error: Option<APIError>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        time: Option<serde_json::Value>,
+        time: Option<InlineObject13>,
     },
     #[display("Compaction")]
     Compaction {
@@ -482,7 +482,7 @@ pub struct EventTuiPromptAppend {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -490,7 +490,7 @@ pub struct EventTuiCommandExecute {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject1>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -498,7 +498,7 @@ pub struct EventTuiToastShow {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject2>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -506,7 +506,7 @@ pub struct EventTuiSessionSelect {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject3>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -514,7 +514,7 @@ pub struct EventInstallationUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject4>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -522,7 +522,7 @@ pub struct EventInstallationUpdateAvailable {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject5>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -536,9 +536,9 @@ pub struct Project {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub icon: Option<serde_json::Value>,
+    pub icon: Option<InlineObject6>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub time: Option<serde_json::Value>,
+    pub time: Option<InlineObject7>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sandboxes: Option<Vec<Option<String>>>,
 }
@@ -556,7 +556,7 @@ pub struct EventServerInstanceDisposed {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject8>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -564,7 +564,7 @@ pub struct EventFileEdited {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject9>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -572,7 +572,7 @@ pub struct EventLspClientDiagnostics {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject10>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -590,7 +590,7 @@ pub struct PermissionRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub always: Option<Vec<Option<String>>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub tool: Option<serde_json::Value>,
+    pub tool: Option<InlineObject11>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -606,7 +606,7 @@ pub struct EventPermissionReplied {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject12>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -614,7 +614,7 @@ pub struct EventSessionStatus {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject13>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -622,7 +622,7 @@ pub struct EventSessionIdle {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject14>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -661,7 +661,7 @@ pub struct QuestionRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub questions: Option<Vec<Option<QuestionInfo>>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub tool: Option<serde_json::Value>,
+    pub tool: Option<InlineObject15>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -680,7 +680,7 @@ pub struct EventQuestionReplied {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject16>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -688,7 +688,7 @@ pub struct EventQuestionRejected {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject17>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -712,7 +712,7 @@ pub struct EventTodoUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject18>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -738,7 +738,7 @@ pub struct EventPtyCreated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject19>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -746,7 +746,7 @@ pub struct EventPtyUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject20>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -754,7 +754,7 @@ pub struct EventPtyExited {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject21>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -762,7 +762,7 @@ pub struct EventPtyDeleted {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject22>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -770,7 +770,7 @@ pub struct EventMcpToolsChanged {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject23>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -778,7 +778,7 @@ pub struct EventFileWatcherUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject24>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -794,7 +794,7 @@ pub struct EventCommandExecuted {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject25>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -802,7 +802,7 @@ pub struct EventVcsBranchUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject26>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -828,13 +828,13 @@ pub struct UserMessage {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub role: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub time: Option<serde_json::Value>,
+    pub time: Option<InlineObject27>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub summary: Option<serde_json::Value>,
+    pub summary: Option<InlineObject28>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub model: Option<serde_json::Value>,
+    pub model: Option<InlineObject29>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub system: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -848,7 +848,7 @@ pub struct ProviderAuthError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub data: Option<serde_json::Value>,
+    pub data: Option<InlineObject30>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -856,7 +856,7 @@ pub struct UnknownError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub data: Option<serde_json::Value>,
+    pub data: Option<InlineObject31>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -872,7 +872,7 @@ pub struct MessageAbortedError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub data: Option<serde_json::Value>,
+    pub data: Option<InlineObject32>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -880,7 +880,7 @@ pub struct APIError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub data: Option<serde_json::Value>,
+    pub data: Option<InlineObject33>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -892,7 +892,7 @@ pub struct AssistantMessage {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub role: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub time: Option<serde_json::Value>,
+    pub time: Option<InlineObject34>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub error: Option<Name>,
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "parentID")]
@@ -906,13 +906,13 @@ pub struct AssistantMessage {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub path: Option<serde_json::Value>,
+    pub path: Option<InlineObject35>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub summary: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cost: Option<f64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub tokens: Option<serde_json::Value>,
+    pub tokens: Option<InlineObject36>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub finish: Option<String>,
 }
@@ -922,7 +922,7 @@ pub struct EventMessageUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject37>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -930,7 +930,7 @@ pub struct EventMessageRemoved {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject38>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -950,7 +950,7 @@ pub struct TextPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub ignored: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub time: Option<serde_json::Value>,
+    pub time: Option<InlineObject39>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
 }
@@ -970,7 +970,7 @@ pub struct ReasoningPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub time: Option<serde_json::Value>,
+    pub time: Option<InlineObject40>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -996,9 +996,9 @@ pub struct FileSource {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Range {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub start: Option<serde_json::Value>,
+    pub start: Option<InlineObject41>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub end: Option<serde_json::Value>,
+    pub end: Option<InlineObject42>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1070,7 +1070,7 @@ pub struct ToolStateRunning {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub time: Option<serde_json::Value>,
+    pub time: Option<InlineObject43>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1086,7 +1086,7 @@ pub struct ToolStateCompleted {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub time: Option<serde_json::Value>,
+    pub time: Option<InlineObject44>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub attachments: Option<Vec<Option<FilePart>>>,
 }
@@ -1102,7 +1102,7 @@ pub struct ToolStateError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub time: Option<serde_json::Value>,
+    pub time: Option<InlineObject45>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1156,7 +1156,7 @@ pub struct StepFinishPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cost: Option<f64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub tokens: Option<serde_json::Value>,
+    pub tokens: Option<InlineObject46>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1202,7 +1202,7 @@ pub struct AgentPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub source: Option<serde_json::Value>,
+    pub source: Option<InlineObject47>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1220,7 +1220,7 @@ pub struct RetryPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub error: Option<APIError>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub time: Option<serde_json::Value>,
+    pub time: Option<InlineObject48>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1242,7 +1242,7 @@ pub struct EventMessagePartUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject49>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1250,7 +1250,7 @@ pub struct EventMessagePartRemoved {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject50>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1258,7 +1258,7 @@ pub struct EventSessionCompacted {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject51>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1285,19 +1285,19 @@ pub struct Session {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "parentID")]
     pub parent_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub summary: Option<serde_json::Value>,
+    pub summary: Option<InlineObject52>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub share: Option<serde_json::Value>,
+    pub share: Option<InlineObject53>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub version: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub time: Option<serde_json::Value>,
+    pub time: Option<InlineObject54>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub permission: Option<PermissionRuleset>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub revert: Option<serde_json::Value>,
+    pub revert: Option<InlineObject55>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1305,7 +1305,7 @@ pub struct EventSessionCreated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject56>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1313,7 +1313,7 @@ pub struct EventSessionUpdated {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject57>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1321,7 +1321,7 @@ pub struct EventSessionDeleted {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject58>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1329,7 +1329,7 @@ pub struct EventSessionDiff {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject59>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1337,7 +1337,7 @@ pub struct EventSessionError {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "type")]
     pub type_field: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub properties: Option<serde_json::Value>,
+    pub properties: Option<InlineObject60>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1379,7 +1379,7 @@ pub struct NotFoundError {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub data: Option<serde_json::Value>,
+    pub data: Option<InlineObject61>,
 }
 ///Custom keybind configurations
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1723,7 +1723,7 @@ pub struct ProviderConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub blacklist: Option<Vec<Option<String>>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub options: Option<serde_json::Value>,
+    pub options: Option<InlineObject62>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1794,14 +1794,14 @@ pub struct Config {
     pub log_level: Option<LogLevel>,
     ///TUI specific settings
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub tui: Option<serde_json::Value>,
+    pub tui: Option<InlineObject63>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub server: Option<ServerConfig>,
     ///Command configuration, see https://opencode.ai/docs/commands
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub command: Option<serde_json::Value>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub watcher: Option<serde_json::Value>,
+    pub watcher: Option<InlineObject64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub plugin: Option<Vec<Option<String>>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1835,10 +1835,10 @@ pub struct Config {
     pub username: Option<String>,
     ///@deprecated Use `agent` field instead.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub mode: Option<serde_json::Value>,
+    pub mode: Option<InlineObject65>,
     ///Agent configuration, see https://opencode.ai/docs/agent
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub agent: Option<serde_json::Value>,
+    pub agent: Option<InlineObject66>,
     ///Custom provider configurations and model overrides
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub provider: Option<serde_json::Value>,
@@ -1859,11 +1859,11 @@ pub struct Config {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tools: Option<serde_json::Value>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub enterprise: Option<serde_json::Value>,
+    pub enterprise: Option<InlineObject67>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub compaction: Option<serde_json::Value>,
+    pub compaction: Option<InlineObject68>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub experimental: Option<serde_json::Value>,
+    pub experimental: Option<InlineObject69>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1933,7 +1933,7 @@ pub struct TextPartInput {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub ignored: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub time: Option<serde_json::Value>,
+    pub time: Option<InlineObject70>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
 }
@@ -1963,7 +1963,7 @@ pub struct AgentPartInput {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub source: Option<serde_json::Value>,
+    pub source: Option<InlineObject71>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -2009,17 +2009,17 @@ pub struct Model {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "providerID")]
     pub provider_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub api: Option<serde_json::Value>,
+    pub api: Option<InlineObject72>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub family: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub capabilities: Option<serde_json::Value>,
+    pub capabilities: Option<InlineObject73>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub cost: Option<serde_json::Value>,
+    pub cost: Option<InlineObject75>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub limit: Option<serde_json::Value>,
+    pub limit: Option<InlineObject77>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub status: Option<StringEnum>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2075,7 +2075,7 @@ pub struct Symbol {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub kind: Option<f64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub location: Option<serde_json::Value>,
+    pub location: Option<InlineObject78>,
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -2101,7 +2101,7 @@ pub struct FileContent {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub diff: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub patch: Option<serde_json::Value>,
+    pub patch: Option<InlineObject79>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub encoding: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "mimeType")]
@@ -2141,7 +2141,7 @@ pub struct Agent {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub permission: Option<PermissionRuleset>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub model: Option<serde_json::Value>,
+    pub model: Option<InlineObject80>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub prompt: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2265,7 +2265,7 @@ pub struct RequestInline {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub icon: Option<serde_json::Value>,
+    pub icon: Option<InlineObject>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RequestInline1 {
@@ -2285,7 +2285,7 @@ pub struct RequestInline2 {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub size: Option<serde_json::Value>,
+    pub size: Option<InlineObject>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RequestInline3 {
@@ -2301,7 +2301,7 @@ pub struct RequestInline4 {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub time: Option<serde_json::Value>,
+    pub time: Option<InlineObject>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RequestInline5 {
@@ -2338,7 +2338,7 @@ pub struct RequestInline8 {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
     pub message_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub model: Option<serde_json::Value>,
+    pub model: Option<InlineObject>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "noReply")]
@@ -2372,7 +2372,7 @@ pub struct RequestInline9 {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
     pub message_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub model: Option<serde_json::Value>,
+    pub model: Option<InlineObject>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "noReply")]
@@ -2416,7 +2416,7 @@ pub struct RequestInline11 {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub model: Option<serde_json::Value>,
+    pub model: Option<InlineObject>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub command: Option<String>,
 }
@@ -2455,7 +2455,7 @@ pub struct ConfigProvidersGetResponse {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderGetResponse {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub all: Option<Vec<Option<serde_json::Value>>>,
+    pub all: Option<Vec<Option<InlineObject>>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub default: Option<serde_json::Value>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2479,15 +2479,15 @@ pub struct RequestInline17 {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FindGetResponse {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub path: Option<serde_json::Value>,
+    pub path: Option<InlineObject>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub lines: Option<serde_json::Value>,
+    pub lines: Option<InlineObject1>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub line_number: Option<f64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub absolute_offset: Option<f64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub submatches: Option<Vec<Option<serde_json::Value>>>,
+    pub submatches: Option<Vec<Option<InlineObject2>>>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RequestInline18 {
@@ -2570,8 +2570,10 @@ pub struct TuiControlNextGetResponse {
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(rename_all = "snake_case")]
 pub enum StringEnum {
-    Running,
-    Exited,
+    Info,
+    Success,
+    Warning,
+    Error,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(tag = "name")]
@@ -2579,12 +2581,12 @@ pub enum Name {
     #[display("ProviderAuthError")]
     ProviderAuthError {
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        data: Option<serde_json::Value>,
+        data: Option<InlineObject81>,
     },
     #[display("UnknownError")]
     UnknownError {
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        data: Option<serde_json::Value>,
+        data: Option<InlineObject82>,
     },
     #[display("MessageOutputLengthError")]
     MessageOutputLengthError {
@@ -2594,12 +2596,12 @@ pub enum Name {
     #[display("MessageAbortedError")]
     MessageAbortedError {
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        data: Option<serde_json::Value>,
+        data: Option<InlineObject83>,
     },
     #[display("APIError")]
     APIError {
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        data: Option<serde_json::Value>,
+        data: Option<InlineObject84>,
     },
 }
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
@@ -2616,7 +2618,7 @@ pub enum Type {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         ignored: Option<bool>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        time: Option<serde_json::Value>,
+        time: Option<InlineObject85>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
     },
@@ -2640,7 +2642,7 @@ pub enum Type {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         name: Option<String>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        source: Option<serde_json::Value>,
+        source: Option<InlineObject86>,
     },
     #[display("Subtask")]
     Subtask {
@@ -2655,6 +2657,653 @@ pub enum Type {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         command: Option<String>,
     },
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject1 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub command: Option<serde_json::Value>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject2 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub title: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub variant: Option<StringEnum>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub duration: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject3 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
+    pub session_id: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject4 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub version: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject5 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub version: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject6 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub url: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub color: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject7 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub updated: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub initialized: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject8 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub directory: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject9 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub file: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject10 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "serverID")]
+    pub server_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub path: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject11 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
+    pub message_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "callID")]
+    pub call_id: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject12 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
+    pub session_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "requestID")]
+    pub request_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reply: Option<StringEnum>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject13 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
+    pub session_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub status: Option<SessionStatus>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject14 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
+    pub session_id: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject15 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
+    pub message_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "callID")]
+    pub call_id: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject16 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
+    pub session_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "requestID")]
+    pub request_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub answers: Option<Vec<Option<QuestionAnswer>>>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject17 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
+    pub session_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "requestID")]
+    pub request_id: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject18 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
+    pub session_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub todos: Option<Vec<Option<Todo>>>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject19 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub info: Option<Pty>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject20 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub info: Option<Pty>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject21 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "exitCode")]
+    pub exit_code: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject22 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject23 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub server: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject24 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub file: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub event: Option<serde_json::Value>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject25 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
+    pub session_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub arguments: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
+    pub message_id: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject26 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub branch: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject27 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject28 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub title: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub body: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub diffs: Option<Vec<Option<FileDiff>>>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject29 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "providerID")]
+    pub provider_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "modelID")]
+    pub model_id: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject30 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "providerID")]
+    pub provider_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject31 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject32 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject33 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "statusCode")]
+    pub status_code: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "isRetryable")]
+    pub is_retryable: Option<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "responseHeaders"
+    )]
+    pub response_headers: Option<serde_json::Value>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "responseBody")]
+    pub response_body: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<serde_json::Value>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject34 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub completed: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject35 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cwd: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub root: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject36 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub read: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub write: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject37 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub info: Option<Message>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject38 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
+    pub session_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
+    pub message_id: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject39 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub start: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject40 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub start: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject41 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub line: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub character: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject42 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub line: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub character: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject43 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub start: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject44 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub start: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub compacted: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject45 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub start: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject46 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub read: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub write: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject47 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub value: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub start: Option<i64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end: Option<i64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject48 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject49 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub part: Option<Part>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub delta: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject50 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
+    pub session_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
+    pub message_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "partID")]
+    pub part_id: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject51 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
+    pub session_id: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject52 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub additions: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub deletions: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub files: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub diffs: Option<Vec<Option<FileDiff>>>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject53 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub url: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject54 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub updated: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub compacting: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub archived: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject55 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
+    pub message_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "partID")]
+    pub part_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub snapshot: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub diff: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject56 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub info: Option<Session>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject57 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub info: Option<Session>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject58 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub info: Option<Session>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject59 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
+    pub session_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub diff: Option<Vec<Option<FileDiff>>>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject60 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "sessionID")]
+    pub session_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error: Option<Name>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject61 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject62 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "apiKey")]
+    pub api_key: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "baseURL")]
+    pub base_url: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "enterpriseUrl")]
+    pub enterprise_url: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "setCacheKey")]
+    pub set_cache_key: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timeout: Option<serde_json::Value>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject63 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub enabled: Option<bool>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject64 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ignore: Option<Vec<Option<String>>>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject65 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub build: Option<AgentConfig>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub plan: Option<AgentConfig>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject66 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub plan: Option<AgentConfig>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub build: Option<AgentConfig>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub general: Option<AgentConfig>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub explore: Option<AgentConfig>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub title: Option<AgentConfig>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub summary: Option<AgentConfig>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub compaction: Option<AgentConfig>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject67 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub url: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject68 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub auto: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub prune: Option<bool>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject69 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub command: Option<Vec<Option<String>>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub environment: Option<serde_json::Value>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject70 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub start: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject71 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub value: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub start: Option<i64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end: Option<i64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject72 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub url: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub npm: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject73 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub audio: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub image: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub video: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pdf: Option<bool>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject74 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub audio: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub image: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub video: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pdf: Option<bool>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject75 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub read: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub write: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject76 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub read: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub write: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject77 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub context: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub output: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject78 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub uri: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub range: Option<Range>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject79 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "oldStart")]
+    pub old_start: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "oldLines")]
+    pub old_lines: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "newStart")]
+    pub new_start: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "newLines")]
+    pub new_lines: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub lines: Option<Vec<Option<String>>>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject80 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "modelID")]
+    pub model_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "providerID")]
+    pub provider_id: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject81 {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "providerID")]
+    pub provider_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject82 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject83 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject84 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "statusCode")]
+    pub status_code: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "isRetryable")]
+    pub is_retryable: Option<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        rename = "responseHeaders"
+    )]
+    pub response_headers: Option<serde_json::Value>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "responseBody")]
+    pub response_body: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<serde_json::Value>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject85 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub start: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InlineObject86 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub value: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub start: Option<i64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end: Option<i64>,
 }
 pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     /**ENDPOINT Get /global/health
