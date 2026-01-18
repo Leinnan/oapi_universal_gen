@@ -617,6 +617,7 @@ pub fn property_type(
 /// * `inline_structs` - Collector for inline struct definitions
 /// * `inline_enums` - Collector for inline enum definitions
 /// * `main_inline_structs` - Main collector for inline structs
+/// * `endpoint_name` - The endpoint name for naming response types
 ///
 /// # Returns
 ///
@@ -627,9 +628,10 @@ pub fn extract_request_body_type(
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
     main_inline_structs: &Rc<RefCell<Vec<InlineStructInfo>>>,
-) -> Option<String> {
+    endpoint_name: &str,
+) -> (Option<String>, bool) {
     let mut nested_inline_structs: Vec<InlineStructInfo> = Vec::new();
-    let result = match rb {
+    let (result, required) = match rb {
         RefOr::T(request_body) => {
             let mut result = None;
             for (media_type, mt) in &request_body.content {
@@ -639,7 +641,7 @@ pub fn extract_request_body_type(
                             Schema::Object(box_schema) => match &box_schema.schema_type {
                                 Some(Types::Single(Type::Object)) => {
                                     let struct_name =
-                                        generate_inline_struct_name(inline_structs, "Request");
+                                        format!("{}{}", to_pascal_case(endpoint_name), "Request");
                                     let fields = box_schema.properties.iter().flat_map(|(name, prop)| {
                                         let rust_name = to_valid_rust_field_name(name);
                                         let field_name = format_ident!("{}", rust_name);
@@ -705,21 +707,24 @@ pub fn extract_request_body_type(
                     }
                 }
             }
-            result
+            (result, request_body.required.unwrap_or(false))
         }
         RefOr::Ref(Ref { ref_location, .. }) => {
             if let Some(path) = ref_location.strip_prefix("#/components/requestBodies/") {
                 let body_name = to_pascal_case(path);
-                Some(body_name)
+                // Try to find the request body definition to check if it is required
+                // Note: components.request_bodies is not available in openapiv3_1::Components
+                // Defaulting to false.
+                (Some(body_name), false)
             } else {
-                None
+                (None, false)
             }
         }
     };
     main_inline_structs
         .borrow_mut()
         .extend(nested_inline_structs);
-    result
+    (result, required)
 }
 
 /// Generates a unique name for an inline struct.

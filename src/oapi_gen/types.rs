@@ -70,6 +70,8 @@ pub struct MethodInfo {
     pub parameters: Vec<ParameterInfo>,
     /// The type name of the request body, if any
     pub request_body_type: Option<String>,
+    /// Whether the request body is required
+    pub request_body_required: bool,
     /// The type name of the response, if any
     pub response_type: Option<String>,
     /// Optional description of the endpoint

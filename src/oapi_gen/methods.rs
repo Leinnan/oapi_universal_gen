@@ -63,15 +63,20 @@ pub fn build_method_info(
                 add_parameter(&mut parameters, param);
             }
         }
-        let request_body_type = oper.request_body.as_ref().and_then(|rb| {
-            extract_request_body_type(
-                &openapiv3_1::RefOr::T(rb.clone()),
-                components,
-                inline_structs,
-                inline_enums,
-                main_inline_structs,
-            )
-        });
+        let (request_body_type, request_body_required) = oper
+            .request_body
+            .as_ref()
+            .map(|rb| {
+                extract_request_body_type(
+                    &openapiv3_1::RefOr::T(rb.clone()),
+                    components,
+                    inline_structs,
+                    inline_enums,
+                    main_inline_structs,
+                    &method_name,
+                )
+            })
+            .unwrap_or((None, false));
 
         let response_type = extract_response_type(
             &oper.responses,
@@ -89,6 +94,7 @@ pub fn build_method_info(
             http_method,
             parameters,
             request_body_type,
+            request_body_required,
             response_type,
             description,
         }
@@ -98,6 +104,7 @@ pub fn build_method_info(
             http_method,
             parameters,
             request_body_type: None,
+            request_body_required: false,
             response_type: None,
             description: None,
         }
@@ -328,7 +335,7 @@ pub fn generate_method_body(path: &str, method_info: &MethodInfo) -> proc_macro2
         }
     }
 
-    let param_decls: Vec<_> = method_info
+    let mut param_decls: Vec<_> = method_info
         .parameters
         .iter()
         .map(|p| {
@@ -341,6 +348,15 @@ pub fn generate_method_body(path: &str, method_info: &MethodInfo) -> proc_macro2
             }
         })
         .collect();
+
+    if let Some(body_type_name) = &method_info.request_body_type {
+        let body_ty = type_to_tokens(body_type_name);
+        if method_info.request_body_required {
+            param_decls.push(quote! { body: #body_ty });
+        } else {
+            param_decls.push(quote! { body: Option<#body_ty> });
+        }
+    }
 
     let return_type = match &method_info.response_type {
         Some(rt) => {
@@ -377,30 +393,19 @@ pub fn generate_method_body(path: &str, method_info: &MethodInfo) -> proc_macro2
         }
     };
 
-    let request_body_fields: Vec<proc_macro2::TokenStream> = method_info
-        .parameters
-        .iter()
-        .filter(|p| p.param_location != ParameterLocation::Path)
-        .filter(|p| p.param_location != ParameterLocation::Query)
-        .filter(|p| p.param_location != ParameterLocation::Header)
-        .map(|p| {
-            let name = &p.name;
-            let rust_name = super::utils::to_valid_rust_field_name(name);
-            quote! { #name: #rust_name }
-        })
-        .collect();
-
     let request_creation = if method_info.request_body_type.is_some() {
-        let body_type = method_info.request_body_type.as_ref().unwrap();
-        let body_ty = type_to_tokens(body_type);
-
-        quote! {
-            let body: #body_ty = serde_json::from_value(serde_json::json!({
-                #(#request_body_fields)*
-            }))
-            .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-
-            let request = self.create_request_with_body(#http_method, &uri, &body)?;
+        if method_info.request_body_required {
+            quote! {
+                let request = self.create_request_with_body(#http_method, &uri, &body)?;
+            }
+        } else {
+            quote! {
+                let request = if let Some(b) = &body {
+                    self.create_request_with_body(#http_method, &uri, b)?
+                } else {
+                    self.create_request(#http_method, &uri)?
+                };
+            }
         }
     } else {
         quote! {

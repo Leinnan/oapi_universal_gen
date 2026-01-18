@@ -1,5 +1,5 @@
+use serde::{Serialize, Deserialize};
 use oapi_universal_gen::*;
-use serde::{Deserialize, Serialize};
 use std::future::Future;
 ///
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
@@ -9,11 +9,7 @@ pub enum SessionStatus {
     Idle,
     #[serde(rename = "retry")]
     #[display("Retry")]
-    Retry {
-        attempt: f64,
-        message: String,
-        next: f64,
-    },
+    Retry { attempt: f64, message: String, next: f64 },
     #[serde(rename = "busy")]
     Busy,
 }
@@ -71,10 +67,7 @@ pub enum Message {
 pub enum FilePartSource {
     #[serde(rename = "file")]
     #[display("File")]
-    File {
-        text: FilePartSourceText,
-        path: String,
-    },
+    File { text: FilePartSourceText, path: String },
     #[serde(rename = "symbol")]
     #[display("Symbol")]
     Symbol {
@@ -99,10 +92,7 @@ pub enum FilePartSource {
 pub enum ToolState {
     #[serde(rename = "pending")]
     #[display("Pending")]
-    Pending {
-        input: serde_json::Value,
-        raw: String,
-    },
+    Pending { input: serde_json::Value, raw: String },
     #[serde(rename = "running")]
     #[display("Running")]
     Running {
@@ -1529,11 +1519,7 @@ pub struct McpOAuthConfig {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "clientId")]
     pub client_id: Option<String>,
     ///OAuth client secret (if required by the authorization server)
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "clientSecret"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "clientSecret")]
     pub client_secret: Option<String>,
     ///OAuth scopes to request during authorization
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1680,11 +1666,7 @@ pub struct Worktree {
 pub struct WorktreeCreateInput {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "startCommand"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "startCommand")]
     pub start_command: Option<String>,
 }
 ///
@@ -1939,11 +1921,7 @@ pub struct OAuth {
     pub expires: f64,
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "accountId")]
     pub account_id: Option<String>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "enterpriseUrl"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "enterpriseUrl")]
     pub enterprise_url: Option<String>,
 }
 ///
@@ -1967,14 +1945,14 @@ pub struct GlobalHealthGetResponse {
     pub version: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline {
+pub struct ProjectProjectidPatchRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub icon: Option<InlineObject>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline1 {
+pub struct PtyPostRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub command: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1987,14 +1965,14 @@ pub struct RequestInline1 {
     pub env: Option<serde_json::Value>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline2 {
+pub struct PtyPtyidPutRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub size: Option<InlineObject>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline3 {
+pub struct SessionPostRequest {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "parentID")]
     pub parent_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2003,14 +1981,14 @@ pub struct RequestInline3 {
     pub permission: Option<PermissionRuleset>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline4 {
+pub struct SessionSessionidPatchRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub time: Option<InlineObject>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline5 {
+pub struct SessionSessionidInitPostRequest {
     #[serde(rename = "modelID")]
     pub model_id: String,
     #[serde(rename = "providerID")]
@@ -2019,12 +1997,12 @@ pub struct RequestInline5 {
     pub message_id: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline6 {
+pub struct SessionSessionidForkPostRequest {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
     pub message_id: Option<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline7 {
+pub struct SessionSessionidSummarizePostRequest {
     #[serde(rename = "providerID")]
     pub provider_id: String,
     #[serde(rename = "modelID")]
@@ -2038,7 +2016,7 @@ pub struct SessionSessionidMessageGetResponse {
     pub parts: Vec<Part>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline8 {
+pub struct SessionSessionidMessagePostRequest {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
     pub message_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2067,7 +2045,7 @@ pub struct SessionSessionidMessageMessageidGetResponse {
     pub parts: Vec<Part>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline9 {
+pub struct SessionSessionidPromptAsyncPostRequest {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
     pub message_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2086,7 +2064,7 @@ pub struct RequestInline9 {
     pub parts: Vec<Type>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline10 {
+pub struct SessionSessionidCommandPostRequest {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
     pub message_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2106,31 +2084,31 @@ pub struct SessionSessionidCommandPostResponse {
     pub parts: Vec<Part>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline11 {
+pub struct SessionSessionidShellPostRequest {
     pub agent: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model: Option<InlineObject>,
     pub command: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline12 {
+pub struct SessionSessionidRevertPostRequest {
     #[serde(rename = "messageID")]
     pub message_id: String,
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "partID")]
     pub part_id: Option<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline13 {
+pub struct SessionSessionidPermissionsPermissionidPostRequest {
     pub response: StringEnum,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline14 {
+pub struct PermissionRequestidReplyPostRequest {
     pub reply: StringEnum,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline15 {
+pub struct QuestionRequestidReplyPostRequest {
     ///User answers in order of questions (each answer is an array of selected labels)
     pub answers: Vec<QuestionAnswer>,
 }
@@ -2146,12 +2124,12 @@ pub struct ProviderGetResponse {
     pub connected: Vec<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline16 {
+pub struct ProviderProvideridOauthAuthorizePostRequest {
     ///Auth method index
     pub method: f64,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline17 {
+pub struct ProviderProvideridOauthCallbackPostRequest {
     ///Auth method index
     pub method: f64,
     ///OAuth authorization code
@@ -2167,7 +2145,7 @@ pub struct FindGetResponse {
     pub submatches: Vec<InlineObject>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline18 {
+pub struct LogPostRequest {
     ///Service name for the log entry
     pub service: String,
     ///Log level
@@ -2179,7 +2157,7 @@ pub struct RequestInline18 {
     pub extra: Option<serde_json::Value>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline19 {
+pub struct McpPostRequest {
     pub name: String,
     pub config: Type,
 }
@@ -2194,20 +2172,20 @@ pub struct McpNameAuthDeleteResponse {
     pub success: bool,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline20 {
+pub struct McpNameAuthCallbackPostRequest {
     ///Authorization code from OAuth callback
     pub code: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline21 {
+pub struct TuiAppendPromptPostRequest {
     pub text: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline22 {
+pub struct TuiExecuteCommandPostRequest {
     pub command: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline23 {
+pub struct TuiShowToastPostRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
     pub message: String,
@@ -2217,7 +2195,7 @@ pub struct RequestInline23 {
     pub duration: Option<f64>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestInline24 {
+pub struct TuiSelectSessionPostRequest {
     ///Session ID to navigate to
     #[serde(rename = "sessionID")]
     pub session_id: String,
@@ -2489,11 +2467,7 @@ pub struct MessageAbortedErrorData {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct APIErrorData {
     pub message: String,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "statusCode"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "statusCode")]
     pub status_code: Option<f64>,
     #[serde(rename = "isRetryable")]
     pub is_retryable: bool,
@@ -2503,11 +2477,7 @@ pub struct APIErrorData {
         rename = "responseHeaders"
     )]
     pub response_headers: Option<serde_json::Value>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "responseBody"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "responseBody")]
     pub response_body: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
@@ -2693,17 +2663,9 @@ pub struct ProviderConfigOptions {
     pub api_key: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "baseURL")]
     pub base_url: Option<String>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "enterpriseUrl"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "enterpriseUrl")]
     pub enterprise_url: Option<String>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "setCacheKey"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "setCacheKey")]
     pub set_cache_key: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timeout: Option<serde_json::Value>,
@@ -2779,21 +2741,13 @@ pub struct ConfigExperimentalHook {
 pub struct ConfigExperimental {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub hook: Option<ConfigExperimentalHook>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "chatMaxRetries"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "chatMaxRetries")]
     pub chat_max_retries: Option<f64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub disable_paste_summary: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub batch_tool: Option<bool>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "openTelemetry"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "openTelemetry")]
     pub open_telemetry: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub primary_tools: Option<Vec<String>>,
@@ -2946,11 +2900,7 @@ pub struct MessageAbortedErrorData1 {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct APIErrorData1 {
     pub message: String,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "statusCode"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "statusCode")]
     pub status_code: Option<f64>,
     #[serde(rename = "isRetryable")]
     pub is_retryable: bool,
@@ -2960,11 +2910,7 @@ pub struct APIErrorData1 {
         rename = "responseHeaders"
     )]
     pub response_headers: Option<serde_json::Value>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "responseBody"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "responseBody")]
     pub response_body: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
@@ -2983,8 +2929,8 @@ pub struct AgentPartInputSource1 {
 }
 pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     /**ENDPOINT Get /global/health
-    Get health information about the OpenCode server.
-    */
+Get health information about the OpenCode server.
+*/
     fn global_health_get(
         &self,
     ) -> impl Future<Output = Result<GlobalHealthGetResponse, Self::RequesterErrorType>>
@@ -2993,68 +2939,91 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = Vec::new();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/global/health", &query_params);
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/global/health",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<GlobalHealthGetResponse>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<GlobalHealthGetResponse>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /global/event
-    Subscribe to global events from the OpenCode system using server-sent events.
-    */
-    fn global_event_get(&self) -> impl Future<Output = Result<(), Self::RequesterErrorType>>
+Subscribe to global events from the OpenCode system using server-sent events.
+*/
+    fn global_event_get(
+        &self,
+    ) -> impl Future<Output = Result<(), Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
             let query_params: Vec<(String, String)> = Vec::new();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/global/event", &query_params);
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/global/event",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             Ok(())
         }
     }
     /**ENDPOINT Post /global/dispose
-    Clean up and dispose all OpenCode instances, releasing all resources.
-    */
-    fn global_dispose_post(&self) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
+Clean up and dispose all OpenCode instances, releasing all resources.
+*/
+    fn global_dispose_post(
+        &self,
+    ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
             let query_params: Vec<(String, String)> = Vec::new();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/global/dispose", &query_params);
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/global/dispose",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /project
-    Get a list of projects that have been opened with OpenCode.
+Get a list of projects that have been opened with OpenCode.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn project_get(
         &self,
         directory: Option<String>,
@@ -3063,34 +3032,38 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/project", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Project>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Project>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /project/current
-    Retrieve the currently active project that OpenCode is working with.
+Retrieve the currently active project that OpenCode is working with.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn project_current_get(
         &self,
         directory: Option<String>,
@@ -3099,77 +3072,91 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/project/current", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/project/current",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Project>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Project>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Patch /project/{projectID}
-    Update project properties such as name, icon and color.
+Update project properties such as name, icon and color.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` project_id
-    */
+- `query` directory
+- `path` project_id
+*/
     fn project_projectid_patch(
         &self,
         directory: Option<String>,
         project_id: String,
+        body: Option<ProjectProjectidPatchRequest>,
     ) -> impl Future<Output = Result<Project, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/project/{}", ::oapi_universal_gen::urlencode(project_id)),
                 &query_params,
             );
-            let body: RequestInline = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Patch, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Patch, &uri, b)?
+            } else {
+                self.create_request(RequestType::Patch, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Project>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Project>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /pty
-    Get a list of all active pseudo-terminal (PTY) sessions managed by OpenCode.
+Get a list of all active pseudo-terminal (PTY) sessions managed by OpenCode.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn pty_get(
         &self,
         directory: Option<String>,
@@ -3178,73 +3165,84 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/pty", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Pty>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Pty>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /pty
-    Create a new pseudo-terminal (PTY) session for running shell commands and processes.
+Create a new pseudo-terminal (PTY) session for running shell commands and processes.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn pty_post(
         &self,
         directory: Option<String>,
+        body: Option<PtyPostRequest>,
     ) -> impl Future<Output = Result<Pty, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/pty", &query_params);
-            let body: RequestInline1 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Pty>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Pty>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /pty/{ptyID}
-    Retrieve detailed information about a specific pseudo-terminal (PTY) session.
+Retrieve detailed information about a specific pseudo-terminal (PTY) session.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` pty_id
-    */
+- `query` directory
+- `path` pty_id
+*/
     fn pty_ptyid_get(
         &self,
         directory: Option<String>,
@@ -3254,13 +3252,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/pty/{}", ::oapi_universal_gen::urlencode(pty_id)),
                 &query_params,
@@ -3268,67 +3266,78 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Pty>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Pty>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Put /pty/{ptyID}
-    Update properties of an existing pseudo-terminal (PTY) session.
+Update properties of an existing pseudo-terminal (PTY) session.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` pty_id
-    */
+- `query` directory
+- `path` pty_id
+*/
     fn pty_ptyid_put(
         &self,
         directory: Option<String>,
         pty_id: String,
+        body: Option<PtyPtyidPutRequest>,
     ) -> impl Future<Output = Result<Pty, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/pty/{}", ::oapi_universal_gen::urlencode(pty_id)),
                 &query_params,
             );
-            let body: RequestInline2 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Put, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Put, &uri, b)?
+            } else {
+                self.create_request(RequestType::Put, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Pty>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Pty>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Delete /pty/{ptyID}
-    Remove and terminate a specific pseudo-terminal (PTY) session.
+Remove and terminate a specific pseudo-terminal (PTY) session.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` pty_id
-    */
+- `query` directory
+- `path` pty_id
+*/
     fn pty_ptyid_delete(
         &self,
         directory: Option<String>,
@@ -3338,13 +3347,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/pty/{}", ::oapi_universal_gen::urlencode(pty_id)),
                 &query_params,
@@ -3352,24 +3361,28 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Delete, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /pty/{ptyID}/connect
-    Establish a WebSocket connection to interact with a pseudo-terminal (PTY) session in real-time.
+Establish a WebSocket connection to interact with a pseudo-terminal (PTY) session in real-time.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` pty_id
-    */
+- `query` directory
+- `path` pty_id
+*/
     fn pty_ptyid_connect_get(
         &self,
         directory: Option<String>,
@@ -3379,13 +3392,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/pty/{}/connect", ::oapi_universal_gen::urlencode(pty_id)),
                 &query_params,
@@ -3393,23 +3406,27 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /config
-    Retrieve the current OpenCode configuration settings and preferences.
+Retrieve the current OpenCode configuration settings and preferences.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn config_get(
         &self,
         directory: Option<String>,
@@ -3418,72 +3435,83 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/config", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Config>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Config>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Patch /config
-    Update OpenCode configuration settings and preferences.
+Update OpenCode configuration settings and preferences.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn config_patch(
         &self,
         directory: Option<String>,
+        body: Option<serde_json::Value>,
     ) -> impl Future<Output = Result<Config, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/config", &query_params);
-            let body: serde_json::Value = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Patch, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Patch, &uri, b)?
+            } else {
+                self.create_request(RequestType::Patch, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Config>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Config>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /experimental/tool/ids
-    Get a list of all available tool IDs, including both built-in tools and dynamically registered tools.
+Get a list of all available tool IDs, including both built-in tools and dynamically registered tools.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn experimental_tool_ids_get(
         &self,
         directory: Option<String>,
@@ -3492,37 +3520,43 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri =
-                ::oapi_universal_gen::UrlBuilder::build("/experimental/tool/ids", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/experimental/tool/ids",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<ToolIDs>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<ToolIDs>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /experimental/tool
-    Get a list of available tools with their JSON schema parameters for a specific provider and model combination.
+Get a list of available tools with their JSON schema parameters for a specific provider and model combination.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `query` provider
-    - `query` model
-    */
+- `query` directory
+- `query` provider
+- `query` model
+*/
     fn experimental_tool_get(
         &self,
         directory: Option<String>,
@@ -3534,37 +3568,41 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                Some((String::from("provider"), provider.to_string())),
-                Some((String::from("model"), model.to_string())),
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, Some((String::from("provider"), provider
+                .to_string())), Some((String::from("model"), model.to_string()))
             ]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/experimental/tool", &query_params);
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/experimental/tool",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<ToolList>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<ToolList>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /instance/dispose
-    Clean up and dispose the current OpenCode instance, releasing all resources.
+Clean up and dispose the current OpenCode instance, releasing all resources.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn instance_dispose_post(
         &self,
         directory: Option<String>,
@@ -3573,34 +3611,41 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/instance/dispose", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/instance/dispose",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /path
-    Retrieve the current working directory and related path information for the OpenCode instance.
+Retrieve the current working directory and related path information for the OpenCode instance.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn path_get(
         &self,
         directory: Option<String>,
@@ -3609,34 +3654,38 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/path", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Path>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Path>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /experimental/worktree
-    List all sandbox worktrees for the current project.
+List all sandbox worktrees for the current project.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn experimental_worktree_get(
         &self,
         directory: Option<String>,
@@ -3645,74 +3694,89 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri =
-                ::oapi_universal_gen::UrlBuilder::build("/experimental/worktree", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/experimental/worktree",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<String>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<String>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /experimental/worktree
-    Create a new git worktree for the current project.
+Create a new git worktree for the current project.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn experimental_worktree_post(
         &self,
         directory: Option<String>,
+        body: Option<serde_json::Value>,
     ) -> impl Future<Output = Result<Worktree, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri =
-                ::oapi_universal_gen::UrlBuilder::build("/experimental/worktree", &query_params);
-            let body: serde_json::Value = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/experimental/worktree",
+                &query_params,
+            );
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Worktree>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Worktree>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /vcs
-    Retrieve version control system (VCS) information for the current project, such as git branch.
+Retrieve version control system (VCS) information for the current project, such as git branch.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn vcs_get(
         &self,
         directory: Option<String>,
@@ -3721,37 +3785,41 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/vcs", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<VcsInfo>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<VcsInfo>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /session
-    Get a list of all OpenCode sessions, sorted by most recently updated.
+Get a list of all OpenCode sessions, sorted by most recently updated.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `query` start - Filter sessions updated on or after this timestamp (milliseconds since epoch)
-    - `query` search - Filter sessions by title (case-insensitive)
-    - `query` limit - Maximum number of sessions to return
-    */
+- `query` directory
+- `query` start - Filter sessions updated on or after this timestamp (milliseconds since epoch)
+- `query` search - Filter sessions by title (case-insensitive)
+- `query` limit - Maximum number of sessions to return
+*/
     fn session_get(
         &self,
         directory: Option<String>,
@@ -3764,85 +3832,86 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                match start.as_ref() {
-                    Some(v) => Some((String::from("start"), v.to_string())),
-                    None => None,
-                },
-                match search.as_ref() {
-                    Some(v) => Some((String::from("search"), v.to_string())),
-                    None => None,
-                },
-                match limit.as_ref() {
-                    Some(v) => Some((String::from("limit"), v.to_string())),
-                    None => None,
-                },
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, match start.as_ref() { Some(v) =>
+                Some((String::from("start"), v.to_string())), None => None, }, match
+                search.as_ref() { Some(v) => Some((String::from("search"), v
+                .to_string())), None => None, }, match limit.as_ref() { Some(v) =>
+                Some((String::from("limit"), v.to_string())), None => None, }
             ]
-            .into_iter()
-            .flatten()
-            .collect();
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/session", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Session>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Session>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /session
-    Create a new OpenCode session for interacting with AI assistants and managing conversations.
+Create a new OpenCode session for interacting with AI assistants and managing conversations.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn session_post(
         &self,
         directory: Option<String>,
+        body: Option<SessionPostRequest>,
     ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/session", &query_params);
-            let body: RequestInline3 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /session/status
-    Retrieve the current status of all sessions, including active, idle, and completed states.
+Retrieve the current status of all sessions, including active, idle, and completed states.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn session_status_get(
         &self,
         directory: Option<String>,
@@ -3851,35 +3920,42 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/session/status", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/session/status",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<serde_json::Value>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<serde_json::Value>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /session/{sessionID}
-    Retrieve detailed information about a specific OpenCode session.
+Retrieve detailed information about a specific OpenCode session.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id
-    */
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_get(
         &self,
         directory: Option<String>,
@@ -3889,13 +3965,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/session/{}", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
@@ -3903,67 +3979,78 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Patch /session/{sessionID}
-    Update properties of an existing session, such as title or other metadata.
+Update properties of an existing session, such as title or other metadata.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id
-    */
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_patch(
         &self,
         directory: Option<String>,
         session_id: String,
+        body: Option<SessionSessionidPatchRequest>,
     ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/session/{}", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
             );
-            let body: RequestInline4 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Patch, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Patch, &uri, b)?
+            } else {
+                self.create_request(RequestType::Patch, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Delete /session/{sessionID}
-    Delete a session and permanently remove all associated data, including messages and history.
+Delete a session and permanently remove all associated data, including messages and history.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id
-    */
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_delete(
         &self,
         directory: Option<String>,
@@ -3973,13 +4060,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/session/{}", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
@@ -3987,24 +4074,28 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Delete, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /session/{sessionID}/children
-    Retrieve all child sessions that were forked from the specified parent session.
+Retrieve all child sessions that were forked from the specified parent session.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id
-    */
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_children_get(
         &self,
         directory: Option<String>,
@@ -4014,41 +4105,44 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/children",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/children", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Session>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Session>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /session/{sessionID}/todo
-    Retrieve the todo list associated with a specific session, showing tasks and action items.
+Retrieve the todo list associated with a specific session, showing tasks and action items.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id - Session ID
-    */
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_todo_get(
         &self,
         directory: Option<String>,
@@ -4058,133 +4152,142 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
-                format!(
-                    "/session/{}/todo",
-                    ::oapi_universal_gen::urlencode(session_id)
-                ),
+                format!("/session/{}/todo", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
             );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Todo>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Todo>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /session/{sessionID}/init
-    Analyze the current application and create an AGENTS.md file with project-specific agent configurations.
+Analyze the current application and create an AGENTS.md file with project-specific agent configurations.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id - Session ID
-    */
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_init_post(
         &self,
         directory: Option<String>,
         session_id: String,
+        body: Option<SessionSessionidInitPostRequest>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
-                format!(
-                    "/session/{}/init",
-                    ::oapi_universal_gen::urlencode(session_id)
-                ),
+                format!("/session/{}/init", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
             );
-            let body: RequestInline5 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /session/{sessionID}/fork
-    Create a new session by forking an existing session at a specific message point.
+Create a new session by forking an existing session at a specific message point.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id
-    */
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_fork_post(
         &self,
         directory: Option<String>,
         session_id: String,
+        body: Option<SessionSessionidForkPostRequest>,
     ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
-                format!(
-                    "/session/{}/fork",
-                    ::oapi_universal_gen::urlencode(session_id)
-                ),
+                format!("/session/{}/fork", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
             );
-            let body: RequestInline6 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /session/{sessionID}/abort
-    Abort an active session and stop any ongoing AI processing or command execution.
+Abort an active session and stop any ongoing AI processing or command execution.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id
-    */
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_abort_post(
         &self,
         directory: Option<String>,
@@ -4194,41 +4297,44 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/abort",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/abort", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /session/{sessionID}/share
-    Create a shareable link for a session, allowing others to view the conversation.
+Create a shareable link for a session, allowing others to view the conversation.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id
-    */
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_share_post(
         &self,
         directory: Option<String>,
@@ -4238,41 +4344,44 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/share",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/share", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Delete /session/{sessionID}/share
-    Remove the shareable link for a session, making it private again.
+Remove the shareable link for a session, making it private again.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id
-    */
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_share_delete(
         &self,
         directory: Option<String>,
@@ -4282,42 +4391,45 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/share",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/share", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Delete, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /session/{sessionID}/diff
-    Get all file changes (diffs) made during this session.
+Get all file changes (diffs) made during this session.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id - Session ID
-    - `query` message_id
-    */
+- `query` directory
+- `path` session_id - Session ID
+- `query` message_id
+*/
     fn session_sessionid_diff_get(
         &self,
         directory: Option<String>,
@@ -4329,127 +4441,130 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                match message_id.as_ref() {
-                    Some(v) => Some((String::from("messageID"), v.to_string())),
-                    None => None,
-                },
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, match message_id.as_ref() { Some(v) =>
+                Some((String::from("messageID"), v.to_string())), None => None, }
             ]
-            .into_iter()
-            .flatten()
-            .collect();
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
-                format!(
-                    "/session/{}/diff",
-                    ::oapi_universal_gen::urlencode(session_id)
-                ),
+                format!("/session/{}/diff", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
             );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<FileDiff>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<FileDiff>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /session/{sessionID}/summarize
-    Generate a concise summary of the session using AI compaction to preserve key information.
+Generate a concise summary of the session using AI compaction to preserve key information.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id - Session ID
-    */
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_summarize_post(
         &self,
         directory: Option<String>,
         session_id: String,
+        body: Option<SessionSessionidSummarizePostRequest>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/summarize",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/summarize", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
-            let body: RequestInline7 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /session/{sessionID}/message
-    Retrieve all messages in a session, including user prompts and AI responses.
+Retrieve all messages in a session, including user prompts and AI responses.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id - Session ID
-    - `query` limit
-    */
+- `query` directory
+- `path` session_id - Session ID
+- `query` limit
+*/
     fn session_sessionid_message_get(
         &self,
         directory: Option<String>,
         session_id: String,
         limit: Option<f64>,
-    ) -> impl Future<Output = Result<Vec<SessionSessionidMessageGetResponse>, Self::RequesterErrorType>>
+    ) -> impl Future<
+        Output = Result<
+            Vec<SessionSessionidMessageGetResponse>,
+            Self::RequesterErrorType,
+        >,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                match limit.as_ref() {
-                    Some(v) => Some((String::from("limit"), v.to_string())),
-                    None => None,
-                },
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, match limit.as_ref() { Some(v) =>
+                Some((String::from("limit"), v.to_string())), None => None, }
             ]
-            .into_iter()
-            .flatten()
-            .collect();
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/message",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/message", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
@@ -4462,42 +4577,48 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         }
     }
     /**ENDPOINT Post /session/{sessionID}/message
-    Create and send a new message to a session, streaming the AI response.
+Create and send a new message to a session, streaming the AI response.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id - Session ID
-    */
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_message_post(
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<SessionSessionidMessagePostResponse, Self::RequesterErrorType>>
+        body: Option<SessionSessionidMessagePostRequest>,
+    ) -> impl Future<
+        Output = Result<SessionSessionidMessagePostResponse, Self::RequesterErrorType>,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/message",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/message", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
-            let body: RequestInline8 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
@@ -4510,33 +4631,36 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         }
     }
     /**ENDPOINT Get /session/{sessionID}/message/{messageID}
-    Retrieve a specific message from a session by its message ID.
+Retrieve a specific message from a session by its message ID.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id - Session ID
-    - `path` message_id - Message ID
-    */
+- `query` directory
+- `path` session_id - Session ID
+- `path` message_id - Message ID
+*/
     fn session_sessionid_message_messageid_get(
         &self,
         directory: Option<String>,
         session_id: String,
         message_id: String,
     ) -> impl Future<
-        Output = Result<SessionSessionidMessageMessageidGetResponse, Self::RequesterErrorType>,
+        Output = Result<
+            SessionSessionidMessageMessageidGetResponse,
+            Self::RequesterErrorType,
+        >,
     >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/session/{}/message/{}",
@@ -4548,46 +4672,51 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<SessionSessionidMessageMessageidGetResponse>(&content)
+                serde_json::from_str::<
+                    SessionSessionidMessageMessageidGetResponse,
+                >(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
     }
     /**ENDPOINT Patch /session/{sessionID}/message/{messageID}/part/{partID}
-    Update a part in a message
+Update a part in a message
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id - Session ID
-    - `path` message_id - Message ID
-    - `path` part_id - Part ID
-    */
+- `query` directory
+- `path` session_id - Session ID
+- `path` message_id - Message ID
+- `path` part_id - Part ID
+*/
     fn session_sessionid_message_messageid_part_partid_patch(
         &self,
         directory: Option<String>,
         session_id: String,
         message_id: String,
         part_id: String,
+        body: Option<serde_json::Value>,
     ) -> impl Future<Output = Result<Part, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/session/{}/message/{}/part/{}",
@@ -4597,31 +4726,37 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 ),
                 &query_params,
             );
-            let body: serde_json::Value = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Patch, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Patch, &uri, b)?
+            } else {
+                self.create_request(RequestType::Patch, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Part>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Part>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Delete /session/{sessionID}/message/{messageID}/part/{partID}
-    Delete a part from a message
+Delete a part from a message
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id - Session ID
-    - `path` message_id - Message ID
-    - `path` part_id - Part ID
-    */
+- `query` directory
+- `path` session_id - Session ID
+- `path` message_id - Message ID
+- `path` part_id - Part ID
+*/
     fn session_sessionid_message_messageid_part_partid_delete(
         &self,
         directory: Option<String>,
@@ -4633,13 +4768,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/session/{}/message/{}/part/{}",
@@ -4652,40 +4787,45 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Delete, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /session/{sessionID}/prompt_async
-    Create and send a new message to a session asynchronously, starting the session if needed and returning immediately.
+Create and send a new message to a session asynchronously, starting the session if needed and returning immediately.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id - Session ID
-    */
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_prompt_async_post(
         &self,
         directory: Option<String>,
         session_id: String,
+        body: Option<SessionSessionidPromptAsyncPostRequest>,
     ) -> impl Future<Output = Result<(), Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/session/{}/prompt_async",
@@ -4693,53 +4833,63 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 ),
                 &query_params,
             );
-            let body: RequestInline9 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             Ok(())
         }
     }
     /**ENDPOINT Post /session/{sessionID}/command
-    Send a new command to a session for execution by the AI assistant.
+Send a new command to a session for execution by the AI assistant.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id - Session ID
-    */
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_command_post(
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<SessionSessionidCommandPostResponse, Self::RequesterErrorType>>
+        body: Option<SessionSessionidCommandPostRequest>,
+    ) -> impl Future<
+        Output = Result<SessionSessionidCommandPostResponse, Self::RequesterErrorType>,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/command",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/command", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
-            let body: RequestInline10 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
@@ -4752,105 +4902,117 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         }
     }
     /**ENDPOINT Post /session/{sessionID}/shell
-    Execute a shell command within the session context and return the AI's response.
+Execute a shell command within the session context and return the AI's response.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id - Session ID
-    */
+- `query` directory
+- `path` session_id - Session ID
+*/
     fn session_sessionid_shell_post(
         &self,
         directory: Option<String>,
         session_id: String,
+        body: Option<SessionSessionidShellPostRequest>,
     ) -> impl Future<Output = Result<AssistantMessage, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/shell",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/shell", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
-            let body: RequestInline11 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<AssistantMessage>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<AssistantMessage>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /session/{sessionID}/revert
-    Revert a specific message in a session, undoing its effects and restoring the previous state.
+Revert a specific message in a session, undoing its effects and restoring the previous state.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id
-    */
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_revert_post(
         &self,
         directory: Option<String>,
         session_id: String,
+        body: Option<SessionSessionidRevertPostRequest>,
     ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/revert",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/revert", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
-            let body: RequestInline12 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /session/{sessionID}/unrevert
-    Restore all previously reverted messages in a session.
+Restore all previously reverted messages in a session.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id
-    */
+- `query` directory
+- `path` session_id
+*/
     fn session_sessionid_unrevert_post(
         &self,
         directory: Option<String>,
@@ -4860,59 +5022,63 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/unrevert",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/unrevert", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /session/{sessionID}/permissions/{permissionID}
-    Approve or deny a permission request from the AI assistant.
+Approve or deny a permission request from the AI assistant.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` session_id
-    - `path` permission_id
-    */
+- `query` directory
+- `path` session_id
+- `path` permission_id
+*/
     fn session_sessionid_permissions_permissionid_post(
         &self,
         directory: Option<String>,
         session_id: String,
         permission_id: String,
+        body: Option<SessionSessionidPermissionsPermissionidPostRequest>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/session/{}/permissions/{}",
@@ -4921,74 +5087,86 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 ),
                 &query_params,
             );
-            let body: RequestInline13 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /permission/{requestID}/reply
-    Approve or deny a permission request from the AI assistant.
+Approve or deny a permission request from the AI assistant.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` request_id
-    */
+- `query` directory
+- `path` request_id
+*/
     fn permission_requestid_reply_post(
         &self,
         directory: Option<String>,
         request_id: String,
+        body: Option<PermissionRequestidReplyPostRequest>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/permission/{}/reply",
-                    ::oapi_universal_gen::urlencode(request_id)
+                    "/permission/{}/reply", ::oapi_universal_gen::urlencode(request_id)
                 ),
                 &query_params,
             );
-            let body: RequestInline14 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /permission
-    Get all pending permission requests across all sessions.
+Get all pending permission requests across all sessions.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn permission_get(
         &self,
         directory: Option<String>,
@@ -4997,34 +5175,41 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/permission", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/permission",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<PermissionRequest>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<PermissionRequest>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /question
-    Get all pending question requests across all sessions.
+Get all pending question requests across all sessions.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn question_get(
         &self,
         directory: Option<String>,
@@ -5033,81 +5218,94 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/question", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/question",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<QuestionRequest>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<QuestionRequest>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /question/{requestID}/reply
-    Provide answers to a question request from the AI assistant.
+Provide answers to a question request from the AI assistant.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` request_id
-    */
+- `query` directory
+- `path` request_id
+*/
     fn question_requestid_reply_post(
         &self,
         directory: Option<String>,
         request_id: String,
+        body: Option<QuestionRequestidReplyPostRequest>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/question/{}/reply",
-                    ::oapi_universal_gen::urlencode(request_id)
+                    "/question/{}/reply", ::oapi_universal_gen::urlencode(request_id)
                 ),
                 &query_params,
             );
-            let body: RequestInline15 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /question/{requestID}/reject
-    Reject a question request from the AI assistant.
+Reject a question request from the AI assistant.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` request_id
-    */
+- `query` directory
+- `path` request_id
+*/
     fn question_requestid_reject_post(
         &self,
         directory: Option<String>,
@@ -5117,40 +5315,43 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/question/{}/reject",
-                    ::oapi_universal_gen::urlencode(request_id)
+                    "/question/{}/reject", ::oapi_universal_gen::urlencode(request_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /command
-    Get a list of all available commands in the OpenCode system.
+Get a list of all available commands in the OpenCode system.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn command_get(
         &self,
         directory: Option<String>,
@@ -5159,70 +5360,83 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/command", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Command>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Command>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /config/providers
-    Get a list of all configured AI providers and their default models.
+Get a list of all configured AI providers and their default models.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn config_providers_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<ConfigProvidersGetResponse, Self::RequesterErrorType>>
+    ) -> impl Future<
+        Output = Result<ConfigProvidersGetResponse, Self::RequesterErrorType>,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/config/providers", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/config/providers",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<ConfigProvidersGetResponse>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<ConfigProvidersGetResponse>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /provider
-    Get a list of all available AI providers, including both available and connected ones.
+Get a list of all available AI providers, including both available and connected ones.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn provider_get(
         &self,
         directory: Option<String>,
@@ -5231,34 +5445,41 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/provider", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/provider",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<ProviderGetResponse>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<ProviderGetResponse>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /provider/auth
-    Retrieve available authentication methods for all AI providers.
+Retrieve available authentication methods for all AI providers.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn provider_auth_get(
         &self,
         directory: Option<String>,
@@ -5267,51 +5488,61 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/provider/auth", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/provider/auth",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<serde_json::Value>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<serde_json::Value>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /provider/{providerID}/oauth/authorize
-    Initiate OAuth authorization for a specific AI provider to get an authorization URL.
+Initiate OAuth authorization for a specific AI provider to get an authorization URL.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` provider_id - Provider ID
-    */
+- `query` directory
+- `path` provider_id - Provider ID
+*/
     fn provider_providerid_oauth_authorize_post(
         &self,
         directory: Option<String>,
         provider_id: String,
-    ) -> impl Future<Output = Result<ProviderAuthAuthorization, Self::RequesterErrorType>>
+        body: Option<ProviderProvideridOauthAuthorizePostRequest>,
+    ) -> impl Future<
+        Output = Result<ProviderAuthAuthorization, Self::RequesterErrorType>,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/provider/{}/oauth/authorize",
@@ -5319,45 +5550,52 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 ),
                 &query_params,
             );
-            let body: RequestInline16 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<ProviderAuthAuthorization>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<ProviderAuthAuthorization>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /provider/{providerID}/oauth/callback
-    Handle the OAuth callback from a provider after user authorization.
+Handle the OAuth callback from a provider after user authorization.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` provider_id - Provider ID
-    */
+- `query` directory
+- `path` provider_id - Provider ID
+*/
     fn provider_providerid_oauth_callback_post(
         &self,
         directory: Option<String>,
         provider_id: String,
+        body: Option<ProviderProvideridOauthCallbackPostRequest>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/provider/{}/oauth/callback",
@@ -5365,29 +5603,35 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
                 ),
                 &query_params,
             );
-            let body: RequestInline17 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /find
-    Search for text patterns across files in the project using ripgrep.
+Search for text patterns across files in the project using ripgrep.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `query` pattern
-    */
+- `query` directory
+- `query` pattern
+*/
     fn find_get(
         &self,
         directory: Option<String>,
@@ -5398,40 +5642,42 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                Some((String::from("pattern"), pattern.to_string())),
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, Some((String::from("pattern"), pattern
+                .to_string()))
             ]
-            .into_iter()
-            .flatten()
-            .collect();
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/find", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<FindGetResponse>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<FindGetResponse>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /find/file
-    Search for files or directories by name or pattern in the project directory.
+Search for files or directories by name or pattern in the project directory.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `query` query
-    - `query` dirs
-    - `query` type_field
-    - `query` limit
-    */
+- `query` directory
+- `query` query
+- `query` dirs
+- `query` type_field
+- `query` limit
+*/
     fn find_file_get(
         &self,
         directory: Option<String>,
@@ -5445,49 +5691,46 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                Some((String::from("query"), query.to_string())),
-                match dirs.as_ref() {
-                    Some(v) => Some((String::from("dirs"), v.to_string())),
-                    None => None,
-                },
-                match type_field.as_ref() {
-                    Some(v) => Some((String::from("type"), v.to_string())),
-                    None => None,
-                },
-                match limit.as_ref() {
-                    Some(v) => Some((String::from("limit"), v.to_string())),
-                    None => None,
-                },
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, Some((String::from("query"), query
+                .to_string())), match dirs.as_ref() { Some(v) =>
+                Some((String::from("dirs"), v.to_string())), None => None, }, match
+                type_field.as_ref() { Some(v) => Some((String::from("type"), v
+                .to_string())), None => None, }, match limit.as_ref() { Some(v) =>
+                Some((String::from("limit"), v.to_string())), None => None, }
             ]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/find/file", &query_params);
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/find/file",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<String>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<String>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /find/symbol
-    Search for workspace symbols like functions, classes, and variables using LSP.
+Search for workspace symbols like functions, classes, and variables using LSP.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `query` query
-    */
+- `query` directory
+- `query` query
+*/
     fn find_symbol_get(
         &self,
         directory: Option<String>,
@@ -5498,37 +5741,42 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                Some((String::from("query"), query.to_string())),
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, Some((String::from("query"), query
+                .to_string()))
             ]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/find/symbol", &query_params);
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/find/symbol",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Symbol>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Symbol>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /file
-    List files and directories in a specified path.
+List files and directories in a specified path.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `query` path
-    */
+- `query` directory
+- `query` path
+*/
     fn file_get(
         &self,
         directory: Option<String>,
@@ -5539,37 +5787,39 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                Some((String::from("path"), path.to_string())),
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, Some((String::from("path"), path
+                .to_string()))
             ]
-            .into_iter()
-            .flatten()
-            .collect();
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/file", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<FileNode>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<FileNode>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /file/content
-    Read the content of a specified file.
+Read the content of a specified file.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `query` path
-    */
+- `query` directory
+- `query` path
+*/
     fn file_content_get(
         &self,
         directory: Option<String>,
@@ -5580,36 +5830,41 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                Some((String::from("path"), path.to_string())),
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, Some((String::from("path"), path
+                .to_string()))
             ]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/file/content", &query_params);
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/file/content",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<FileContent>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<FileContent>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /file/status
-    Get the git status of all files in the project.
+Get the git status of all files in the project.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn file_status_get(
         &self,
         directory: Option<String>,
@@ -5618,72 +5873,86 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/file/status", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/file/status",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<File>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<File>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /log
-    Write a log entry to the server logs with specified level and metadata.
+Write a log entry to the server logs with specified level and metadata.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn log_post(
         &self,
         directory: Option<String>,
+        body: Option<LogPostRequest>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/log", &query_params);
-            let body: RequestInline18 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /agent
-    Get a list of all available AI agents in the OpenCode system.
+Get a list of all available AI agents in the OpenCode system.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn agent_get(
         &self,
         directory: Option<String>,
@@ -5692,34 +5961,38 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/agent", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Agent>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Agent>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /mcp
-    Get the status of all Model Context Protocol (MCP) servers.
+Get the status of all Model Context Protocol (MCP) servers.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn mcp_get(
         &self,
         directory: Option<String>,
@@ -5728,73 +6001,84 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/mcp", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<serde_json::Value>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<serde_json::Value>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /mcp
-    Dynamically add a new Model Context Protocol (MCP) server to the system.
+Dynamically add a new Model Context Protocol (MCP) server to the system.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn mcp_post(
         &self,
         directory: Option<String>,
+        body: Option<McpPostRequest>,
     ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/mcp", &query_params);
-            let body: RequestInline19 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<serde_json::Value>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<serde_json::Value>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /mcp/{name}/auth
-    Start OAuth authentication flow for a Model Context Protocol (MCP) server.
+Start OAuth authentication flow for a Model Context Protocol (MCP) server.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` name
-    */
+- `query` directory
+- `path` name
+*/
     fn mcp_name_auth_post(
         &self,
         directory: Option<String>,
@@ -5804,13 +6088,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/mcp/{}/auth", ::oapi_universal_gen::urlencode(name)),
                 &query_params,
@@ -5818,40 +6102,46 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<McpNameAuthPostResponse>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<McpNameAuthPostResponse>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Delete /mcp/{name}/auth
-    Remove OAuth credentials for an MCP server
+Remove OAuth credentials for an MCP server
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` name
-    */
+- `query` directory
+- `path` name
+*/
     fn mcp_name_auth_delete(
         &self,
         directory: Option<String>,
         name: String,
-    ) -> impl Future<Output = Result<McpNameAuthDeleteResponse, Self::RequesterErrorType>>
+    ) -> impl Future<
+        Output = Result<McpNameAuthDeleteResponse, Self::RequesterErrorType>,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/mcp/{}/auth", ::oapi_universal_gen::urlencode(name)),
                 &query_params,
@@ -5859,70 +6149,78 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Delete, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<McpNameAuthDeleteResponse>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<McpNameAuthDeleteResponse>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /mcp/{name}/auth/callback
-    Complete OAuth authentication for a Model Context Protocol (MCP) server using the authorization code.
+Complete OAuth authentication for a Model Context Protocol (MCP) server using the authorization code.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` name
-    */
+- `query` directory
+- `path` name
+*/
     fn mcp_name_auth_callback_post(
         &self,
         directory: Option<String>,
         name: String,
+        body: Option<McpNameAuthCallbackPostRequest>,
     ) -> impl Future<Output = Result<MCPStatus, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
-                format!(
-                    "/mcp/{}/auth/callback",
-                    ::oapi_universal_gen::urlencode(name)
-                ),
+                format!("/mcp/{}/auth/callback", ::oapi_universal_gen::urlencode(name)),
                 &query_params,
             );
-            let body: RequestInline20 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<MCPStatus>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<MCPStatus>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /mcp/{name}/auth/authenticate
-    Start OAuth flow and wait for callback (opens browser)
+Start OAuth flow and wait for callback (opens browser)
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` name
-    */
+- `query` directory
+- `path` name
+*/
     fn mcp_name_auth_authenticate_post(
         &self,
         directory: Option<String>,
@@ -5932,41 +6230,44 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/mcp/{}/auth/authenticate",
-                    ::oapi_universal_gen::urlencode(name)
+                    "/mcp/{}/auth/authenticate", ::oapi_universal_gen::urlencode(name)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<MCPStatus>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<MCPStatus>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /mcp/{name}/connect
-    Connect an MCP server
+Connect an MCP server
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` name
-    */
+- `query` directory
+- `path` name
+*/
     fn mcp_name_connect_post(
         &self,
         directory: Option<String>,
@@ -5976,13 +6277,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/mcp/{}/connect", ::oapi_universal_gen::urlencode(name)),
                 &query_params,
@@ -5990,24 +6291,28 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /mcp/{name}/disconnect
-    Disconnect an MCP server
+Disconnect an MCP server
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` name
-    */
+- `query` directory
+- `path` name
+*/
     fn mcp_name_disconnect_post(
         &self,
         directory: Option<String>,
@@ -6017,13 +6322,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/mcp/{}/disconnect", ::oapi_universal_gen::urlencode(name)),
                 &query_params,
@@ -6031,23 +6336,27 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /experimental/resource
-    Get all available MCP resources from connected servers. Optionally filter by name.
+Get all available MCP resources from connected servers. Optionally filter by name.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn experimental_resource_get(
         &self,
         directory: Option<String>,
@@ -6056,35 +6365,41 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri =
-                ::oapi_universal_gen::UrlBuilder::build("/experimental/resource", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/experimental/resource",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<serde_json::Value>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<serde_json::Value>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /lsp
-    Get LSP server status
+Get LSP server status
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn lsp_get(
         &self,
         directory: Option<String>,
@@ -6093,34 +6408,38 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/lsp", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<LSPStatus>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<LSPStatus>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /formatter
-    Get formatter status
+Get formatter status
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn formatter_get(
         &self,
         directory: Option<String>,
@@ -6129,72 +6448,89 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/formatter", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/formatter",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<FormatterStatus>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<FormatterStatus>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /tui/append-prompt
-    Append prompt to the TUI
+Append prompt to the TUI
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn tui_append_prompt_post(
         &self,
         directory: Option<String>,
+        body: Option<TuiAppendPromptPostRequest>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/append-prompt", &query_params);
-            let body: RequestInline21 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/append-prompt",
+                &query_params,
+            );
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /tui/open-help
-    Open the help dialog in the TUI to display user assistance information.
+Open the help dialog in the TUI to display user assistance information.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn tui_open_help_post(
         &self,
         directory: Option<String>,
@@ -6203,34 +6539,41 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/open-help", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/open-help",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /tui/open-sessions
-    Open the session dialog
+Open the session dialog
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn tui_open_sessions_post(
         &self,
         directory: Option<String>,
@@ -6239,34 +6582,41 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/open-sessions", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/open-sessions",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /tui/open-themes
-    Open the theme dialog
+Open the theme dialog
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn tui_open_themes_post(
         &self,
         directory: Option<String>,
@@ -6275,34 +6625,41 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/open-themes", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/open-themes",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /tui/open-models
-    Open the model dialog
+Open the model dialog
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn tui_open_models_post(
         &self,
         directory: Option<String>,
@@ -6311,34 +6668,41 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/open-models", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/open-models",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /tui/submit-prompt
-    Submit the prompt
+Submit the prompt
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn tui_submit_prompt_post(
         &self,
         directory: Option<String>,
@@ -6347,34 +6711,41 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/submit-prompt", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/submit-prompt",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /tui/clear-prompt
-    Clear the prompt
+Clear the prompt
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn tui_clear_prompt_post(
         &self,
         directory: Option<String>,
@@ -6383,305 +6754,376 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/clear-prompt", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/clear-prompt",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /tui/execute-command
-    Execute a TUI command (e.g. agent_cycle)
+Execute a TUI command (e.g. agent_cycle)
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn tui_execute_command_post(
         &self,
         directory: Option<String>,
+        body: Option<TuiExecuteCommandPostRequest>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri =
-                ::oapi_universal_gen::UrlBuilder::build("/tui/execute-command", &query_params);
-            let body: RequestInline22 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/execute-command",
+                &query_params,
+            );
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /tui/show-toast
-    Show a toast notification in the TUI
+Show a toast notification in the TUI
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn tui_show_toast_post(
         &self,
         directory: Option<String>,
+        body: Option<TuiShowToastPostRequest>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/show-toast", &query_params);
-            let body: RequestInline23 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/show-toast",
+                &query_params,
+            );
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /tui/publish
-    Publish a TUI event
+Publish a TUI event
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn tui_publish_post(
         &self,
         directory: Option<String>,
+        body: Option<serde_json::Value>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/publish", &query_params);
-            let body: serde_json::Value = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/publish",
+                &query_params,
+            );
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /tui/select-session
-    Navigate the TUI to display the specified session.
+Navigate the TUI to display the specified session.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn tui_select_session_post(
         &self,
         directory: Option<String>,
+        body: Option<TuiSelectSessionPostRequest>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/select-session", &query_params);
-            let body: RequestInline24 = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/select-session",
+                &query_params,
+            );
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /tui/control/next
-    Retrieve the next TUI (Terminal User Interface) request from the queue for processing.
+Retrieve the next TUI (Terminal User Interface) request from the queue for processing.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn tui_control_next_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<TuiControlNextGetResponse, Self::RequesterErrorType>>
+    ) -> impl Future<
+        Output = Result<TuiControlNextGetResponse, Self::RequesterErrorType>,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/control/next", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/control/next",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<TuiControlNextGetResponse>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<TuiControlNextGetResponse>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Post /tui/control/response
-    Submit a response to the TUI request queue to complete a pending request.
+Submit a response to the TUI request queue to complete a pending request.
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn tui_control_response_post(
         &self,
         directory: Option<String>,
+        body: Option<serde_json::Value>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri =
-                ::oapi_universal_gen::UrlBuilder::build("/tui/control/response", &query_params);
-            let body: serde_json::Value = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Post, &uri, &body)?;
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/control/response",
+                &query_params,
+            );
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Post, &uri, b)?
+            } else {
+                self.create_request(RequestType::Post, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Put /auth/{providerID}
-    Set authentication credentials
+Set authentication credentials
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    - `path` provider_id
-    */
+- `query` directory
+- `path` provider_id
+*/
     fn auth_providerid_put(
         &self,
         directory: Option<String>,
         provider_id: String,
+        body: Option<serde_json::Value>,
     ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/auth/{}", ::oapi_universal_gen::urlencode(provider_id)),
                 &query_params,
             );
-            let body: serde_json::Value = serde_json::from_value(serde_json::json!({}))
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?;
-            let request = self.create_request_with_body(RequestType::Put, &uri, &body)?;
+            let request = if let Some(b) = &body {
+                self.create_request_with_body(RequestType::Put, &uri, b)?
+            } else {
+                self.create_request(RequestType::Put, &uri)?
+            };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /**ENDPOINT Get /event
-    Get events
+Get events
 
-    # Arguments
+# Arguments
 
-    - `query` directory
-    */
+- `query` directory
+*/
     fn event_get(
         &self,
         directory: Option<String>,
@@ -6690,18 +7132,20 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/event", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             Ok(())
         }
