@@ -2991,7 +2991,7 @@ Get a list of projects that have been opened with OpenCode.
     fn project_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<Project>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3016,7 +3016,7 @@ Get a list of projects that have been opened with OpenCode.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<Project>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3031,7 +3031,7 @@ Retrieve the currently active project that OpenCode is working with.
     fn project_current_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Project, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3059,7 +3059,7 @@ Retrieve the currently active project that OpenCode is working with.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Project>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3076,7 +3076,7 @@ Update project properties such as name, icon and color.
         &self,
         directory: Option<String>,
         project_id: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Project, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3107,7 +3107,7 @@ Update project properties such as name, icon and color.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Project>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3122,7 +3122,7 @@ Get a list of all active pseudo-terminal (PTY) sessions managed by OpenCode.
     fn pty_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<Pty>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3147,7 +3147,7 @@ Get a list of all active pseudo-terminal (PTY) sessions managed by OpenCode.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<Pty>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3162,7 +3162,7 @@ Create a new pseudo-terminal (PTY) session for running shell commands and proces
     fn pty_post(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Pty, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3189,7 +3189,7 @@ Create a new pseudo-terminal (PTY) session for running shell commands and proces
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Pty>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3206,7 +3206,7 @@ Retrieve detailed information about a specific pseudo-terminal (PTY) session.
         &self,
         directory: Option<String>,
         pty_id: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Pty, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3234,7 +3234,7 @@ Retrieve detailed information about a specific pseudo-terminal (PTY) session.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Pty>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3251,7 +3251,7 @@ Update properties of an existing pseudo-terminal (PTY) session.
         &self,
         directory: Option<String>,
         pty_id: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Pty, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3281,7 +3281,7 @@ Update properties of an existing pseudo-terminal (PTY) session.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Pty>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3386,7 +3386,7 @@ Retrieve the current OpenCode configuration settings and preferences.
     fn config_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Config, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3411,7 +3411,7 @@ Retrieve the current OpenCode configuration settings and preferences.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Config>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3426,7 +3426,7 @@ Update OpenCode configuration settings and preferences.
     fn config_patch(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Config, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3454,7 +3454,7 @@ Update OpenCode configuration settings and preferences.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Config>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3469,7 +3469,7 @@ Get a list of all available tool IDs, including both built-in tools and dynamica
     fn experimental_tool_ids_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<ToolIDs, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3497,7 +3497,7 @@ Get a list of all available tool IDs, including both built-in tools and dynamica
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<ToolIDs>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3516,7 +3516,7 @@ Get a list of available tools with their JSON schema parameters for a specific p
         directory: Option<String>,
         provider: String,
         model: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<ToolList, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3545,7 +3545,7 @@ Get a list of available tools with their JSON schema parameters for a specific p
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<ToolList>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3603,7 +3603,7 @@ Retrieve the current working directory and related path information for the Open
     fn path_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Path, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3628,7 +3628,7 @@ Retrieve the current working directory and related path information for the Open
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Path>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3686,7 +3686,7 @@ Create a new git worktree for the current project.
     fn experimental_worktree_post(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Worktree, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3716,7 +3716,7 @@ Create a new git worktree for the current project.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Worktree>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3731,7 +3731,7 @@ Retrieve version control system (VCS) information for the current project, such 
     fn vcs_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<VcsInfo, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3756,7 +3756,7 @@ Retrieve version control system (VCS) information for the current project, such 
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<VcsInfo>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3777,7 +3777,7 @@ Get a list of all OpenCode sessions, sorted by most recently updated.
         start: Option<f64>,
         search: Option<String>,
         limit: Option<f64>,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<Session>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3806,7 +3806,7 @@ Get a list of all OpenCode sessions, sorted by most recently updated.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<Session>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3821,7 +3821,7 @@ Create a new OpenCode session for interacting with AI assistants and managing co
     fn session_post(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3848,7 +3848,7 @@ Create a new OpenCode session for interacting with AI assistants and managing co
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Session>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3908,7 +3908,7 @@ Retrieve detailed information about a specific OpenCode session.
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3936,7 +3936,7 @@ Retrieve detailed information about a specific OpenCode session.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Session>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -3953,7 +3953,7 @@ Update properties of an existing session, such as title or other metadata.
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -3984,7 +3984,7 @@ Update properties of an existing session, such as title or other metadata.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Session>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -4046,7 +4046,7 @@ Retrieve all child sessions that were forked from the specified parent session.
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<Session>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4076,7 +4076,7 @@ Retrieve all child sessions that were forked from the specified parent session.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<Session>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -4093,7 +4093,7 @@ Retrieve the todo list associated with a specific session, showing tasks and act
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<Todo>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4121,7 +4121,7 @@ Retrieve the todo list associated with a specific session, showing tasks and act
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<Todo>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -4185,7 +4185,7 @@ Create a new session by forking an existing session at a specific message point.
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4215,7 +4215,7 @@ Create a new session by forking an existing session at a specific message point.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Session>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -4279,7 +4279,7 @@ Create a shareable link for a session, allowing others to view the conversation.
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4309,7 +4309,7 @@ Create a shareable link for a session, allowing others to view the conversation.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Session>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -4326,7 +4326,7 @@ Remove the shareable link for a session, making it private again.
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4356,7 +4356,7 @@ Remove the shareable link for a session, making it private again.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Session>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -4375,7 +4375,7 @@ Get all file changes (diffs) made during this session.
         directory: Option<String>,
         session_id: String,
         message_id: Option<String>,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<FileDiff>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4404,7 +4404,7 @@ Get all file changes (diffs) made during this session.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<FileDiff>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -4638,7 +4638,7 @@ Update a part in a message
         session_id: String,
         message_id: String,
         part_id: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Part, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4674,7 +4674,7 @@ Update a part in a message
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Part>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -4839,7 +4839,7 @@ Execute a shell command within the session context and return the AI's response.
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<AssistantMessage, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4871,7 +4871,7 @@ Execute a shell command within the session context and return the AI's response.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<AssistantMessage>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -4888,7 +4888,7 @@ Revert a specific message in a session, undoing its effects and restoring the pr
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4920,7 +4920,7 @@ Revert a specific message in a session, undoing its effects and restoring the pr
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Session>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -4937,7 +4937,7 @@ Restore all previously reverted messages in a session.
         &self,
         directory: Option<String>,
         session_id: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Session, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -4967,7 +4967,7 @@ Restore all previously reverted messages in a session.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<Session>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -5084,7 +5084,7 @@ Get all pending permission requests across all sessions.
     fn permission_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<PermissionRequest>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -5112,7 +5112,7 @@ Get all pending permission requests across all sessions.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<PermissionRequest>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -5127,7 +5127,7 @@ Get all pending question requests across all sessions.
     fn question_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<QuestionRequest>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -5155,7 +5155,7 @@ Get all pending question requests across all sessions.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<QuestionRequest>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -5266,7 +5266,7 @@ Get a list of all available commands in the OpenCode system.
     fn command_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<Command>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -5291,7 +5291,7 @@ Get a list of all available commands in the OpenCode system.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<Command>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -5439,7 +5439,9 @@ Initiate OAuth authorization for a specific AI provider to get an authorization 
         &self,
         directory: Option<String>,
         provider_id: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<
+        Output = Result<ProviderAuthAuthorization, Self::RequesterErrorType>,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -5472,7 +5474,7 @@ Initiate OAuth authorization for a specific AI provider to get an authorization 
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<ProviderAuthAuthorization>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -5638,7 +5640,7 @@ Search for workspace symbols like functions, classes, and variables using LSP.
         &self,
         directory: Option<String>,
         query: String,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<Symbol>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -5667,7 +5669,7 @@ Search for workspace symbols like functions, classes, and variables using LSP.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<Symbol>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -5684,7 +5686,7 @@ List files and directories in a specified path.
         &self,
         directory: Option<String>,
         path: String,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<FileNode>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -5710,7 +5712,7 @@ List files and directories in a specified path.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<FileNode>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -5727,7 +5729,7 @@ Read the content of a specified file.
         &self,
         directory: Option<String>,
         path: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<FileContent, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -5756,7 +5758,7 @@ Read the content of a specified file.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<FileContent>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -5771,7 +5773,7 @@ Get the git status of all files in the project.
     fn file_status_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<File>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -5799,7 +5801,7 @@ Get the git status of all files in the project.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<File>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -5856,7 +5858,7 @@ Get a list of all available AI agents in the OpenCode system.
     fn agent_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<Agent>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -5881,7 +5883,7 @@ Get a list of all available AI agents in the OpenCode system.
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<Agent>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -6072,7 +6074,7 @@ Complete OAuth authentication for a Model Context Protocol (MCP) server using th
         &self,
         directory: Option<String>,
         name: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<MCPStatus, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -6102,7 +6104,7 @@ Complete OAuth authentication for a Model Context Protocol (MCP) server using th
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<MCPStatus>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -6119,7 +6121,7 @@ Start OAuth flow and wait for callback (opens browser)
         &self,
         directory: Option<String>,
         name: String,
-    ) -> impl Future<Output = Result<serde_json::Value, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<MCPStatus, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -6149,7 +6151,7 @@ Start OAuth flow and wait for callback (opens browser)
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<serde_json::Value>(&content)
+                serde_json::from_str::<MCPStatus>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -6297,7 +6299,7 @@ Get LSP server status
     fn lsp_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<LSPStatus>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -6322,7 +6324,7 @@ Get LSP server status
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<LSPStatus>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -6337,7 +6339,7 @@ Get formatter status
     fn formatter_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<Vec<serde_json::Value>, Self::RequesterErrorType>>
+    ) -> impl Future<Output = Result<Vec<FormatterStatus>, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
@@ -6365,7 +6367,7 @@ Get formatter status
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<Vec<serde_json::Value>>(&content)
+                serde_json::from_str::<Vec<FormatterStatus>>(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }

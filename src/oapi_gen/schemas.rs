@@ -843,13 +843,18 @@ pub fn response_schema_to_string(
 ) -> String {
     let mut nested_inline_structs: Vec<InlineStructInfo> = Vec::new();
     let result = match schema {
-        Schema::Object(box_schema) => match &box_schema.schema_type {
-            Some(Types::Single(Type::Object)) => {
-                if box_schema.properties.is_empty() {
-                    "serde_json::Value".to_string()
-                } else {
-                    let struct_name = format!("{}{}", to_pascal_case(endpoint_name), "Response");
-                    let fields = box_schema.properties.iter().flat_map(|(name, prop)| {
+        Schema::Object(box_schema) => {
+            if !box_schema.reference.is_empty() {
+                return extract_ref_name(&box_schema.reference);
+            }
+            match &box_schema.schema_type {
+                Some(Types::Single(Type::Object)) => {
+                    if box_schema.properties.is_empty() {
+                        "serde_json::Value".to_string()
+                    } else {
+                        let struct_name =
+                            format!("{}{}", to_pascal_case(endpoint_name), "Response");
+                        let fields = box_schema.properties.iter().flat_map(|(name, prop)| {
                         let rust_name = to_valid_rust_field_name(name);
                         let field_name = format_ident!("{}", rust_name);
                         let is_required = is_field_required(name, &box_schema.required);
@@ -894,48 +899,49 @@ pub fn response_schema_to_string(
                         ]
                     }).flatten().collect::<Vec<_>>();
 
-                    let struct_ident = format_ident!("{}", struct_name);
-                    inline_structs.push(quote! {
-                        #[derive(Debug, Clone, Serialize, Deserialize)]
-                        pub struct #struct_ident {
-                            #(#fields)*
-                        }
-                    });
-                    struct_name
+                        let struct_ident = format_ident!("{}", struct_name);
+                        inline_structs.push(quote! {
+                            #[derive(Debug, Clone, Serialize, Deserialize)]
+                            pub struct #struct_ident {
+                                #(#fields)*
+                            }
+                        });
+                        struct_name
+                    }
                 }
-            }
-            Some(Types::Single(Type::Array)) => {
-                let inner_type = box_schema
-                    .items
-                    .as_ref()
-                    .map(|item| match item {
-                        Schema::Object(inner_box_schema) => response_schema_to_string_item(
-                            &inner_box_schema,
-                            components,
-                            inline_structs,
-                            inline_enums,
-                            endpoint_name,
-                            main_inline_structs,
-                        ),
-                        _ => "serde_json::Value".to_string(),
-                    })
-                    .unwrap_or_else(|| "serde_json::Value".to_string());
-                format!("Vec<{}>", inner_type)
-            }
-            Some(Types::Single(Type::String)) => "String".to_string(),
-            Some(Types::Single(Type::Integer)) => {
-                if box_schema.format == "int32" {
-                    "i32".to_string()
-                } else if box_schema.format == "int64" {
-                    "i64".to_string()
-                } else {
-                    "i64".to_string()
+                Some(Types::Single(Type::Array)) => {
+                    let inner_type = box_schema
+                        .items
+                        .as_ref()
+                        .map(|item| match item {
+                            Schema::Object(inner_box_schema) => response_schema_to_string_item(
+                                &inner_box_schema,
+                                components,
+                                inline_structs,
+                                inline_enums,
+                                endpoint_name,
+                                main_inline_structs,
+                            ),
+                            _ => "serde_json::Value".to_string(),
+                        })
+                        .unwrap_or_else(|| "serde_json::Value".to_string());
+                    format!("Vec<{}>", inner_type)
                 }
+                Some(Types::Single(Type::String)) => "String".to_string(),
+                Some(Types::Single(Type::Integer)) => {
+                    if box_schema.format == "int32" {
+                        "i32".to_string()
+                    } else if box_schema.format == "int64" {
+                        "i64".to_string()
+                    } else {
+                        "i64".to_string()
+                    }
+                }
+                Some(Types::Single(Type::Number)) => "f64".to_string(),
+                Some(Types::Single(Type::Boolean)) => "bool".to_string(),
+                _ => "serde_json::Value".to_string(),
             }
-            Some(Types::Single(Type::Number)) => "f64".to_string(),
-            Some(Types::Single(Type::Boolean)) => "bool".to_string(),
-            _ => "serde_json::Value".to_string(),
-        },
+        }
         _ => "serde_json::Value".to_string(),
     };
     main_inline_structs
@@ -966,6 +972,9 @@ pub fn response_schema_to_string_item(
     endpoint_name: &str,
     main_inline_structs: &Rc<RefCell<Vec<InlineStructInfo>>>,
 ) -> String {
+    if !schema.reference.is_empty() {
+        return extract_ref_name(&schema.reference);
+    }
     let mut nested_inline_structs: Vec<InlineStructInfo> = Vec::new();
     let result = match &schema.schema_type {
         Some(Types::Single(Type::Object)) => {
