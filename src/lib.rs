@@ -482,10 +482,19 @@ impl UrlBuilder {
     /// let builder = builder.join("users");
     /// ```
     pub fn join(mut self, path: impl AsRef<str>) -> Self {
-        if !self.path.ends_with('/') {
-            self.path.push('/');
+        let path_str = path.as_ref();
+
+        // Normalize base: remove all trailing slashes to avoid duplicates
+        while self.path.ends_with('/') {
+            self.path.pop();
         }
-        self.path.push_str(path.as_ref());
+
+        // Add single separator
+        self.path.push('/');
+
+        // Normalize appended path: remove all leading slashes
+        self.path.push_str(path_str.trim_start_matches('/'));
+
         self
     }
 
