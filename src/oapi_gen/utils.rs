@@ -156,33 +156,18 @@ pub fn enum_value_to_variant_name(value: &serde_json::Value) -> proc_macro2::Ide
 /// Converts to PascalCase and handles special characters by
 /// replacing them with underscores.
 pub fn to_valid_enum_variant(name: &str) -> String {
-    let mut result = String::new();
-    let mut first = true;
-    for c in name.chars() {
-        if c.is_alphanumeric() || c == '_' {
-            if first && c.is_ascii_digit() {
-                result.push('V');
-            }
-            if result.is_empty() {
-                result.push(c.to_ascii_uppercase());
-            } else {
-                result.push(c);
-            }
-            first = false;
-        } else if !result.is_empty()
-            && result
-                .chars()
-                .last()
-                .map(|last| last.is_alphanumeric())
-                .unwrap_or(false)
-        {
-            result.push('_');
-        }
+    if name.is_empty() {
+        return "Unknown".to_string();
     }
-    if result.is_empty() {
-        result = "Unknown".to_string();
+
+    let starts_with_digit = name.chars().next().map_or(false, |c| c.is_ascii_digit());
+    let pascal = to_pascal_case(name);
+
+    if starts_with_digit {
+        format!("V{}", pascal)
+    } else {
+        pascal
     }
-    result
 }
 
 /// Extracts the schema name from an OpenAPI reference.

@@ -204,8 +204,8 @@ pub enum Part {
         metadata: Option<serde_json::Value>,
     },
     #[serde(rename = "step-start")]
-    #[display("Step_start")]
-    Step_start {
+    #[display("StepStart")]
+    StepStart {
         id: String,
         #[serde(rename = "sessionID")]
         session_id: String,
@@ -215,8 +215,8 @@ pub enum Part {
         snapshot: Option<String>,
     },
     #[serde(rename = "step-finish")]
-    #[display("Step_finish")]
-    Step_finish {
+    #[display("StepFinish")]
+    StepFinish {
         id: String,
         #[serde(rename = "sessionID")]
         session_id: String,
@@ -382,10 +382,10 @@ pub enum MCPStatus {
     #[display("Failed")]
     Failed { error: String },
     #[serde(rename = "needs_auth")]
-    Needs_auth,
+    NeedsAuth,
     #[serde(rename = "needs_client_registration")]
-    #[display("Needs_client_registration")]
-    Needs_client_registration { error: String },
+    #[display("NeedsClientRegistration")]
+    NeedsClientRegistration { error: String },
 }
 ///
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]

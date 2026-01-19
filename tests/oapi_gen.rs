@@ -117,9 +117,9 @@ fn test_string_with_spaces_enum() {
     let output = generate_from_json(&json);
 
     assert!(output.contains("pub enum StringWithSpaces"));
-    assert!(output.contains("Hello_world"));
-    assert!(output.contains("Foo_bar"));
-    assert!(output.contains("Baz_qux"));
+    assert!(output.contains("HelloWorld"));
+    assert!(output.contains("FooBar"));
+    assert!(output.contains("BazQux"));
     let parsed = syn::parse_file(&output);
     assert!(
         parsed.is_ok(),
