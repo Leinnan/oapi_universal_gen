@@ -4,7 +4,7 @@
 //! OpenAPI specifications. It orchestrates the entire generation process
 //! including schema parsing, type generation, and method implementation.
 
-use openapiv3_1::{OpenApi, Schema, Type, schema::Types};
+use openapiv3_1::{schema::Types, OpenApi, Schema, Type};
 use quote::{format_ident, quote};
 
 use super::methods::generate_methods;
@@ -14,6 +14,28 @@ use super::schemas::{
 };
 use super::types::{InlineEnumInfo, InlineStructInfo};
 use super::utils::{enum_value_to_variant_name, to_pascal_case, to_valid_enum_variant};
+
+/// Generates a documentation string for a schema.
+///
+/// If a description is provided, it is used directly. Otherwise, a descriptive
+/// comment is generated based on the schema name.
+///
+/// # Arguments
+///
+/// * `name` - The name of the schema
+/// * `description` - Optional description from the OpenAPI schema
+///
+/// # Returns
+///
+/// A string suitable for use as a doc comment
+fn make_schema_doc(name: &str, description: Option<String>) -> String {
+    if let Some(desc) = description {
+        if !desc.is_empty() {
+            return desc;
+        }
+    }
+    format!("Generated from schema '{}'.", name)
+}
 
 /// Generates Rust code from an OpenAPI JSON string.
 ///
@@ -81,7 +103,7 @@ fn generate_code(openapi: &OpenApi) -> String {
             _ => return None,
         };
         let enum_name = format_ident!("{}", to_pascal_case(name.as_str()));
-        let d = schema_ref.description.clone();
+        let d = make_schema_doc(name.as_str(), Some(schema_ref.description.clone()));
         let doc = quote! { #[doc = #d] };
 
         if let Some((tag_field, variants)) = extract_discriminator_info(&cmp_2, schema_ref) {
@@ -107,6 +129,7 @@ fn generate_code(openapi: &OpenApi) -> String {
                         &tag_field,
                         &mut *inline_structs.borrow_mut(),
                         Some(&variant_parent_name),
+                        true,
                     );
                     if !has_fields {
                         quote! {
@@ -208,7 +231,7 @@ fn generate_code(openapi: &OpenApi) -> String {
             }
 
             let schema_name = format_ident!("{}", to_pascal_case(name.as_str()));
-            let d = schema_ref.description.clone();
+            let d = make_schema_doc(name.as_str(), Some(schema_ref.description.clone()));
             let doc = quote! { #[doc = #d] };
 
             if let Some(Types::Single(Type::Array)) = &schema_ref.schema_type {
@@ -263,10 +286,8 @@ fn generate_code(openapi: &OpenApi) -> String {
         })
         .flat_map(|enum_info| {
             let enum_name = format_ident!("{}", enum_info.name);
-            let doc = enum_info
-                .description
-                .as_ref()
-                .map(|d| quote! { #[doc = #d] });
+            let d = make_schema_doc(&enum_info.name, enum_info.description.clone());
+            let doc = quote! { #[doc = #d] };
 
             if enum_info.is_tagged {
                 let tag_field = enum_info.tag_field.as_ref().unwrap();
@@ -294,6 +315,7 @@ fn generate_code(openapi: &OpenApi) -> String {
                             tag_field,
                             &mut *inline_structs.borrow_mut(),
                             Some(&variant_parent_name),
+                            true,
                         );
                         if !has_fields {
                             quote! {

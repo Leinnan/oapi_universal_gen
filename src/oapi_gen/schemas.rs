@@ -6,8 +6,8 @@
 //! analysis for tagged unions.
 
 use openapiv3_1::{
-    Components, Object, Ref, RefOr, Schema, Type, path::Parameter, request_body::RequestBody,
-    schema::Types,
+    path::Parameter, request_body::RequestBody, schema::Types, Components, Object, Ref, RefOr,
+    Schema, Type,
 };
 use quote::{format_ident, quote};
 use std::cell::RefCell;
@@ -15,6 +15,132 @@ use std::rc::Rc;
 
 use super::types::{InlineEnumInfo, InlineStructInfo, ParameterInfo};
 use super::utils::{extract_ref_name, is_field_required, to_pascal_case, to_valid_rust_field_name};
+
+/// Generates a documentation string for a struct field.
+///
+/// This function creates comprehensive field documentation including:
+/// - Required/optional status
+/// - Type information
+/// - Description from the schema
+/// - Example values when available
+///
+/// # Arguments
+///
+/// * `name` - The field name
+/// * `description` - Optional description from the schema
+/// * `is_required` - Whether the field is required
+/// * `ty` - The Rust type as a string
+/// * `example` - Optional example value
+///
+/// # Returns
+///
+/// A documentation string for the field
+fn make_field_doc(
+    name: &str,
+    description: Option<&str>,
+    is_required: bool,
+    ty: &str,
+    example: Option<&str>,
+) -> String {
+    let mut doc = String::new();
+
+    if let Some(desc) = description {
+        if !desc.is_empty() {
+            doc.push_str(desc);
+            doc.push(' ');
+        }
+    }
+
+    doc.push_str(&format!("Type: {}.", ty));
+
+    let required_text = if is_required { "Required" } else { "Optional" };
+    doc.push_str(&format!(" {}", required_text));
+
+    if let Some(example_str) = example {
+        if !example_str.is_empty() {
+            doc.push_str(&format!(" Example: {}", example_str));
+        }
+    }
+
+    doc
+}
+
+/// Extracts type information from a property schema for documentation.
+///
+/// # Arguments
+///
+/// * `prop` - The property schema
+///
+/// # Returns
+///
+/// A string describing the type
+fn get_property_type_string(prop: &Schema) -> String {
+    match prop {
+        Schema::Object(box_prop) => {
+            let prop_ref = box_prop.as_ref();
+            if !prop_ref.reference.is_empty() {
+                extract_ref_name(&prop_ref.reference)
+            } else if let Some(enum_name) = get_enum_type_name(prop_ref) {
+                enum_name
+            } else if let Some(Types::Single(schema_kind)) = &prop_ref.schema_type {
+                match schema_kind {
+                    Type::String => "String".to_string(),
+                    Type::Integer => {
+                        if prop_ref.format == "int32" {
+                            "i32".to_string()
+                        } else {
+                            "i64".to_string()
+                        }
+                    }
+                    Type::Number => "f64".to_string(),
+                    Type::Boolean => "bool".to_string(),
+                    Type::Array => {
+                        if let Some(items) = &prop_ref.items {
+                            let item_type = get_property_type_string(items);
+                            format!("Vec<{}>", item_type)
+                        } else {
+                            "Vec".to_string()
+                        }
+                    }
+                    Type::Object => {
+                        if !prop_ref.title.is_empty() {
+                            prop_ref.title.clone()
+                        } else {
+                            "Object".to_string()
+                        }
+                    }
+                    _ => "serde_json::Value".to_string(),
+                }
+            } else {
+                "serde_json::Value".to_string()
+            }
+        }
+        _ => "serde_json::Value".to_string(),
+    }
+}
+
+/// Extracts example value from a property schema for documentation.
+///
+/// # Arguments
+///
+/// * `prop` - The property schema
+///
+/// # Returns
+///
+/// An optional example value string
+fn get_property_example(prop: &Schema) -> Option<String> {
+    match prop {
+        Schema::Object(box_prop) => {
+            let prop_ref = box_prop.as_ref();
+            if !prop_ref.examples.is_empty() {
+                prop_ref.examples.first().map(|ex| format!("{}", ex))
+            } else {
+                None
+            }
+        }
+        _ => None,
+    }
+}
 
 /// Determines if a schema represents an enum type.
 ///
@@ -186,6 +312,7 @@ pub fn generate_struct_fields_for_tagged_variant(
     tag_field: &str,
     inline_structs: &mut Vec<InlineStructInfo>,
     parent_name: Option<&str>,
+    is_variant: bool,
 ) -> (Vec<proc_macro2::TokenStream>, bool) {
     let fields: Vec<_> = schema
         .properties
@@ -204,6 +331,24 @@ pub fn generate_struct_fields_for_tagged_variant(
                 name,
                 is_required,
             );
+            let type_str = get_property_type_string(prop);
+            let example_str = get_property_example(prop);
+            let doc: proc_macro2::TokenStream = match prop {
+                Schema::Object(box_prop) => {
+                    let prop_ref = box_prop.as_ref();
+                    let desc = if prop_ref.description.is_empty() {
+                        None
+                    } else {
+                        Some(prop_ref.description.as_str())
+                    };
+                    let doc_str = make_field_doc(name, desc, is_required, &type_str, example_str.as_deref());
+                    quote! { #[doc = #doc_str] }
+                }
+                _ => {
+                    let doc_str = make_field_doc(name, None, is_required, &type_str, example_str.as_deref());
+                    quote! { #[doc = #doc_str] }
+                }
+            };
             let serde_attr = if is_required {
                 if rust_name.as_str() != name {
                     quote! { #[serde(rename = #name)] }
@@ -217,9 +362,18 @@ pub fn generate_struct_fields_for_tagged_variant(
                     quote! { #[serde(default, skip_serializing_if = "Option::is_none")] }
                 }
             };
-            quote! {
-                #serde_attr
-                #field_name: #ty,
+            if is_variant {
+                quote! {
+                    #doc
+                    #serde_attr
+                    #field_name: #ty,
+                }
+            } else {
+                quote! {
+                    #doc
+                    #serde_attr
+                    pub #field_name: #ty,
+                }
             }
         })
         .collect();
@@ -344,17 +498,23 @@ pub fn generate_struct_fields(
                 name,
                 is_required,
             );
+            let type_str = get_property_type_string(prop);
+            let example_str = get_property_example(prop);
             let doc: Option<proc_macro2::TokenStream> = match prop {
                 Schema::Object(box_prop) => {
                     let prop_ref = box_prop.as_ref();
-                    let desc = &prop_ref.description;
-                    if !desc.is_empty() {
-                        Some(quote! { #[doc = #desc] })
-                    } else {
+                    let desc = if prop_ref.description.is_empty() {
                         None
-                    }
+                    } else {
+                        Some(prop_ref.description.as_str())
+                    };
+                    let doc_str = make_field_doc(name, desc, is_required, &type_str, example_str.as_deref());
+                    Some(quote! { #[doc = #doc_str] })
                 }
-                _ => None,
+                _ => {
+                    let doc_str = make_field_doc(name, None, is_required, &type_str, example_str.as_deref());
+                    Some(quote! { #[doc = #doc_str] })
+                }
             };
             let serde_attr = if is_required {
                 if rust_name.as_str() != name {
@@ -380,10 +540,6 @@ pub fn generate_struct_fields(
 }
 
 /// Determines the Rust type for a property schema.
-///
-/// This is the core type resolution function that maps OpenAPI schema
-/// types to Rust types, handling references, enums, arrays, objects,
-/// and primitives.
 ///
 /// # Arguments
 ///
@@ -655,17 +811,23 @@ pub fn extract_request_body_type(
                                             name,
                                             is_required,
                                         );
-                                        let doc: Option<proc_macro2::TokenStream> = match prop {
+                                        let type_str = get_property_type_string(prop);
+                                        let example_str = get_property_example(prop);
+                                        let doc: proc_macro2::TokenStream = match prop {
                                             Schema::Object(box_prop) => {
                                                 let prop_ref = box_prop.as_ref();
-                                                let desc = &prop_ref.description;
-                                                if !desc.is_empty() {
-                                                    Some(quote! { #[doc = #desc] })
-                                                } else {
+                                                let desc = if prop_ref.description.is_empty() {
                                                     None
-                                                }
+                                                } else {
+                                                    Some(prop_ref.description.as_str())
+                                                };
+                                                let doc_str = make_field_doc(name, desc, is_required, &type_str, example_str.as_deref());
+                                                quote! { #[doc = #doc_str] }
                                             }
-                                            _ => None,
+                                            _ => {
+                                                let doc_str = make_field_doc(name, None, is_required, &type_str, example_str.as_deref());
+                                                quote! { #[doc = #doc_str] }
+                                            }
                                         };
                                         let serde_attr = if is_required {
                                             if rust_name.as_str() != name {
@@ -681,7 +843,7 @@ pub fn extract_request_body_type(
                                             }
                                         };
                                         vec![
-                                            doc.into_iter().collect::<Vec<_>>(),
+                                            vec![doc],
                                             vec![serde_attr],
                                             vec![quote! { pub #field_name: #ty, }],
                                         ]
@@ -872,17 +1034,23 @@ pub fn response_schema_to_string(
                             name,
                             is_required,
                         );
-                        let doc: Option<proc_macro2::TokenStream> = match prop {
+                        let type_str = get_property_type_string(prop);
+                        let example_str = get_property_example(prop);
+                        let doc: proc_macro2::TokenStream = match prop {
                             Schema::Object(box_prop) => {
                                 let prop_ref = box_prop.as_ref();
-                                let desc = &prop_ref.description;
-                                if !desc.is_empty() {
-                                    Some(quote! { #[doc = #desc] })
-                                } else {
+                                let desc = if prop_ref.description.is_empty() {
                                     None
-                                }
+                                } else {
+                                    Some(prop_ref.description.as_str())
+                                };
+                                let doc_str = make_field_doc(name, desc, is_required, &type_str, example_str.as_deref());
+                                quote! { #[doc = #doc_str] }
                             }
-                            _ => None,
+                            _ => {
+                                let doc_str = make_field_doc(name, None, is_required, &type_str, example_str.as_deref());
+                                quote! { #[doc = #doc_str] }
+                            }
                         };
                         let serde_attr = if is_required {
                             if rust_name.as_str() != name {
@@ -898,7 +1066,7 @@ pub fn response_schema_to_string(
                             }
                         };
                         vec![
-                            doc.into_iter().collect::<Vec<_>>(),
+                            vec![doc],
                             vec![serde_attr],
                             vec![quote! { pub #field_name: #ty, }],
                         ]
@@ -1000,19 +1168,24 @@ pub fn response_schema_to_string_item(
                         name,
                         is_required,
                     );
-                    let doc: Option<proc_macro2::TokenStream> = match prop {
+                    let type_str = get_property_type_string(prop);
+                    let example_str = get_property_example(prop);
+                    let doc: proc_macro2::TokenStream = match prop {
                         Schema::Object(box_prop) => {
                             let prop_ref = box_prop.as_ref();
-                            let desc = &prop_ref.description;
-                            if !desc.is_empty() {
-                                Some(quote! { #[doc = #desc] })
-                            } else {
+                            let desc = if prop_ref.description.is_empty() {
                                 None
-                            }
+                            } else {
+                                Some(prop_ref.description.as_str())
+                            };
+                            let doc_str = make_field_doc(name, desc, is_required, &type_str, example_str.as_deref());
+                            quote! { #[doc = #doc_str] }
                         }
-                        _ => None,
+                        _ => {
+                            let doc_str = make_field_doc(name, None, is_required, &type_str, example_str.as_deref());
+                            quote! { #[doc = #doc_str] }
+                        }
                     };
-                    let is_required = is_field_required(name, &schema.required);
                     let serde_attr = if is_required {
                         if rust_name.as_str() != name {
                             quote! { #[serde(rename = #name)] }
@@ -1027,7 +1200,7 @@ pub fn response_schema_to_string_item(
                         }
                     };
                     vec![
-                        doc.into_iter().collect::<Vec<_>>(),
+                        vec![doc],
                         vec![serde_attr],
                         vec![quote! { pub #field_name: #ty, }],
                     ]

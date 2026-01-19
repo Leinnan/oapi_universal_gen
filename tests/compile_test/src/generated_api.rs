@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use oapi_universal_gen::*;
 use std::future::Future;
-///
+///Generated from schema 'SessionStatus'.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(tag = "type")]
 pub enum SessionStatus {
@@ -9,282 +9,414 @@ pub enum SessionStatus {
     Idle,
     #[serde(rename = "retry")]
     #[display("Retry")]
-    Retry { attempt: f64, message: String, next: f64 },
+    Retry {
+        ///Type: f64. Required
+        attempt: f64,
+        ///Type: String. Required
+        message: String,
+        ///Type: f64. Required
+        next: f64,
+    },
     #[serde(rename = "busy")]
     Busy,
 }
-///
+///Generated from schema 'Message'.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(tag = "role")]
 pub enum Message {
     #[serde(rename = "user")]
     #[display("User")]
     User {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: Object. Required
         time: UserMessageTime,
+        ///Type: Object. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         summary: Option<UserMessageSummary>,
+        ///Type: String. Required
         agent: String,
+        ///Type: Object. Required
         model: UserMessageModel,
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         system: Option<String>,
+        ///Type: Object. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         tools: Option<serde_json::Value>,
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         variant: Option<String>,
     },
     #[serde(rename = "assistant")]
     #[display("Assistant")]
     Assistant {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: Object. Required
         time: AssistantMessageTime,
+        ///Type: serde_json::Value. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         error: Option<Name>,
+        ///Type: String. Required
         #[serde(rename = "parentID")]
         parent_id: String,
+        ///Type: String. Required
         #[serde(rename = "modelID")]
         model_id: String,
+        ///Type: String. Required
         #[serde(rename = "providerID")]
         provider_id: String,
+        ///Type: String. Required
         mode: String,
+        ///Type: String. Required
         agent: String,
+        ///Type: Object. Required
         path: AssistantMessagePath,
+        ///Type: bool. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         summary: Option<bool>,
+        ///Type: f64. Required
         cost: f64,
+        ///Type: Object. Required
         tokens: AssistantMessageTokens,
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         finish: Option<String>,
     },
 }
-///
+///Generated from schema 'FilePartSource'.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(tag = "type")]
 pub enum FilePartSource {
     #[serde(rename = "file")]
     #[display("File")]
-    File { text: FilePartSourceText, path: String },
+    File {
+        ///Type: FilePartSourceText. Required
+        text: FilePartSourceText,
+        ///Type: String. Required
+        path: String,
+    },
     #[serde(rename = "symbol")]
     #[display("Symbol")]
     Symbol {
+        ///Type: FilePartSourceText. Required
         text: FilePartSourceText,
+        ///Type: String. Required
         path: String,
+        ///Type: Range. Required
         range: Range,
+        ///Type: String. Required
         name: String,
+        ///Type: i64. Required
         kind: i64,
     },
     #[serde(rename = "resource")]
     #[display("Resource")]
     Resource {
+        ///Type: FilePartSourceText. Required
         text: FilePartSourceText,
+        ///Type: String. Required
         #[serde(rename = "clientName")]
         client_name: String,
+        ///Type: String. Required
         uri: String,
     },
 }
-///
+///Generated from schema 'ToolState'.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(tag = "status")]
 pub enum ToolState {
     #[serde(rename = "pending")]
     #[display("Pending")]
-    Pending { input: serde_json::Value, raw: String },
+    Pending {
+        ///Type: Object. Required
+        input: serde_json::Value,
+        ///Type: String. Required
+        raw: String,
+    },
     #[serde(rename = "running")]
     #[display("Running")]
     Running {
+        ///Type: Object. Required
         input: serde_json::Value,
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         title: Option<String>,
+        ///Type: Object. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
+        ///Type: Object. Required
         time: ToolStateRunningTime,
     },
     #[serde(rename = "completed")]
     #[display("Completed")]
     Completed {
+        ///Type: Object. Required
         input: serde_json::Value,
+        ///Type: String. Required
         output: String,
+        ///Type: String. Required
         title: String,
+        ///Type: Object. Required
         metadata: serde_json::Value,
+        ///Type: Object. Required
         time: ToolStateCompletedTime,
+        ///Type: Vec<FilePart>. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         attachments: Option<Vec<FilePart>>,
     },
     #[serde(rename = "error")]
     #[display("Error")]
     Error {
+        ///Type: Object. Required
         input: serde_json::Value,
+        ///Type: String. Required
         error: String,
+        ///Type: Object. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
+        ///Type: Object. Required
         time: ToolStateErrorTime,
     },
 }
-///
+///Generated from schema 'Part'.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(tag = "type")]
 pub enum Part {
     #[serde(rename = "text")]
     #[display("Text")]
     Text {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: String. Required
         #[serde(rename = "messageID")]
         message_id: String,
+        ///Type: String. Required
         text: String,
+        ///Type: bool. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         synthetic: Option<bool>,
+        ///Type: bool. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         ignored: Option<bool>,
+        ///Type: Object. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         time: Option<TextPartTime>,
+        ///Type: Object. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
     },
     #[serde(rename = "subtask")]
     #[display("Subtask")]
     Subtask {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: String. Required
         #[serde(rename = "messageID")]
         message_id: String,
+        ///Type: String. Required
         prompt: String,
+        ///Type: String. Required
         description: String,
+        ///Type: String. Required
         agent: String,
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         command: Option<String>,
     },
     #[serde(rename = "reasoning")]
     #[display("Reasoning")]
     Reasoning {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: String. Required
         #[serde(rename = "messageID")]
         message_id: String,
+        ///Type: String. Required
         text: String,
+        ///Type: Object. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
+        ///Type: Object. Required
         time: ReasoningPartTime,
     },
     #[serde(rename = "file")]
     #[display("File")]
     File {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: String. Required
         #[serde(rename = "messageID")]
         message_id: String,
+        ///Type: String. Required
         mime: String,
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         filename: Option<String>,
+        ///Type: String. Required
         url: String,
+        ///Type: FilePartSource. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         source: Option<FilePartSource>,
     },
     #[serde(rename = "tool")]
     #[display("Tool")]
     Tool {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: String. Required
         #[serde(rename = "messageID")]
         message_id: String,
+        ///Type: String. Required
         #[serde(rename = "callID")]
         call_id: String,
+        ///Type: String. Required
         tool: String,
+        ///Type: ToolState. Required
         state: ToolState,
+        ///Type: Object. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
     },
     #[serde(rename = "step-start")]
     #[display("StepStart")]
     StepStart {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: String. Required
         #[serde(rename = "messageID")]
         message_id: String,
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         snapshot: Option<String>,
     },
     #[serde(rename = "step-finish")]
     #[display("StepFinish")]
     StepFinish {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: String. Required
         #[serde(rename = "messageID")]
         message_id: String,
+        ///Type: String. Required
         reason: String,
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         snapshot: Option<String>,
+        ///Type: f64. Required
         cost: f64,
+        ///Type: Object. Required
         tokens: StepFinishPartTokens,
     },
     #[serde(rename = "snapshot")]
     #[display("Snapshot")]
     Snapshot {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: String. Required
         #[serde(rename = "messageID")]
         message_id: String,
+        ///Type: String. Required
         snapshot: String,
     },
     #[serde(rename = "patch")]
     #[display("Patch")]
     Patch {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: String. Required
         #[serde(rename = "messageID")]
         message_id: String,
+        ///Type: String. Required
         hash: String,
+        ///Type: Vec<String>. Required
         files: Vec<String>,
     },
     #[serde(rename = "agent")]
     #[display("Agent")]
     Agent {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: String. Required
         #[serde(rename = "messageID")]
         message_id: String,
+        ///Type: String. Required
         name: String,
+        ///Type: Object. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         source: Option<AgentPartSource>,
     },
     #[serde(rename = "retry")]
     #[display("Retry")]
     Retry {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: String. Required
         #[serde(rename = "messageID")]
         message_id: String,
+        ///Type: f64. Required
         attempt: f64,
+        ///Type: APIError. Required
         error: APIError,
+        ///Type: Object. Required
         time: RetryPartTime,
     },
     #[serde(rename = "compaction")]
     #[display("Compaction")]
     Compaction {
+        ///Type: String. Required
         id: String,
+        ///Type: String. Required
         #[serde(rename = "sessionID")]
         session_id: String,
+        ///Type: String. Required
         #[serde(rename = "messageID")]
         message_id: String,
+        ///Type: bool. Required
         auto: bool,
     },
 }
-///
+///Generated from schema 'PermissionAction'.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(rename_all = "snake_case")]
 pub enum PermissionAction {
@@ -292,7 +424,7 @@ pub enum PermissionAction {
     Deny,
     Ask,
 }
-///
+///Generated from schema 'Event'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Event {
     EventTuiPromptAppend(EventTuiPromptAppend),
@@ -344,7 +476,7 @@ pub enum LogLevel {
     WARN,
     ERROR,
 }
-///
+///Generated from schema 'PermissionActionConfig'.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(rename_all = "snake_case")]
 pub enum PermissionActionConfig {
@@ -352,13 +484,13 @@ pub enum PermissionActionConfig {
     Allow,
     Deny,
 }
-///
+///Generated from schema 'PermissionRuleConfig'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum PermissionRuleConfig {
     PermissionActionConfig(PermissionActionConfig),
     PermissionObjectConfig(PermissionObjectConfig),
 }
-///
+///Generated from schema 'PermissionConfig'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum PermissionConfig {
     PermissionActionConfig(PermissionActionConfig),
@@ -370,7 +502,7 @@ pub enum LayoutConfig {
     Auto,
     Stretch,
 }
-///
+///Generated from schema 'MCPStatus'.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(tag = "status")]
 pub enum MCPStatus {
@@ -380,25 +512,36 @@ pub enum MCPStatus {
     Disabled,
     #[serde(rename = "failed")]
     #[display("Failed")]
-    Failed { error: String },
+    Failed {
+        ///Type: String. Required
+        error: String,
+    },
     #[serde(rename = "needs_auth")]
     NeedsAuth,
     #[serde(rename = "needs_client_registration")]
     #[display("NeedsClientRegistration")]
-    NeedsClientRegistration { error: String },
+    NeedsClientRegistration {
+        ///Type: String. Required
+        error: String,
+    },
 }
-///
+///Generated from schema 'Auth'.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(tag = "type")]
 pub enum Auth {
     #[serde(rename = "oauth")]
     #[display("Oauth")]
     Oauth {
+        ///Type: String. Required
         refresh: String,
+        ///Type: String. Required
         access: String,
+        ///Type: f64. Required
         expires: f64,
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none", rename = "accountId")]
         account_id: Option<String>,
+        ///Type: String. Optional
         #[serde(
             default,
             skip_serializing_if = "Option::is_none",
@@ -408,1803 +551,2329 @@ pub enum Auth {
     },
     #[serde(rename = "api")]
     #[display("Api")]
-    Api { key: String },
+    Api {
+        ///Type: String. Required
+        key: String,
+    },
     #[serde(rename = "wellknown")]
     #[display("Wellknown")]
-    Wellknown { key: String, token: String },
+    Wellknown {
+        ///Type: String. Required
+        key: String,
+        ///Type: String. Required
+        token: String,
+    },
 }
-///
+///Generated from schema 'Event.tui.prompt.append'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventTuiPromptAppend {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventTuiPromptAppendProperties,
 }
-///
+///Generated from schema 'Event.tui.command.execute'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventTuiCommandExecute {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventTuiCommandExecuteProperties,
 }
-///
+///Generated from schema 'Event.tui.toast.show'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventTuiToastShow {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventTuiToastShowProperties,
 }
-///
+///Generated from schema 'Event.tui.session.select'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventTuiSessionSelect {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventTuiSessionSelectProperties,
 }
-///
+///Generated from schema 'Event.installation.updated'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventInstallationUpdated {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventInstallationUpdatedProperties,
 }
-///
+///Generated from schema 'Event.installation.update-available'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventInstallationUpdateAvailable {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventInstallationUpdateAvailableProperties,
 }
-///
+///Generated from schema 'Project'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Project {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     pub worktree: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub vcs: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub icon: Option<ProjectIcon>,
+    ///Type: Object. Required
     pub time: ProjectTime,
+    ///Type: Vec<String>. Required
     pub sandboxes: Vec<String>,
 }
-///
+///Generated from schema 'Event.project.updated'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventProjectUpdated {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Project. Required
     pub properties: Project,
 }
-///
+///Generated from schema 'Event.server.instance.disposed'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventServerInstanceDisposed {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventServerInstanceDisposedProperties,
 }
-///
+///Generated from schema 'Event.file.edited'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventFileEdited {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventFileEditedProperties,
 }
-///
+///Generated from schema 'Event.lsp.client.diagnostics'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventLspClientDiagnostics {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventLspClientDiagnosticsProperties,
 }
-///
+///Generated from schema 'PermissionRequest'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PermissionRequest {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     pub permission: String,
+    ///Type: Vec<String>. Required
     pub patterns: Vec<String>,
+    ///Type: Object. Required
     pub metadata: serde_json::Value,
+    ///Type: Vec<String>. Required
     pub always: Vec<String>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tool: Option<PermissionRequestTool>,
 }
-///
+///Generated from schema 'Event.permission.asked'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPermissionAsked {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: PermissionRequest. Required
     pub properties: PermissionRequest,
 }
-///
+///Generated from schema 'Event.permission.replied'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPermissionReplied {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventPermissionRepliedProperties,
 }
-///
+///Generated from schema 'Event.session.status'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionStatus {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventSessionStatusProperties,
 }
-///
+///Generated from schema 'Event.session.idle'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionIdle {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventSessionIdleProperties,
 }
-///
+///Generated from schema 'QuestionOption'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QuestionOption {
-    ///Display text (1-5 words, concise)
+    ///Display text (1-5 words, concise) Type: String. Required
     pub label: String,
-    ///Explanation of choice
+    ///Explanation of choice Type: String. Required
     pub description: String,
 }
-///
+///Generated from schema 'QuestionInfo'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QuestionInfo {
-    ///Complete question
+    ///Complete question Type: String. Required
     pub question: String,
-    ///Very short label (max 12 chars)
+    ///Very short label (max 12 chars) Type: String. Required
     pub header: String,
-    ///Available choices
+    ///Available choices Type: Vec<QuestionOption>. Required
     pub options: Vec<QuestionOption>,
-    ///Allow selecting multiple choices
+    ///Allow selecting multiple choices Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub multiple: Option<bool>,
 }
-///
+///Generated from schema 'QuestionRequest'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QuestionRequest {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
-    ///Questions to ask
+    ///Questions to ask Type: Vec<QuestionInfo>. Required
     pub questions: Vec<QuestionInfo>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tool: Option<QuestionRequestTool>,
 }
-///
+///Generated from schema 'Event.question.asked'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventQuestionAsked {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: QuestionRequest. Required
     pub properties: QuestionRequest,
 }
-///
+///Generated from schema 'QuestionAnswer'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QuestionAnswer(pub Vec<String>);
-///
+///Generated from schema 'Event.question.replied'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventQuestionReplied {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventQuestionRepliedProperties,
 }
-///
+///Generated from schema 'Event.question.rejected'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventQuestionRejected {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventQuestionRejectedProperties,
 }
-///
+///Generated from schema 'Todo'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Todo {
-    ///Brief description of the task
+    ///Brief description of the task Type: String. Required
     pub content: String,
-    ///Current status of the task: pending, in_progress, completed, cancelled
+    ///Current status of the task: pending, in_progress, completed, cancelled Type: String. Required
     pub status: String,
-    ///Priority level of the task: high, medium, low
+    ///Priority level of the task: high, medium, low Type: String. Required
     pub priority: String,
-    ///Unique identifier for the todo item
+    ///Unique identifier for the todo item Type: String. Required
     pub id: String,
 }
-///
+///Generated from schema 'Event.todo.updated'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventTodoUpdated {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventTodoUpdatedProperties,
 }
-///
+///Generated from schema 'Pty'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Pty {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     pub title: String,
+    ///Type: String. Required
     pub command: String,
+    ///Type: Vec<String>. Required
     pub args: Vec<String>,
+    ///Type: String. Required
     pub cwd: String,
+    ///Type: StringEnum. Required
     pub status: StringEnum,
+    ///Type: f64. Required
     pub pid: f64,
 }
-///
+///Generated from schema 'Event.pty.created'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPtyCreated {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventPtyCreatedProperties,
 }
-///
+///Generated from schema 'Event.pty.updated'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPtyUpdated {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventPtyUpdatedProperties,
 }
-///
+///Generated from schema 'Event.pty.exited'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPtyExited {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventPtyExitedProperties,
 }
-///
+///Generated from schema 'Event.pty.deleted'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPtyDeleted {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventPtyDeletedProperties,
 }
-///
+///Generated from schema 'Event.mcp.tools.changed'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventMcpToolsChanged {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventMcpToolsChangedProperties,
 }
-///
+///Generated from schema 'Event.file.watcher.updated'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventFileWatcherUpdated {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventFileWatcherUpdatedProperties,
 }
-///
+///Generated from schema 'Event.lsp.updated'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventLspUpdated {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: serde_json::Value,
 }
-///
+///Generated from schema 'Event.command.executed'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventCommandExecuted {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventCommandExecutedProperties,
 }
-///
+///Generated from schema 'Event.vcs.branch.updated'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventVcsBranchUpdated {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventVcsBranchUpdatedProperties,
 }
-///
+///Generated from schema 'FileDiff'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FileDiff {
+    ///Type: String. Required
     pub file: String,
+    ///Type: String. Required
     pub before: String,
+    ///Type: String. Required
     pub after: String,
+    ///Type: f64. Required
     pub additions: f64,
+    ///Type: f64. Required
     pub deletions: f64,
 }
-///
+///Generated from schema 'UserMessage'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UserMessage {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     pub role: String,
+    ///Type: Object. Required
     pub time: UserMessageTime,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub summary: Option<UserMessageSummary>,
+    ///Type: String. Required
     pub agent: String,
+    ///Type: Object. Required
     pub model: UserMessageModel,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub system: Option<String>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tools: Option<serde_json::Value>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub variant: Option<String>,
 }
-///
+///Generated from schema 'ProviderAuthError'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderAuthError {
+    ///Type: String. Required
     pub name: String,
+    ///Type: Object. Required
     pub data: ProviderAuthErrorData,
 }
-///
+///Generated from schema 'UnknownError'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UnknownError {
+    ///Type: String. Required
     pub name: String,
+    ///Type: Object. Required
     pub data: UnknownErrorData,
 }
-///
+///Generated from schema 'MessageOutputLengthError'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MessageOutputLengthError {
+    ///Type: String. Required
     pub name: String,
+    ///Type: Object. Required
     pub data: serde_json::Value,
 }
-///
+///Generated from schema 'MessageAbortedError'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MessageAbortedError {
+    ///Type: String. Required
     pub name: String,
+    ///Type: Object. Required
     pub data: MessageAbortedErrorData,
 }
-///
+///Generated from schema 'APIError'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct APIError {
+    ///Type: String. Required
     pub name: String,
+    ///Type: Object. Required
     pub data: APIErrorData,
 }
-///
+///Generated from schema 'AssistantMessage'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AssistantMessage {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     pub role: String,
+    ///Type: Object. Required
     pub time: AssistantMessageTime,
+    ///Type: serde_json::Value. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub error: Option<Name>,
+    ///Type: String. Required
     #[serde(rename = "parentID")]
     pub parent_id: String,
+    ///Type: String. Required
     #[serde(rename = "modelID")]
     pub model_id: String,
+    ///Type: String. Required
     #[serde(rename = "providerID")]
     pub provider_id: String,
+    ///Type: String. Required
     pub mode: String,
+    ///Type: String. Required
     pub agent: String,
+    ///Type: Object. Required
     pub path: AssistantMessagePath,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub summary: Option<bool>,
+    ///Type: f64. Required
     pub cost: f64,
+    ///Type: Object. Required
     pub tokens: AssistantMessageTokens,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub finish: Option<String>,
 }
-///
+///Generated from schema 'Event.message.updated'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventMessageUpdated {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventMessageUpdatedProperties,
 }
-///
+///Generated from schema 'Event.message.removed'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventMessageRemoved {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventMessageRemovedProperties,
 }
-///
+///Generated from schema 'TextPart'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TextPart {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     #[serde(rename = "messageID")]
     pub message_id: String,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub text: String,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub synthetic: Option<bool>,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub ignored: Option<bool>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub time: Option<TextPartTime>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
 }
-///
+///Generated from schema 'ReasoningPart'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ReasoningPart {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     #[serde(rename = "messageID")]
     pub message_id: String,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub text: String,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
+    ///Type: Object. Required
     pub time: ReasoningPartTime,
 }
-///
+///Generated from schema 'FilePartSourceText'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FilePartSourceText {
+    ///Type: String. Required
     pub value: String,
+    ///Type: i64. Required
     pub start: i64,
+    ///Type: i64. Required
     pub end: i64,
 }
-///
+///Generated from schema 'FileSource'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FileSource {
+    ///Type: FilePartSourceText. Required
     pub text: FilePartSourceText,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub path: String,
 }
-///
+///Generated from schema 'Range'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Range {
+    ///Type: Object. Required
     pub start: RangeStart,
+    ///Type: Object. Required
     pub end: RangeEnd,
 }
-///
+///Generated from schema 'SymbolSource'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SymbolSource {
+    ///Type: FilePartSourceText. Required
     pub text: FilePartSourceText,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub path: String,
+    ///Type: Range. Required
     pub range: Range,
+    ///Type: String. Required
     pub name: String,
+    ///Type: i64. Required
     pub kind: i64,
 }
-///
+///Generated from schema 'ResourceSource'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ResourceSource {
+    ///Type: FilePartSourceText. Required
     pub text: FilePartSourceText,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     #[serde(rename = "clientName")]
     pub client_name: String,
+    ///Type: String. Required
     pub uri: String,
 }
-///
+///Generated from schema 'FilePart'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FilePart {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     #[serde(rename = "messageID")]
     pub message_id: String,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub mime: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub filename: Option<String>,
+    ///Type: String. Required
     pub url: String,
+    ///Type: FilePartSource. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub source: Option<FilePartSource>,
 }
-///
+///Generated from schema 'ToolStatePending'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolStatePending {
+    ///Type: String. Required
     pub status: String,
+    ///Type: Object. Required
     pub input: serde_json::Value,
+    ///Type: String. Required
     pub raw: String,
 }
-///
+///Generated from schema 'ToolStateRunning'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolStateRunning {
+    ///Type: String. Required
     pub status: String,
+    ///Type: Object. Required
     pub input: serde_json::Value,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
+    ///Type: Object. Required
     pub time: ToolStateRunningTime,
 }
-///
+///Generated from schema 'ToolStateCompleted'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolStateCompleted {
+    ///Type: String. Required
     pub status: String,
+    ///Type: Object. Required
     pub input: serde_json::Value,
+    ///Type: String. Required
     pub output: String,
+    ///Type: String. Required
     pub title: String,
+    ///Type: Object. Required
     pub metadata: serde_json::Value,
+    ///Type: Object. Required
     pub time: ToolStateCompletedTime,
+    ///Type: Vec<FilePart>. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub attachments: Option<Vec<FilePart>>,
 }
-///
+///Generated from schema 'ToolStateError'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolStateError {
+    ///Type: String. Required
     pub status: String,
+    ///Type: Object. Required
     pub input: serde_json::Value,
+    ///Type: String. Required
     pub error: String,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
+    ///Type: Object. Required
     pub time: ToolStateErrorTime,
 }
-///
+///Generated from schema 'ToolPart'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolPart {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     #[serde(rename = "messageID")]
     pub message_id: String,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     #[serde(rename = "callID")]
     pub call_id: String,
+    ///Type: String. Required
     pub tool: String,
+    ///Type: ToolState. Required
     pub state: ToolState,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
 }
-///
+///Generated from schema 'StepStartPart'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StepStartPart {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     #[serde(rename = "messageID")]
     pub message_id: String,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub snapshot: Option<String>,
 }
-///
+///Generated from schema 'StepFinishPart'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StepFinishPart {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     #[serde(rename = "messageID")]
     pub message_id: String,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub reason: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub snapshot: Option<String>,
+    ///Type: f64. Required
     pub cost: f64,
+    ///Type: Object. Required
     pub tokens: StepFinishPartTokens,
 }
-///
+///Generated from schema 'SnapshotPart'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SnapshotPart {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     #[serde(rename = "messageID")]
     pub message_id: String,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub snapshot: String,
 }
-///
+///Generated from schema 'PatchPart'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PatchPart {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     #[serde(rename = "messageID")]
     pub message_id: String,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub hash: String,
+    ///Type: Vec<String>. Required
     pub files: Vec<String>,
 }
-///
+///Generated from schema 'AgentPart'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentPart {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     #[serde(rename = "messageID")]
     pub message_id: String,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub name: String,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub source: Option<AgentPartSource>,
 }
-///
+///Generated from schema 'RetryPart'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RetryPart {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     #[serde(rename = "messageID")]
     pub message_id: String,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: f64. Required
     pub attempt: f64,
+    ///Type: APIError. Required
     pub error: APIError,
+    ///Type: Object. Required
     pub time: RetryPartTime,
 }
-///
+///Generated from schema 'CompactionPart'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CompactionPart {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
+    ///Type: String. Required
     #[serde(rename = "messageID")]
     pub message_id: String,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: bool. Required
     pub auto: bool,
 }
-///
+///Generated from schema 'Event.message.part.updated'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventMessagePartUpdated {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventMessagePartUpdatedProperties,
 }
-///
+///Generated from schema 'Event.message.part.removed'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventMessagePartRemoved {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventMessagePartRemovedProperties,
 }
-///
+///Generated from schema 'Event.session.compacted'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionCompacted {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventSessionCompactedProperties,
 }
-///
+///Generated from schema 'PermissionRule'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PermissionRule {
+    ///Type: String. Required
     pub permission: String,
+    ///Type: String. Required
     pub pattern: String,
+    ///Type: PermissionAction. Required
     pub action: PermissionAction,
 }
-///
+///Generated from schema 'PermissionRuleset'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PermissionRuleset(pub Vec<PermissionRule>);
-///
+///Generated from schema 'Session'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Session {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "projectID")]
     pub project_id: String,
+    ///Type: String. Required
     pub directory: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "parentID")]
     pub parent_id: Option<String>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub summary: Option<SessionSummary>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub share: Option<SessionShare>,
+    ///Type: String. Required
     pub title: String,
+    ///Type: String. Required
     pub version: String,
+    ///Type: Object. Required
     pub time: SessionTime,
+    ///Type: PermissionRuleset. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub permission: Option<PermissionRuleset>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub revert: Option<SessionRevert>,
 }
-///
+///Generated from schema 'Event.session.created'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionCreated {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventSessionCreatedProperties,
 }
-///
+///Generated from schema 'Event.session.updated'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionUpdated {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventSessionUpdatedProperties,
 }
-///
+///Generated from schema 'Event.session.deleted'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionDeleted {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventSessionDeletedProperties,
 }
-///
+///Generated from schema 'Event.session.diff'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionDiff {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventSessionDiffProperties,
 }
-///
+///Generated from schema 'Event.session.error'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionError {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: EventSessionErrorProperties,
 }
-///
+///Generated from schema 'Event.server.connected'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventServerConnected {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: serde_json::Value,
 }
-///
+///Generated from schema 'Event.global.disposed'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventGlobalDisposed {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: Object. Required
     pub properties: serde_json::Value,
 }
-///
+///Generated from schema 'GlobalEvent'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GlobalEvent {
+    ///Type: String. Required
     pub directory: String,
+    ///Type: Event. Required
     pub payload: Event,
 }
-///
+///Generated from schema 'BadRequestError'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BadRequestError {
+    ///Type: serde_json::Value. Required
     pub data: serde_json::Value,
+    ///Type: Vec<Object>. Required
     pub errors: Vec<serde_json::Value>,
+    ///Type: bool. Required
     pub success: bool,
 }
-///
+///Generated from schema 'NotFoundError'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NotFoundError {
+    ///Type: String. Required
     pub name: String,
+    ///Type: Object. Required
     pub data: NotFoundErrorData,
 }
 ///Custom keybind configurations
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct KeybindsConfig {
-    ///Leader key for keybind combinations
+    ///Leader key for keybind combinations Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub leader: Option<String>,
-    ///Exit the application
+    ///Exit the application Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub app_exit: Option<String>,
-    ///Open external editor
+    ///Open external editor Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub editor_open: Option<String>,
-    ///List available themes
+    ///List available themes Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub theme_list: Option<String>,
-    ///Toggle sidebar
+    ///Toggle sidebar Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sidebar_toggle: Option<String>,
-    ///Toggle session scrollbar
+    ///Toggle session scrollbar Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub scrollbar_toggle: Option<String>,
-    ///Toggle username visibility
+    ///Toggle username visibility Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub username_toggle: Option<String>,
-    ///View status
+    ///View status Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub status_view: Option<String>,
-    ///Export session to editor
+    ///Export session to editor Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_export: Option<String>,
-    ///Create a new session
+    ///Create a new session Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_new: Option<String>,
-    ///List all sessions
+    ///List all sessions Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_list: Option<String>,
-    ///Show session timeline
+    ///Show session timeline Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_timeline: Option<String>,
-    ///Fork session from message
+    ///Fork session from message Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_fork: Option<String>,
-    ///Rename session
+    ///Rename session Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_rename: Option<String>,
-    ///Share current session
+    ///Share current session Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_share: Option<String>,
-    ///Unshare current session
+    ///Unshare current session Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_unshare: Option<String>,
-    ///Interrupt current session
+    ///Interrupt current session Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_interrupt: Option<String>,
-    ///Compact the session
+    ///Compact the session Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_compact: Option<String>,
-    ///Scroll messages up by one page
+    ///Scroll messages up by one page Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub messages_page_up: Option<String>,
-    ///Scroll messages down by one page
+    ///Scroll messages down by one page Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub messages_page_down: Option<String>,
-    ///Scroll messages up by half page
+    ///Scroll messages up by half page Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub messages_half_page_up: Option<String>,
-    ///Scroll messages down by half page
+    ///Scroll messages down by half page Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub messages_half_page_down: Option<String>,
-    ///Navigate to first message
+    ///Navigate to first message Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub messages_first: Option<String>,
-    ///Navigate to last message
+    ///Navigate to last message Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub messages_last: Option<String>,
-    ///Navigate to next message
+    ///Navigate to next message Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub messages_next: Option<String>,
-    ///Navigate to previous message
+    ///Navigate to previous message Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub messages_previous: Option<String>,
-    ///Navigate to last user message
+    ///Navigate to last user message Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub messages_last_user: Option<String>,
-    ///Copy message
+    ///Copy message Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub messages_copy: Option<String>,
-    ///Undo message
+    ///Undo message Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub messages_undo: Option<String>,
-    ///Redo message
+    ///Redo message Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub messages_redo: Option<String>,
-    ///Toggle code block concealment in messages
+    ///Toggle code block concealment in messages Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub messages_toggle_conceal: Option<String>,
-    ///Toggle tool details visibility
+    ///Toggle tool details visibility Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tool_details: Option<String>,
-    ///List available models
+    ///List available models Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model_list: Option<String>,
-    ///Next recently used model
+    ///Next recently used model Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model_cycle_recent: Option<String>,
-    ///Previous recently used model
+    ///Previous recently used model Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model_cycle_recent_reverse: Option<String>,
-    ///Next favorite model
+    ///Next favorite model Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model_cycle_favorite: Option<String>,
-    ///Previous favorite model
+    ///Previous favorite model Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model_cycle_favorite_reverse: Option<String>,
-    ///List available commands
+    ///List available commands Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub command_list: Option<String>,
-    ///List agents
+    ///List agents Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent_list: Option<String>,
-    ///Next agent
+    ///Next agent Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent_cycle: Option<String>,
-    ///Previous agent
+    ///Previous agent Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent_cycle_reverse: Option<String>,
-    ///Cycle model variants
+    ///Cycle model variants Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub variant_cycle: Option<String>,
-    ///Clear input field
+    ///Clear input field Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_clear: Option<String>,
-    ///Paste from clipboard
+    ///Paste from clipboard Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_paste: Option<String>,
-    ///Submit input
+    ///Submit input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_submit: Option<String>,
-    ///Insert newline in input
+    ///Insert newline in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_newline: Option<String>,
-    ///Move cursor left in input
+    ///Move cursor left in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_move_left: Option<String>,
-    ///Move cursor right in input
+    ///Move cursor right in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_move_right: Option<String>,
-    ///Move cursor up in input
+    ///Move cursor up in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_move_up: Option<String>,
-    ///Move cursor down in input
+    ///Move cursor down in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_move_down: Option<String>,
-    ///Select left in input
+    ///Select left in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_select_left: Option<String>,
-    ///Select right in input
+    ///Select right in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_select_right: Option<String>,
-    ///Select up in input
+    ///Select up in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_select_up: Option<String>,
-    ///Select down in input
+    ///Select down in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_select_down: Option<String>,
-    ///Move to start of line in input
+    ///Move to start of line in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_line_home: Option<String>,
-    ///Move to end of line in input
+    ///Move to end of line in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_line_end: Option<String>,
-    ///Select to start of line in input
+    ///Select to start of line in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_select_line_home: Option<String>,
-    ///Select to end of line in input
+    ///Select to end of line in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_select_line_end: Option<String>,
-    ///Move to start of visual line in input
+    ///Move to start of visual line in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_visual_line_home: Option<String>,
-    ///Move to end of visual line in input
+    ///Move to end of visual line in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_visual_line_end: Option<String>,
-    ///Select to start of visual line in input
+    ///Select to start of visual line in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_select_visual_line_home: Option<String>,
-    ///Select to end of visual line in input
+    ///Select to end of visual line in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_select_visual_line_end: Option<String>,
-    ///Move to start of buffer in input
+    ///Move to start of buffer in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_buffer_home: Option<String>,
-    ///Move to end of buffer in input
+    ///Move to end of buffer in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_buffer_end: Option<String>,
-    ///Select to start of buffer in input
+    ///Select to start of buffer in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_select_buffer_home: Option<String>,
-    ///Select to end of buffer in input
+    ///Select to end of buffer in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_select_buffer_end: Option<String>,
-    ///Delete line in input
+    ///Delete line in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_delete_line: Option<String>,
-    ///Delete to end of line in input
+    ///Delete to end of line in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_delete_to_line_end: Option<String>,
-    ///Delete to start of line in input
+    ///Delete to start of line in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_delete_to_line_start: Option<String>,
-    ///Backspace in input
+    ///Backspace in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_backspace: Option<String>,
-    ///Delete character in input
+    ///Delete character in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_delete: Option<String>,
-    ///Undo in input
+    ///Undo in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_undo: Option<String>,
-    ///Redo in input
+    ///Redo in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_redo: Option<String>,
-    ///Move word forward in input
+    ///Move word forward in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_word_forward: Option<String>,
-    ///Move word backward in input
+    ///Move word backward in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_word_backward: Option<String>,
-    ///Select word forward in input
+    ///Select word forward in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_select_word_forward: Option<String>,
-    ///Select word backward in input
+    ///Select word backward in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_select_word_backward: Option<String>,
-    ///Delete word forward in input
+    ///Delete word forward in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_delete_word_forward: Option<String>,
-    ///Delete word backward in input
+    ///Delete word backward in input Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_delete_word_backward: Option<String>,
-    ///Previous history item
+    ///Previous history item Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub history_previous: Option<String>,
-    ///Next history item
+    ///Next history item Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub history_next: Option<String>,
-    ///Next child session
+    ///Next child session Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_child_cycle: Option<String>,
-    ///Previous child session
+    ///Previous child session Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_child_cycle_reverse: Option<String>,
-    ///Go to parent session
+    ///Go to parent session Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_parent: Option<String>,
-    ///Suspend terminal
+    ///Suspend terminal Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub terminal_suspend: Option<String>,
-    ///Toggle terminal title
+    ///Toggle terminal title Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub terminal_title_toggle: Option<String>,
-    ///Toggle tips on home screen
+    ///Toggle tips on home screen Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tips_toggle: Option<String>,
 }
 ///Server configuration for opencode serve and web commands
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ServerConfig {
-    ///Port to listen on
+    ///Port to listen on Type: i64. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub port: Option<i64>,
-    ///Hostname to listen on
+    ///Hostname to listen on Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub hostname: Option<String>,
-    ///Enable mDNS service discovery
+    ///Enable mDNS service discovery Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mdns: Option<bool>,
-    ///Additional domains to allow for CORS
+    ///Additional domains to allow for CORS Type: Vec<String>. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cors: Option<Vec<String>>,
 }
-///
+///Generated from schema 'PermissionObjectConfig'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PermissionObjectConfig {}
-///
+///Generated from schema 'AgentConfig'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentConfig {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model: Option<String>,
+    ///Type: f64. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub temperature: Option<f64>,
+    ///Type: f64. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub top_p: Option<f64>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub prompt: Option<String>,
-    ///@deprecated Use 'permission' field instead
+    ///@deprecated Use 'permission' field instead Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tools: Option<serde_json::Value>,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub disable: Option<bool>,
-    ///Description of when to use the agent
+    ///Description of when to use the agent Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    ///Type: StringEnum. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mode: Option<StringEnum>,
-    ///Hide this subagent from the @ autocomplete menu (default: false, only applies to mode: subagent)
+    ///Hide this subagent from the @ autocomplete menu (default: false, only applies to mode: subagent) Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub hidden: Option<bool>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub options: Option<serde_json::Value>,
-    ///Hex color code for the agent (e.g., #FF5733)
+    ///Hex color code for the agent (e.g., #FF5733) Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub color: Option<String>,
-    ///Maximum number of agentic iterations before forcing text-only response
+    ///Maximum number of agentic iterations before forcing text-only response Type: i64. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub steps: Option<i64>,
-    ///@deprecated Use 'steps' field instead.
+    ///@deprecated Use 'steps' field instead. Type: i64. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "maxSteps")]
     pub max_steps: Option<i64>,
+    ///Type: PermissionConfig. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub permission: Option<PermissionConfig>,
 }
-///
+///Generated from schema 'ProviderConfig'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderConfig {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub api: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    ///Type: Vec<String>. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub env: Option<Vec<String>>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub npm: Option<String>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub models: Option<serde_json::Value>,
+    ///Type: Vec<String>. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub whitelist: Option<Vec<String>>,
+    ///Type: Vec<String>. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub blacklist: Option<Vec<String>>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub options: Option<ProviderConfigOptions>,
 }
-///
+///Generated from schema 'McpLocalConfig'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpLocalConfig {
-    ///Type of MCP server connection
+    ///Type of MCP server connection Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
-    ///Command and arguments to run the MCP server
+    ///Command and arguments to run the MCP server Type: Vec<String>. Required
     pub command: Vec<String>,
-    ///Environment variables to set when running the MCP server
+    ///Environment variables to set when running the MCP server Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub environment: Option<serde_json::Value>,
-    ///Enable or disable the MCP server on startup
+    ///Enable or disable the MCP server on startup Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
-    ///Timeout in ms for fetching tools from the MCP server. Defaults to 5000 (5 seconds) if not specified.
+    ///Timeout in ms for fetching tools from the MCP server. Defaults to 5000 (5 seconds) if not specified. Type: i64. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timeout: Option<i64>,
 }
-///
+///Generated from schema 'McpOAuthConfig'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpOAuthConfig {
-    ///OAuth client ID. If not provided, dynamic client registration (RFC 7591) will be attempted.
+    ///OAuth client ID. If not provided, dynamic client registration (RFC 7591) will be attempted. Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "clientId")]
     pub client_id: Option<String>,
-    ///OAuth client secret (if required by the authorization server)
+    ///OAuth client secret (if required by the authorization server) Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "clientSecret")]
     pub client_secret: Option<String>,
-    ///OAuth scopes to request during authorization
+    ///OAuth scopes to request during authorization Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub scope: Option<String>,
 }
-///
+///Generated from schema 'McpRemoteConfig'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpRemoteConfig {
-    ///Type of MCP server connection
+    ///Type of MCP server connection Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
-    ///URL of the remote MCP server
+    ///URL of the remote MCP server Type: String. Required
     pub url: String,
-    ///Enable or disable the MCP server on startup
+    ///Enable or disable the MCP server on startup Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
-    ///Headers to send with the request
+    ///Headers to send with the request Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub headers: Option<serde_json::Value>,
-    ///OAuth authentication configuration for the MCP server. Set to false to disable OAuth auto-detection.
+    ///OAuth authentication configuration for the MCP server. Set to false to disable OAuth auto-detection. Type: serde_json::Value. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub oauth: Option<serde_json::Value>,
-    ///Timeout in ms for fetching tools from the MCP server. Defaults to 5000 (5 seconds) if not specified.
+    ///Timeout in ms for fetching tools from the MCP server. Defaults to 5000 (5 seconds) if not specified. Type: i64. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timeout: Option<i64>,
 }
-///
+///Generated from schema 'Config'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
-    ///JSON schema reference for configuration validation
+    ///JSON schema reference for configuration validation Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "$schema")]
     pub dollar_schema: Option<String>,
-    ///Theme name to use for the interface
+    ///Theme name to use for the interface Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub theme: Option<String>,
+    ///Type: KeybindsConfig. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub keybinds: Option<KeybindsConfig>,
+    ///Type: LogLevel. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "logLevel")]
     pub log_level: Option<LogLevel>,
-    ///TUI specific settings
+    ///TUI specific settings Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tui: Option<ConfigTui>,
+    ///Type: ServerConfig. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub server: Option<ServerConfig>,
-    ///Command configuration, see https://opencode.ai/docs/commands
+    ///Command configuration, see https://opencode.ai/docs/commands Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub command: Option<serde_json::Value>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub watcher: Option<ConfigWatcher>,
+    ///Type: Vec<String>. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub plugin: Option<Vec<String>>,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub snapshot: Option<bool>,
-    ///Control sharing behavior:'manual' allows manual sharing via commands, 'auto' enables automatic sharing, 'disabled' disables all sharing
+    ///Control sharing behavior:'manual' allows manual sharing via commands, 'auto' enables automatic sharing, 'disabled' disables all sharing Type: StringEnum. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub share: Option<StringEnum>,
-    ///@deprecated Use 'share' field instead. Share newly created sessions automatically
+    ///@deprecated Use 'share' field instead. Share newly created sessions automatically Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub autoshare: Option<bool>,
-    ///Automatically update to the latest version. Set to true to auto-update, false to disable, or 'notify' to show update notifications
+    ///Automatically update to the latest version. Set to true to auto-update, false to disable, or 'notify' to show update notifications Type: serde_json::Value. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub autoupdate: Option<serde_json::Value>,
-    ///Disable providers that are loaded automatically
+    ///Disable providers that are loaded automatically Type: Vec<String>. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub disabled_providers: Option<Vec<String>>,
-    ///When set, ONLY these providers will be enabled. All other providers will be ignored
+    ///When set, ONLY these providers will be enabled. All other providers will be ignored Type: Vec<String>. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enabled_providers: Option<Vec<String>>,
-    ///Model to use in the format of provider/model, eg anthropic/claude-2
+    ///Model to use in the format of provider/model, eg anthropic/claude-2 Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model: Option<String>,
-    ///Small model to use for tasks like title generation in the format of provider/model
+    ///Small model to use for tasks like title generation in the format of provider/model Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub small_model: Option<String>,
-    ///Default agent to use when none is specified. Must be a primary agent. Falls back to 'build' if not set or if the specified agent is invalid.
+    ///Default agent to use when none is specified. Must be a primary agent. Falls back to 'build' if not set or if the specified agent is invalid. Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub default_agent: Option<String>,
-    ///Custom username to display in conversations instead of system username
+    ///Custom username to display in conversations instead of system username Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub username: Option<String>,
-    ///@deprecated Use `agent` field instead.
+    ///@deprecated Use `agent` field instead. Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mode: Option<ConfigMode>,
-    ///Agent configuration, see https://opencode.ai/docs/agent
+    ///Agent configuration, see https://opencode.ai/docs/agent Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<ConfigAgent>,
-    ///Custom provider configurations and model overrides
+    ///Custom provider configurations and model overrides Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub provider: Option<serde_json::Value>,
-    ///MCP (Model Context Protocol) server configurations
+    ///MCP (Model Context Protocol) server configurations Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mcp: Option<serde_json::Value>,
+    ///Type: serde_json::Value. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub formatter: Option<serde_json::Value>,
+    ///Type: serde_json::Value. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub lsp: Option<serde_json::Value>,
-    ///Additional instruction files or patterns to include
+    ///Additional instruction files or patterns to include Type: Vec<String>. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub instructions: Option<Vec<String>>,
+    ///Type: LayoutConfig. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub layout: Option<LayoutConfig>,
+    ///Type: PermissionConfig. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub permission: Option<PermissionConfig>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tools: Option<serde_json::Value>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub enterprise: Option<ConfigEnterprise>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub compaction: Option<ConfigCompaction>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub experimental: Option<ConfigExperimental>,
 }
-///
+///Generated from schema 'ToolIDs'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolIDs(pub Vec<String>);
-///
+///Generated from schema 'ToolListItem'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolListItem {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     pub description: String,
+    ///Type: serde_json::Value. Required
     pub parameters: serde_json::Value,
 }
-///
+///Generated from schema 'ToolList'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolList(pub Vec<ToolListItem>);
-///
+///Generated from schema 'Path'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Path {
+    ///Type: String. Required
     pub home: String,
+    ///Type: String. Required
     pub state: String,
+    ///Type: String. Required
     pub config: String,
+    ///Type: String. Required
     pub worktree: String,
+    ///Type: String. Required
     pub directory: String,
 }
-///
+///Generated from schema 'Worktree'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Worktree {
+    ///Type: String. Required
     pub name: String,
+    ///Type: String. Required
     pub branch: String,
+    ///Type: String. Required
     pub directory: String,
 }
-///
+///Generated from schema 'WorktreeCreateInput'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorktreeCreateInput {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "startCommand")]
     pub start_command: Option<String>,
 }
-///
+///Generated from schema 'VcsInfo'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct VcsInfo {
+    ///Type: String. Required
     pub branch: String,
 }
-///
+///Generated from schema 'TextPartInput'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TextPartInput {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub text: String,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub synthetic: Option<bool>,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub ignored: Option<bool>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub time: Option<TextPartInputTime>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
 }
-///
+///Generated from schema 'FilePartInput'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FilePartInput {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub mime: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub filename: Option<String>,
+    ///Type: String. Required
     pub url: String,
+    ///Type: FilePartSource. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub source: Option<FilePartSource>,
 }
-///
+///Generated from schema 'AgentPartInput'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentPartInput {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub name: String,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub source: Option<AgentPartInputSource>,
 }
-///
+///Generated from schema 'SubtaskPartInput'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SubtaskPartInput {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub prompt: String,
+    ///Type: String. Required
     pub description: String,
+    ///Type: String. Required
     pub agent: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub command: Option<String>,
 }
-///
+///Generated from schema 'Command'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Command {
+    ///Type: String. Required
     pub name: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model: Option<String>,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mcp: Option<bool>,
+    ///Type: serde_json::Value. Required
     pub template: serde_json::Value,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub subtask: Option<bool>,
+    ///Type: Vec<String>. Required
     pub hints: Vec<String>,
 }
-///
+///Generated from schema 'Model'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Model {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     #[serde(rename = "providerID")]
     pub provider_id: String,
+    ///Type: Object. Required
     pub api: ModelApi,
+    ///Type: String. Required
     pub name: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub family: Option<String>,
+    ///Type: Object. Required
     pub capabilities: ModelCapabilities,
+    ///Type: Object. Required
     pub cost: ModelCost,
+    ///Type: Object. Required
     pub limit: ModelLimit,
+    ///Type: StringEnum. Required
     pub status: StringEnum,
+    ///Type: Object. Required
     pub options: serde_json::Value,
+    ///Type: Object. Required
     pub headers: serde_json::Value,
+    ///Type: String. Required
     pub release_date: String,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub variants: Option<serde_json::Value>,
 }
-///
+///Generated from schema 'Provider'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Provider {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     pub name: String,
+    ///Type: StringEnum. Required
     pub source: StringEnum,
+    ///Type: Vec<String>. Required
     pub env: Vec<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub key: Option<String>,
+    ///Type: Object. Required
     pub options: serde_json::Value,
+    ///Type: Object. Required
     pub models: serde_json::Value,
 }
-///
+///Generated from schema 'ProviderAuthMethod'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderAuthMethod {
+    ///Type: serde_json::Value. Required
     #[serde(rename = "type")]
     pub type_field: serde_json::Value,
+    ///Type: String. Required
     pub label: String,
 }
-///
+///Generated from schema 'ProviderAuthAuthorization'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderAuthAuthorization {
+    ///Type: String. Required
     pub url: String,
+    ///Type: serde_json::Value. Required
     pub method: serde_json::Value,
+    ///Type: String. Required
     pub instructions: String,
 }
-///
+///Generated from schema 'Symbol'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Symbol {
+    ///Type: String. Required
     pub name: String,
+    ///Type: f64. Required
     pub kind: f64,
+    ///Type: Object. Required
     pub location: SymbolLocation,
 }
-///
+///Generated from schema 'FileNode'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FileNode {
+    ///Type: String. Required
     pub name: String,
+    ///Type: String. Required
     pub path: String,
+    ///Type: String. Required
     pub absolute: String,
+    ///Type: StringEnum. Required
     #[serde(rename = "type")]
     pub type_field: StringEnum,
+    ///Type: bool. Required
     pub ignored: bool,
 }
-///
+///Generated from schema 'FileContent'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FileContent {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub content: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub diff: Option<String>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub patch: Option<FileContentPatch>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub encoding: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "mimeType")]
     pub mime_type: Option<String>,
 }
-///
+///Generated from schema 'File'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct File {
+    ///Type: String. Required
     pub path: String,
+    ///Type: i64. Required
     pub added: i64,
+    ///Type: i64. Required
     pub removed: i64,
+    ///Type: StringEnum. Required
     pub status: StringEnum,
 }
-///
+///Generated from schema 'Agent'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Agent {
+    ///Type: String. Required
     pub name: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    ///Type: StringEnum. Required
     pub mode: StringEnum,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub native: Option<bool>,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub hidden: Option<bool>,
+    ///Type: f64. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "topP")]
     pub top_p: Option<f64>,
+    ///Type: f64. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub temperature: Option<f64>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub color: Option<String>,
+    ///Type: PermissionRuleset. Required
     pub permission: PermissionRuleset,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model: Option<AgentModel>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub prompt: Option<String>,
+    ///Type: Object. Required
     pub options: serde_json::Value,
+    ///Type: i64. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub steps: Option<i64>,
 }
-///
+///Generated from schema 'MCPStatusConnected'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MCPStatusConnected {
+    ///Type: String. Required
     pub status: String,
 }
-///
+///Generated from schema 'MCPStatusDisabled'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MCPStatusDisabled {
+    ///Type: String. Required
     pub status: String,
 }
-///
+///Generated from schema 'MCPStatusFailed'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MCPStatusFailed {
+    ///Type: String. Required
     pub status: String,
+    ///Type: String. Required
     pub error: String,
 }
-///
+///Generated from schema 'MCPStatusNeedsAuth'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MCPStatusNeedsAuth {
+    ///Type: String. Required
     pub status: String,
 }
-///
+///Generated from schema 'MCPStatusNeedsClientRegistration'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MCPStatusNeedsClientRegistration {
+    ///Type: String. Required
     pub status: String,
+    ///Type: String. Required
     pub error: String,
 }
-///
+///Generated from schema 'McpResource'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpResource {
+    ///Type: String. Required
     pub name: String,
+    ///Type: String. Required
     pub uri: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "mimeType")]
     pub mime_type: Option<String>,
+    ///Type: String. Required
     pub client: String,
 }
-///
+///Generated from schema 'LSPStatus'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LSPStatus {
+    ///Type: String. Required
     pub id: String,
+    ///Type: String. Required
     pub name: String,
+    ///Type: String. Required
     pub root: String,
+    ///Type: serde_json::Value. Required
     pub status: serde_json::Value,
 }
-///
+///Generated from schema 'FormatterStatus'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FormatterStatus {
+    ///Type: String. Required
     pub name: String,
+    ///Type: Vec<String>. Required
     pub extensions: Vec<String>,
+    ///Type: bool. Required
     pub enabled: bool,
 }
-///
+///Generated from schema 'OAuth'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OAuth {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub refresh: String,
+    ///Type: String. Required
     pub access: String,
+    ///Type: f64. Required
     pub expires: f64,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "accountId")]
     pub account_id: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "enterpriseUrl")]
     pub enterprise_url: Option<String>,
 }
-///
+///Generated from schema 'ApiAuth'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ApiAuth {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub key: String,
 }
-///
+///Generated from schema 'WellKnownAuth'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WellKnownAuth {
+    ///Type: String. Required
     #[serde(rename = "type")]
     pub type_field: String,
+    ///Type: String. Required
     pub key: String,
+    ///Type: String. Required
     pub token: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GlobalHealthGetResponse {
+    ///Type: bool. Required
     pub healthy: bool,
+    ///Type: String. Required
     pub version: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProjectProjectidPatchRequest {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub icon: Option<InlineObject>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PtyPostRequest {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub command: Option<String>,
+    ///Type: Vec<String>. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub args: Option<Vec<String>>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cwd: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub env: Option<serde_json::Value>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PtyPtyidPutRequest {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub size: Option<InlineObject>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionPostRequest {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "parentID")]
     pub parent_id: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    ///Type: PermissionRuleset. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub permission: Option<PermissionRuleset>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidPatchRequest {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub time: Option<InlineObject>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidInitPostRequest {
+    ///Type: String. Required
     #[serde(rename = "modelID")]
     pub model_id: String,
+    ///Type: String. Required
     #[serde(rename = "providerID")]
     pub provider_id: String,
+    ///Type: String. Required
     #[serde(rename = "messageID")]
     pub message_id: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidForkPostRequest {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
     pub message_id: Option<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidSummarizePostRequest {
+    ///Type: String. Required
     #[serde(rename = "providerID")]
     pub provider_id: String,
+    ///Type: String. Required
     #[serde(rename = "modelID")]
     pub model_id: String,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub auto: Option<bool>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidMessageGetResponse {
+    ///Type: Message. Required
     pub info: Message,
+    ///Type: Vec<Part>. Required
     pub parts: Vec<Part>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidMessagePostRequest {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
     pub message_id: Option<String>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model: Option<InlineObject>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "noReply")]
     pub no_reply: Option<bool>,
-    ///@deprecated tools and permissions have been merged, you can set permissions on the session itself now
+    ///@deprecated tools and permissions have been merged, you can set permissions on the session itself now Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tools: Option<serde_json::Value>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub system: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub variant: Option<String>,
+    ///Type: Vec<serde_json::Value>. Required
     pub parts: Vec<Type>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidMessagePostResponse {
+    ///Type: AssistantMessage. Required
     pub info: AssistantMessage,
+    ///Type: Vec<Part>. Required
     pub parts: Vec<Part>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidMessageMessageidGetResponse {
+    ///Type: Message. Required
     pub info: Message,
+    ///Type: Vec<Part>. Required
     pub parts: Vec<Part>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidPromptAsyncPostRequest {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
     pub message_id: Option<String>,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model: Option<InlineObject>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
+    ///Type: bool. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "noReply")]
     pub no_reply: Option<bool>,
-    ///@deprecated tools and permissions have been merged, you can set permissions on the session itself now
+    ///@deprecated tools and permissions have been merged, you can set permissions on the session itself now Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tools: Option<serde_json::Value>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub system: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub variant: Option<String>,
+    ///Type: Vec<serde_json::Value>. Required
     pub parts: Vec<Type>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidCommandPostRequest {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "messageID")]
     pub message_id: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model: Option<String>,
+    ///Type: String. Required
     pub arguments: String,
+    ///Type: String. Required
     pub command: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub variant: Option<String>,
+    ///Type: Vec<serde_json::Value>. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parts: Option<Vec<Type>>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidCommandPostResponse {
+    ///Type: AssistantMessage. Required
     pub info: AssistantMessage,
+    ///Type: Vec<Part>. Required
     pub parts: Vec<Part>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidShellPostRequest {
+    ///Type: String. Required
     pub agent: String,
+    ///Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model: Option<InlineObject>,
+    ///Type: String. Required
     pub command: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidRevertPostRequest {
+    ///Type: String. Required
     #[serde(rename = "messageID")]
     pub message_id: String,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "partID")]
     pub part_id: Option<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSessionidPermissionsPermissionidPostRequest {
+    ///Type: StringEnum. Required
     pub response: StringEnum,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PermissionRequestidReplyPostRequest {
+    ///Type: StringEnum. Required
     pub reply: StringEnum,
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QuestionRequestidReplyPostRequest {
-    ///User answers in order of questions (each answer is an array of selected labels)
+    ///User answers in order of questions (each answer is an array of selected labels) Type: Vec<QuestionAnswer>. Required
     pub answers: Vec<QuestionAnswer>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ConfigProvidersGetResponse {
+    ///Type: Vec<Provider>. Required
     pub providers: Vec<Provider>,
+    ///Type: Object. Required
     pub default: serde_json::Value,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderGetResponse {
+    ///Type: Vec<Object>. Required
     pub all: Vec<InlineObject>,
+    ///Type: Object. Required
     pub default: serde_json::Value,
+    ///Type: Vec<String>. Required
     pub connected: Vec<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderProvideridOauthAuthorizePostRequest {
-    ///Auth method index
+    ///Auth method index Type: f64. Required
     pub method: f64,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderProvideridOauthCallbackPostRequest {
-    ///Auth method index
+    ///Auth method index Type: f64. Required
     pub method: f64,
-    ///OAuth authorization code
+    ///OAuth authorization code Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub code: Option<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FindGetResponse {
+    ///Type: Object. Required
     pub path: FindGetResponsePath,
+    ///Type: Object. Required
     pub lines: FindGetResponseLines,
+    ///Type: f64. Required
     pub line_number: f64,
+    ///Type: f64. Required
     pub absolute_offset: f64,
+    ///Type: Vec<Object>. Required
     pub submatches: Vec<InlineObject>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LogPostRequest {
-    ///Service name for the log entry
+    ///Service name for the log entry Type: String. Required
     pub service: String,
-    ///Log level
+    ///Log level Type: StringEnum. Required
     pub level: StringEnum,
-    ///Log message
+    ///Log message Type: String. Required
     pub message: String,
-    ///Additional metadata for the log entry
+    ///Additional metadata for the log entry Type: Object. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub extra: Option<serde_json::Value>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpPostRequest {
+    ///Type: String. Required
     pub name: String,
+    ///Type: serde_json::Value. Required
     pub config: Type,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpNameAuthPostResponse {
-    ///URL to open in browser for authorization
+    ///URL to open in browser for authorization Type: String. Required
     #[serde(rename = "authorizationUrl")]
     pub authorization_url: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpNameAuthDeleteResponse {
+    ///Type: bool. Required
     pub success: bool,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpNameAuthCallbackPostRequest {
-    ///Authorization code from OAuth callback
+    ///Authorization code from OAuth callback Type: String. Required
     pub code: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TuiAppendPromptPostRequest {
+    ///Type: String. Required
     pub text: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TuiExecuteCommandPostRequest {
+    ///Type: String. Required
     pub command: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TuiShowToastPostRequest {
+    ///Type: String. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    ///Type: String. Required
     pub message: String,
+    ///Type: StringEnum. Required
     pub variant: StringEnum,
-    ///Duration in milliseconds
+    ///Duration in milliseconds Type: f64. Optional
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub duration: Option<f64>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TuiSelectSessionPostRequest {
-    ///Session ID to navigate to
+    ///Session ID to navigate to Type: String. Required
     #[serde(rename = "sessionID")]
     pub session_id: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TuiControlNextGetResponse {
+    ///Type: String. Required
     pub path: String,
+    ///Type: serde_json::Value. Required
     pub body: serde_json::Value,
 }
+///Generated from schema 'StringEnum'.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(rename_all = "snake_case")]
 pub enum StringEnum {
@@ -2213,67 +2882,103 @@ pub enum StringEnum {
     Warning,
     Error,
 }
+///Generated from schema 'Name'.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(tag = "name")]
 pub enum Name {
     #[display("ProviderAuthError")]
-    ProviderAuthError { data: ProviderAuthErrorData1 },
+    ProviderAuthError {
+        ///Type: Object. Required
+        data: ProviderAuthErrorData1,
+    },
     #[display("UnknownError")]
-    UnknownError { data: UnknownErrorData1 },
+    UnknownError {
+        ///Type: Object. Required
+        data: UnknownErrorData1,
+    },
     #[display("MessageOutputLengthError")]
-    MessageOutputLengthError { data: serde_json::Value },
+    MessageOutputLengthError {
+        ///Type: Object. Required
+        data: serde_json::Value,
+    },
     #[display("MessageAbortedError")]
-    MessageAbortedError { data: MessageAbortedErrorData1 },
+    MessageAbortedError {
+        ///Type: Object. Required
+        data: MessageAbortedErrorData1,
+    },
     #[display("APIError")]
-    APIError { data: APIErrorData1 },
+    APIError {
+        ///Type: Object. Required
+        data: APIErrorData1,
+    },
 }
+///Generated from schema 'Type'.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
 #[serde(tag = "type")]
 pub enum Type {
     #[serde(rename = "text")]
     #[display("Text")]
     Text {
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         id: Option<String>,
+        ///Type: String. Required
         text: String,
+        ///Type: bool. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         synthetic: Option<bool>,
+        ///Type: bool. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         ignored: Option<bool>,
+        ///Type: Object. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         time: Option<TextPartInputTime1>,
+        ///Type: Object. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
     },
     #[serde(rename = "file")]
     #[display("File")]
     File {
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         id: Option<String>,
+        ///Type: String. Required
         mime: String,
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         filename: Option<String>,
+        ///Type: String. Required
         url: String,
+        ///Type: FilePartSource. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         source: Option<FilePartSource>,
     },
     #[serde(rename = "agent")]
     #[display("Agent")]
     Agent {
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         id: Option<String>,
+        ///Type: String. Required
         name: String,
+        ///Type: Object. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         source: Option<AgentPartInputSource1>,
     },
     #[serde(rename = "subtask")]
     #[display("Subtask")]
     Subtask {
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         id: Option<String>,
+        ///Type: String. Required
         prompt: String,
+        ///Type: String. Required
         description: String,
+        ///Type: String. Required
         agent: String,
+        ///Type: String. Optional
         #[serde(default, skip_serializing_if = "Option::is_none")]
         command: Option<String>,
     },
