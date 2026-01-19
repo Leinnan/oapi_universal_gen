@@ -7,8 +7,6 @@
 
 use openapiv3_1::{Components, OpenApi};
 use quote::{format_ident, quote};
-use std::cell::RefCell;
-use std::rc::Rc;
 
 use super::types::{
     InlineEnumInfo, InlineStructInfo, MethodInfo, ParameterInfo, ParameterLocation,
@@ -44,7 +42,7 @@ pub fn build_method_info(
     components: &Components,
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
-    main_inline_structs: &Rc<RefCell<Vec<InlineStructInfo>>>,
+    main_inline_structs: &mut Vec<InlineStructInfo>,
 ) -> MethodInfo {
     let method_name = format!(
         "{}_{}",
@@ -130,7 +128,7 @@ pub fn generate_methods(
     openapi: &OpenApi,
     components: &Components,
     inline_enums: &mut Vec<InlineEnumInfo>,
-    main_inline_structs: &Rc<RefCell<Vec<InlineStructInfo>>>,
+    main_inline_structs: &mut Vec<InlineStructInfo>,
 ) -> (Vec<proc_macro2::TokenStream>, Vec<proc_macro2::TokenStream>) {
     let mut inline_input_structs = Vec::new();
     let mut methods = Vec::new();

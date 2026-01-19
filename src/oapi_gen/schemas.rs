@@ -10,8 +10,6 @@ use openapiv3_1::{
     schema::Types,
 };
 use quote::{format_ident, quote};
-use std::cell::RefCell;
-use std::rc::Rc;
 
 use super::types::{InlineEnumInfo, InlineStructInfo, ParameterInfo};
 use super::utils::{extract_ref_name, is_field_required, to_pascal_case, to_valid_rust_field_name};
@@ -39,7 +37,7 @@ fn make_field_doc(
     name: &str,
     description: Option<&str>,
     is_required: bool,
-    ty: &str,
+    _ty: &str,
     example: Option<&str>,
 ) -> String {
     let mut doc = String::new();
@@ -807,7 +805,7 @@ pub fn extract_request_body_type(
     components: &Components,
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
-    main_inline_structs: &Rc<RefCell<Vec<InlineStructInfo>>>,
+    main_inline_structs: &mut Vec<InlineStructInfo>,
     endpoint_name: &str,
 ) -> (Option<String>, bool) {
     let mut nested_inline_structs: Vec<InlineStructInfo> = Vec::new();
@@ -913,9 +911,7 @@ pub fn extract_request_body_type(
             }
         }
     };
-    main_inline_structs
-        .borrow_mut()
-        .extend(nested_inline_structs);
+    main_inline_structs.extend(nested_inline_structs);
     (result, required)
 }
 
@@ -990,7 +986,7 @@ pub fn extract_response_type(
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
     endpoint_name: &str,
-    main_inline_structs: &Rc<RefCell<Vec<InlineStructInfo>>>,
+    main_inline_structs: &mut Vec<InlineStructInfo>,
 ) -> Option<String> {
     for (status_code, response_ref) in &responses.responses {
         if !is_success_status_code(status_code) {
@@ -1036,7 +1032,7 @@ pub fn response_schema_to_string(
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
     endpoint_name: &str,
-    main_inline_structs: &Rc<RefCell<Vec<InlineStructInfo>>>,
+    main_inline_structs: &mut Vec<InlineStructInfo>,
 ) -> String {
     let mut nested_inline_structs: Vec<InlineStructInfo> = Vec::new();
     let result = match schema {
@@ -1153,9 +1149,7 @@ pub fn response_schema_to_string(
         }
         _ => "serde_json::Value".to_string(),
     };
-    main_inline_structs
-        .borrow_mut()
-        .extend(nested_inline_structs);
+    main_inline_structs.extend(nested_inline_structs);
     result
 }
 
@@ -1179,7 +1173,7 @@ pub fn response_schema_to_string_item(
     inline_structs: &mut Vec<proc_macro2::TokenStream>,
     inline_enums: &mut Vec<InlineEnumInfo>,
     endpoint_name: &str,
-    main_inline_structs: &Rc<RefCell<Vec<InlineStructInfo>>>,
+    main_inline_structs: &mut Vec<InlineStructInfo>,
 ) -> String {
     if !schema.reference.is_empty() {
         return extract_ref_name(&schema.reference);
@@ -1290,9 +1284,7 @@ pub fn response_schema_to_string_item(
         Some(Types::Single(Type::Boolean)) => "bool".to_string(),
         _ => "serde_json::Value".to_string(),
     };
-    main_inline_structs
-        .borrow_mut()
-        .extend(nested_inline_structs);
+    main_inline_structs.extend(nested_inline_structs);
     result
 }
 

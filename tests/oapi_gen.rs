@@ -358,7 +358,7 @@ fn test_doc_comments_generated() {
     let output = generate_from_json(json);
 
     assert!(output.contains("///A test schema description"));
-    assert!(output.contains("///The name field"));
+    assert!(output.contains("/// The name field"));
 
     let parsed = syn::parse_file(&output);
     assert!(
