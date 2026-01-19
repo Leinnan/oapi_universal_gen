@@ -6,8 +6,8 @@
 //! analysis for tagged unions.
 
 use openapiv3_1::{
-    path::Parameter, request_body::RequestBody, schema::Types, Components, Object, Ref, RefOr,
-    Schema, Type,
+    Components, Object, Ref, RefOr, Schema, Type, path::Parameter, request_body::RequestBody,
+    schema::Types,
 };
 use quote::{format_ident, quote};
 use std::cell::RefCell;
@@ -43,18 +43,17 @@ fn make_field_doc(
     example: Option<&str>,
 ) -> String {
     let mut doc = String::new();
+    doc.push_str(" ");
 
     if let Some(desc) = description {
         if !desc.is_empty() {
             doc.push_str(desc);
             doc.push(' ');
         }
+    } else {
+        let required_text = if is_required { "Required" } else { "Optional" };
+        doc.push_str(&format!("{} '{}' field.", required_text, name))
     }
-
-    doc.push_str(&format!("Type: {}.", ty));
-
-    let required_text = if is_required { "Required" } else { "Optional" };
-    doc.push_str(&format!(" {}", required_text));
 
     if let Some(example_str) = example {
         if !example_str.is_empty() {
@@ -140,6 +139,31 @@ fn get_property_example(prop: &Schema) -> Option<String> {
         }
         _ => None,
     }
+}
+
+/// Generates documentation for an inline struct.
+///
+/// # Arguments
+///
+/// * `endpoint` - The path of the endpoint
+/// * `placement` - The placement of the struct- body or response.
+/// * `description` - Optional description from the schema
+///
+/// # Returns
+///
+/// A token stream with the doc comment
+fn make_inline_struct_doc(
+    endpoint: &str,
+    placement: &str,
+    description: Option<&str>,
+) -> proc_macro2::TokenStream {
+    if let Some(desc) = description {
+        if !desc.is_empty() {
+            return quote! { #[doc = #desc] };
+        }
+    }
+    let doc = format!("{placement} type for endpoint '{}'.", endpoint);
+    quote! { #[doc = #doc] }
 }
 
 /// Determines if a schema represents an enum type.
@@ -850,7 +874,13 @@ pub fn extract_request_body_type(
                                     }).flatten().collect::<Vec<_>>();
 
                                     let struct_ident = format_ident!("{}", struct_name);
+                                    let struct_doc = make_inline_struct_doc(
+                                        &endpoint_name,
+                                        "Request body",
+                                        Some(box_schema.description.as_str()),
+                                    );
                                     inline_structs.push(quote! {
+                                        #struct_doc
                                         #[derive(Debug, Clone, Serialize, Deserialize)]
                                         pub struct #struct_ident {
                                             #(#fields)*
@@ -1073,7 +1103,13 @@ pub fn response_schema_to_string(
                     }).flatten().collect::<Vec<_>>();
 
                         let struct_ident = format_ident!("{}", struct_name);
+                        let struct_doc = make_inline_struct_doc(
+                            &endpoint_name,
+                            "Request response",
+                            Some(box_schema.description.as_str()),
+                        );
                         inline_structs.push(quote! {
+                            #struct_doc
                             #[derive(Debug, Clone, Serialize, Deserialize)]
                             pub struct #struct_ident {
                                 #(#fields)*
@@ -1207,7 +1243,13 @@ pub fn response_schema_to_string_item(
                 }).flatten().collect::<Vec<_>>();
 
                 let struct_ident = format_ident!("{}", struct_name);
+                let struct_doc = make_inline_struct_doc(
+                    &endpoint_name,
+                    "Request response",
+                    Some(schema.description.as_str()),
+                );
                 inline_structs.push(quote! {
+                    #struct_doc
                     #[derive(Debug, Clone, Serialize, Deserialize)]
                     pub struct #struct_ident {
                         #(#fields)*

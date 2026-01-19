@@ -4,7 +4,7 @@
 //! OpenAPI specifications. It orchestrates the entire generation process
 //! including schema parsing, type generation, and method implementation.
 
-use openapiv3_1::{schema::Types, OpenApi, Schema, Type};
+use openapiv3_1::{OpenApi, Schema, Type, schema::Types};
 use quote::{format_ident, quote};
 
 use super::methods::generate_methods;
@@ -117,6 +117,12 @@ fn generate_code(openapi: &OpenApi) -> String {
                     } else {
                         quote! {}
                     };
+                    let docs = if !variant_schema.description.is_empty() {
+                        format!(" '{}' variant. {}", name, variant_schema.description)
+                    } else {
+                        format!(" '{}' variant.", name)
+                    };
+                    let docs_atr = quote! { #[doc = #docs] };
                     let enum_name = to_pascal_case(name);
                     let variant_parent_name = if !ref_name.is_empty() {
                         ref_name.clone()
@@ -134,12 +140,14 @@ fn generate_code(openapi: &OpenApi) -> String {
                     if !has_fields {
                         quote! {
                             #rename_attr
+                            #docs_atr
                             #ident,
                         }
                     } else {
                         quote! {
                             #rename_attr
                             #[display(#variant_name)]
+                            #docs_atr
                             #ident { #(#fields)* },
                         }
                     }
