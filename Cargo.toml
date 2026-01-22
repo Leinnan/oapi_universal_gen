@@ -19,7 +19,7 @@ members = [
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0"
 url = "2.5"
-ehttp = { version = "0.4", features= ["native-async"], optional = true }
+ehttp = { version = "0.6", features= ["native-async"], optional = true }
 reqwest = { version = "^0.12", default-features = false, features = ["json", "multipart"], optional = true }
 quote = { version = "1.0", optional = true }
 proc-macro2 = { version = "1.0", optional = true }

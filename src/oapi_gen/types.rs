@@ -106,4 +106,6 @@ pub struct InlineStructInfo {
     pub name: String,
     /// The generated field definitions as token streams
     pub fields: Vec<proc_macro2::TokenStream>,
+    /// The schema object for structural comparison and deduplication
+    pub schema: openapiv3_1::Object,
 }

@@ -6,8 +6,8 @@
 //! analysis for tagged unions.
 
 use openapiv3_1::{
-    Components, Object, Ref, RefOr, Schema, Type, path::Parameter, request_body::RequestBody,
-    schema::Types,
+    path::Parameter, request_body::RequestBody, schema::Types, Components, Object, Ref, RefOr,
+    Schema, Type,
 };
 use quote::{format_ident, quote};
 
@@ -561,6 +561,101 @@ pub fn generate_struct_fields(
         .collect()
 }
 
+fn get_object_fields(schema: &Schema) -> Option<&Object> {
+    match schema {
+        Schema::Object(obj) => Some(obj.as_ref()),
+        _ => None,
+    }
+}
+
+fn schemas_are_equal(components: &Components, a: &Object, b: &Object) -> bool {
+    if a.properties.len() != b.properties.len() {
+        return false;
+    }
+
+    let a_required: std::collections::HashSet<_> = a.required.iter().collect();
+    let b_required: std::collections::HashSet<_> = b.required.iter().collect();
+    if a_required != b_required {
+        return false;
+    }
+
+    for ((a_name, a_prop), (b_name, b_prop)) in a.properties.iter().zip(b.properties.iter()) {
+        if a_name != b_name {
+            return false;
+        }
+
+        let a_is_required = a_required.contains(&a_name);
+        let b_is_required = b_required.contains(&b_name);
+        if a_is_required != b_is_required {
+            return false;
+        }
+
+        let a_desc = get_object_fields(a_prop).and_then(|obj| {
+            if obj.description.is_empty() {
+                None
+            } else {
+                Some(obj.description.clone())
+            }
+        });
+        let b_desc = get_object_fields(b_prop).and_then(|obj| {
+            if obj.description.is_empty() {
+                None
+            } else {
+                Some(obj.description.clone())
+            }
+        });
+        if a_desc != b_desc {
+            return false;
+        }
+
+        if !property_types_equal(components, a_prop, b_prop) {
+            return false;
+        }
+    }
+
+    true
+}
+
+fn property_types_equal(components: &Components, a: &Schema, b: &Schema) -> bool {
+    let a_obj = match a {
+        Schema::Object(box_obj) => box_obj.as_ref(),
+        _ => return false,
+    };
+    let b_obj = match b {
+        Schema::Object(box_obj) => box_obj.as_ref(),
+        _ => return false,
+    };
+
+    if a_obj.reference.is_empty() != b_obj.reference.is_empty() {
+        return false;
+    }
+    if !a_obj.reference.is_empty() && !b_obj.reference.is_empty() {
+        return a_obj.reference == b_obj.reference;
+    }
+
+    if a_obj.schema_type != b_obj.schema_type {
+        return false;
+    }
+
+    if a_obj.description != b_obj.description {
+        return false;
+    }
+
+    match &a_obj.schema_type {
+        Some(Types::Single(Type::String)) => true,
+        Some(Types::Single(Type::Integer)) => a_obj.format == b_obj.format,
+        Some(Types::Single(Type::Number)) => true,
+        Some(Types::Single(Type::Boolean)) => true,
+        Some(Types::Single(Type::Array)) => match (&a_obj.items, &b_obj.items) {
+            (Some(a_items), Some(b_items)) => property_types_equal(components, a_items, b_items),
+            (None, None) => true,
+            _ => false,
+        },
+        Some(Types::Single(Type::Object)) => schemas_are_equal(components, a_obj, b_obj),
+        _ => false,
+    }
+}
+
 /// Determines the Rust type for a property schema.
 ///
 /// # Arguments
@@ -711,6 +806,17 @@ pub fn property_type(
                                 }
                                 None => "InlineObject".to_string(),
                             };
+                            if let Some(existing) = inline_structs
+                                .iter()
+                                .find(|s| schemas_are_equal(components, &s.schema, box_schema))
+                            {
+                                let ident = format_ident!("{}", existing.name);
+                                return if is_required {
+                                    quote! { #ident }
+                                } else {
+                                    quote! { Option<#ident> }
+                                };
+                            }
                             let mut struct_name = base_name.clone();
                             let mut counter = 0;
                             loop {
@@ -757,6 +863,7 @@ pub fn property_type(
                             inline_structs.push(InlineStructInfo {
                                 name: struct_name.clone(),
                                 fields: fields.clone(),
+                                schema: box_schema.as_ref().clone(),
                             });
                             let ident = format_ident!("{}", struct_name);
                             if is_required {

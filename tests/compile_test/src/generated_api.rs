@@ -1,5 +1,5 @@
+use serde::{Serialize, Deserialize};
 use oapi_universal_gen::*;
-use serde::{Deserialize, Serialize};
 use std::future::Future;
 ///Generated from schema 'SessionStatus'.
 #[derive(Debug, Clone, Serialize, Deserialize, derive_more::Display)]
@@ -269,7 +269,7 @@ pub enum Part {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
         /// Required 'time' field.
-        time: ReasoningPartTime,
+        time: TextPartTime,
     },
     #[serde(rename = "file")]
     #[display("File")]
@@ -353,7 +353,7 @@ pub enum Part {
         /// Required 'cost' field.
         cost: f64,
         /// Required 'tokens' field.
-        tokens: StepFinishPartTokens,
+        tokens: AssistantMessageTokens,
     },
     #[serde(rename = "snapshot")]
     #[display("Snapshot")]
@@ -422,7 +422,7 @@ pub enum Part {
         /// Required 'error' field.
         error: APIError,
         /// Required 'time' field.
-        time: RetryPartTime,
+        time: UserMessageTime,
     },
     #[serde(rename = "compaction")]
     #[display("Compaction")]
@@ -648,7 +648,7 @@ pub struct EventInstallationUpdateAvailable {
     #[serde(rename = "type")]
     pub type_field: String,
     /// Required 'properties' field.
-    pub properties: EventInstallationUpdateAvailableProperties,
+    pub properties: EventInstallationUpdatedProperties,
 }
 ///Generated from schema 'Project'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -796,7 +796,7 @@ pub struct QuestionRequest {
     pub questions: Vec<QuestionInfo>,
     /// Optional 'tool' field.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub tool: Option<QuestionRequestTool>,
+    pub tool: Option<PermissionRequestTool>,
 }
 ///Generated from schema 'Event.question.asked'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -883,7 +883,7 @@ pub struct EventPtyUpdated {
     #[serde(rename = "type")]
     pub type_field: String,
     /// Required 'properties' field.
-    pub properties: EventPtyUpdatedProperties,
+    pub properties: EventPtyCreatedProperties,
 }
 ///Generated from schema 'Event.pty.exited'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1021,7 +1021,7 @@ pub struct MessageAbortedError {
     /// Required 'name' field.
     pub name: String,
     /// Required 'data' field.
-    pub data: MessageAbortedErrorData,
+    pub data: UnknownErrorData,
 }
 ///Generated from schema 'APIError'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1139,7 +1139,7 @@ pub struct ReasoningPart {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
     /// Required 'time' field.
-    pub time: ReasoningPartTime,
+    pub time: TextPartTime,
 }
 ///Generated from schema 'FilePartSourceText'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1168,7 +1168,7 @@ pub struct Range {
     /// Required 'start' field.
     pub start: RangeStart,
     /// Required 'end' field.
-    pub end: RangeEnd,
+    pub end: RangeStart,
 }
 ///Generated from schema 'SymbolSource'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1351,7 +1351,7 @@ pub struct StepFinishPart {
     /// Required 'cost' field.
     pub cost: f64,
     /// Required 'tokens' field.
-    pub tokens: StepFinishPartTokens,
+    pub tokens: AssistantMessageTokens,
 }
 ///Generated from schema 'SnapshotPart'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1428,7 +1428,7 @@ pub struct RetryPart {
     /// Required 'error' field.
     pub error: APIError,
     /// Required 'time' field.
-    pub time: RetryPartTime,
+    pub time: UserMessageTime,
 }
 ///Generated from schema 'CompactionPart'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1472,7 +1472,7 @@ pub struct EventSessionCompacted {
     #[serde(rename = "type")]
     pub type_field: String,
     /// Required 'properties' field.
-    pub properties: EventSessionCompactedProperties,
+    pub properties: EventSessionIdleProperties,
 }
 ///Generated from schema 'PermissionRule'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1535,7 +1535,7 @@ pub struct EventSessionUpdated {
     #[serde(rename = "type")]
     pub type_field: String,
     /// Required 'properties' field.
-    pub properties: EventSessionUpdatedProperties,
+    pub properties: EventSessionCreatedProperties,
 }
 ///Generated from schema 'Event.session.deleted'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1544,7 +1544,7 @@ pub struct EventSessionDeleted {
     #[serde(rename = "type")]
     pub type_field: String,
     /// Required 'properties' field.
-    pub properties: EventSessionDeletedProperties,
+    pub properties: EventSessionCreatedProperties,
 }
 ///Generated from schema 'Event.session.diff'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1606,7 +1606,7 @@ pub struct NotFoundError {
     /// Required 'name' field.
     pub name: String,
     /// Required 'data' field.
-    pub data: NotFoundErrorData,
+    pub data: UnknownErrorData,
 }
 ///Custom keybind configurations
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1994,11 +1994,7 @@ pub struct McpOAuthConfig {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "clientId")]
     pub client_id: Option<String>,
     /// OAuth client secret (if required by the authorization server)
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "clientSecret"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "clientSecret")]
     pub client_secret: Option<String>,
     /// OAuth scopes to request during authorization
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2172,11 +2168,7 @@ pub struct WorktreeCreateInput {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     /// Optional 'startCommand' field.
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "startCommand"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "startCommand")]
     pub start_command: Option<String>,
 }
 ///Generated from schema 'VcsInfo'.
@@ -2204,7 +2196,7 @@ pub struct TextPartInput {
     pub ignored: Option<bool>,
     /// Optional 'time' field.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub time: Option<TextPartInputTime>,
+    pub time: Option<TextPartTime>,
     /// Optional 'metadata' field.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
@@ -2242,7 +2234,7 @@ pub struct AgentPartInput {
     pub name: String,
     /// Optional 'source' field.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub source: Option<AgentPartInputSource>,
+    pub source: Option<AgentPartSource>,
 }
 ///Generated from schema 'SubtaskPartInput'.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -2544,11 +2536,7 @@ pub struct OAuth {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "accountId")]
     pub account_id: Option<String>,
     /// Optional 'enterpriseUrl' field.
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "enterpriseUrl"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "enterpriseUrl")]
     pub enterprise_url: Option<String>,
 }
 ///Generated from schema 'ApiAuth'.
@@ -2864,7 +2852,7 @@ pub struct FindGetResponse {
     /// Required 'path' field.
     pub path: FindGetResponsePath,
     /// Required 'lines' field.
-    pub lines: FindGetResponseLines,
+    pub lines: FindGetResponsePath,
     /// Required 'line_number' field.
     pub line_number: f64,
     /// Required 'absolute_offset' field.
@@ -2969,12 +2957,12 @@ pub enum Name {
     #[display("ProviderAuthError")]
     ProviderAuthError {
         /// Required 'data' field.
-        data: ProviderAuthErrorData1,
+        data: ProviderAuthErrorData,
     },
     #[display("UnknownError")]
     UnknownError {
         /// Required 'data' field.
-        data: UnknownErrorData1,
+        data: UnknownErrorData,
     },
     #[display("MessageOutputLengthError")]
     MessageOutputLengthError {
@@ -2984,12 +2972,12 @@ pub enum Name {
     #[display("MessageAbortedError")]
     MessageAbortedError {
         /// Required 'data' field.
-        data: MessageAbortedErrorData1,
+        data: UnknownErrorData,
     },
     #[display("APIError")]
     APIError {
         /// Required 'data' field.
-        data: APIErrorData1,
+        data: APIErrorData,
     },
 }
 ///Generated from schema 'Type'.
@@ -3012,7 +3000,7 @@ pub enum Type {
         ignored: Option<bool>,
         /// Optional 'time' field.
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        time: Option<TextPartInputTime1>,
+        time: Option<TextPartTime>,
         /// Optional 'metadata' field.
         #[serde(default, skip_serializing_if = "Option::is_none")]
         metadata: Option<serde_json::Value>,
@@ -3044,7 +3032,7 @@ pub enum Type {
         name: String,
         /// Optional 'source' field.
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        source: Option<AgentPartInputSource1>,
+        source: Option<AgentPartSource>,
     },
     #[serde(rename = "subtask")]
     #[display("Subtask")]
@@ -3062,6 +3050,76 @@ pub enum Type {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         command: Option<String>,
     },
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UserMessageTime {
+    pub created: f64,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UserMessageSummary {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub title: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub body: Option<String>,
+    pub diffs: Vec<FileDiff>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UserMessageModel {
+    #[serde(rename = "providerID")]
+    pub provider_id: String,
+    #[serde(rename = "modelID")]
+    pub model_id: String,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AssistantMessageTime {
+    pub created: f64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub completed: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AssistantMessagePath {
+    pub cwd: String,
+    pub root: String,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AssistantMessageTokensCache {
+    pub read: f64,
+    pub write: f64,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AssistantMessageTokens {
+    pub input: f64,
+    pub output: f64,
+    pub reasoning: f64,
+    pub cache: AssistantMessageTokensCache,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ToolStateRunningTime {
+    pub start: f64,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ToolStateCompletedTime {
+    pub start: f64,
+    pub end: f64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub compacted: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ToolStateErrorTime {
+    pub start: f64,
+    pub end: f64,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TextPartTime {
+    pub start: f64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end: Option<f64>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AgentPartSource {
+    pub value: String,
+    pub start: i64,
+    pub end: i64,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventTuiPromptAppendProperties {
@@ -3087,10 +3145,6 @@ pub struct EventTuiSessionSelectProperties {
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventInstallationUpdatedProperties {
-    pub version: String,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct EventInstallationUpdateAvailableProperties {
     pub version: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -3148,13 +3202,6 @@ pub struct EventSessionIdleProperties {
     pub session_id: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct QuestionRequestTool {
-    #[serde(rename = "messageID")]
-    pub message_id: String,
-    #[serde(rename = "callID")]
-    pub call_id: String,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventQuestionRepliedProperties {
     #[serde(rename = "sessionID")]
     pub session_id: String,
@@ -3177,10 +3224,6 @@ pub struct EventTodoUpdatedProperties {
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPtyCreatedProperties {
-    pub info: Pty,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct EventPtyUpdatedProperties {
     pub info: Pty,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -3217,25 +3260,6 @@ pub struct EventVcsBranchUpdatedProperties {
     pub branch: Option<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct UserMessageTime {
-    pub created: f64,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct UserMessageSummary {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub title: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub body: Option<String>,
-    pub diffs: Vec<FileDiff>,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct UserMessageModel {
-    #[serde(rename = "providerID")]
-    pub provider_id: String,
-    #[serde(rename = "modelID")]
-    pub model_id: String,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderAuthErrorData {
     #[serde(rename = "providerID")]
     pub provider_id: String,
@@ -3246,17 +3270,9 @@ pub struct UnknownErrorData {
     pub message: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct MessageAbortedErrorData {
-    pub message: String,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct APIErrorData {
     pub message: String,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "statusCode"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "statusCode")]
     pub status_code: Option<f64>,
     #[serde(rename = "isRetryable")]
     pub is_retryable: bool,
@@ -3266,37 +3282,10 @@ pub struct APIErrorData {
         rename = "responseHeaders"
     )]
     pub response_headers: Option<serde_json::Value>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "responseBody"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "responseBody")]
     pub response_body: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AssistantMessageTime {
-    pub created: f64,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub completed: Option<f64>,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AssistantMessagePath {
-    pub cwd: String,
-    pub root: String,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AssistantMessageTokensCache {
-    pub read: f64,
-    pub write: f64,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AssistantMessageTokens {
-    pub input: f64,
-    pub output: f64,
-    pub reasoning: f64,
-    pub cache: AssistantMessageTokensCache,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventMessageUpdatedProperties {
@@ -3310,64 +3299,9 @@ pub struct EventMessageRemovedProperties {
     pub message_id: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TextPartTime {
-    pub start: f64,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub end: Option<f64>,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ReasoningPartTime {
-    pub start: f64,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub end: Option<f64>,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RangeStart {
     pub line: f64,
     pub character: f64,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RangeEnd {
-    pub line: f64,
-    pub character: f64,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ToolStateRunningTime {
-    pub start: f64,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ToolStateCompletedTime {
-    pub start: f64,
-    pub end: f64,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub compacted: Option<f64>,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ToolStateErrorTime {
-    pub start: f64,
-    pub end: f64,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct StepFinishPartTokensCache {
-    pub read: f64,
-    pub write: f64,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct StepFinishPartTokens {
-    pub input: f64,
-    pub output: f64,
-    pub reasoning: f64,
-    pub cache: StepFinishPartTokensCache,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AgentPartSource {
-    pub value: String,
-    pub start: i64,
-    pub end: i64,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RetryPartTime {
-    pub created: f64,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventMessagePartUpdatedProperties {
@@ -3383,11 +3317,6 @@ pub struct EventMessagePartRemovedProperties {
     pub message_id: String,
     #[serde(rename = "partID")]
     pub part_id: String,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct EventSessionCompactedProperties {
-    #[serde(rename = "sessionID")]
-    pub session_id: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionSummary {
@@ -3426,14 +3355,6 @@ pub struct EventSessionCreatedProperties {
     pub info: Session,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct EventSessionUpdatedProperties {
-    pub info: Session,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct EventSessionDeletedProperties {
-    pub info: Session,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventSessionDiffProperties {
     #[serde(rename = "sessionID")]
     pub session_id: String,
@@ -3447,26 +3368,14 @@ pub struct EventSessionErrorProperties {
     pub error: Option<Name>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct NotFoundErrorData {
-    pub message: String,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderConfigOptions {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "apiKey")]
     pub api_key: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "baseURL")]
     pub base_url: Option<String>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "enterpriseUrl"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "enterpriseUrl")]
     pub enterprise_url: Option<String>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "setCacheKey"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "setCacheKey")]
     pub set_cache_key: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timeout: Option<serde_json::Value>,
@@ -3542,21 +3451,13 @@ pub struct ConfigExperimentalHook {
 pub struct ConfigExperimental {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub hook: Option<ConfigExperimentalHook>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "chatMaxRetries"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "chatMaxRetries")]
     pub chat_max_retries: Option<f64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub disable_paste_summary: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub batch_tool: Option<bool>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "openTelemetry"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "openTelemetry")]
     pub open_telemetry: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub primary_tools: Option<Vec<String>>,
@@ -3564,18 +3465,6 @@ pub struct ConfigExperimental {
     pub continue_loop_on_deny: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mcp_timeout: Option<i64>,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TextPartInputTime {
-    pub start: f64,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub end: Option<f64>,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AgentPartInputSource {
-    pub value: String,
-    pub start: i64,
-    pub end: i64,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelApi {
@@ -3592,44 +3481,26 @@ pub struct ModelCapabilitiesInput {
     pub pdf: bool,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ModelCapabilitiesOutput {
-    pub text: bool,
-    pub audio: bool,
-    pub image: bool,
-    pub video: bool,
-    pub pdf: bool,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelCapabilities {
     pub temperature: bool,
     pub reasoning: bool,
     pub attachment: bool,
     pub toolcall: bool,
     pub input: ModelCapabilitiesInput,
-    pub output: ModelCapabilitiesOutput,
+    pub output: ModelCapabilitiesInput,
     pub interleaved: serde_json::Value,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ModelCostCache {
-    pub read: f64,
-    pub write: f64,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ModelCostExperimentalOver200KCache {
-    pub read: f64,
-    pub write: f64,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelCostExperimentalOver200K {
     pub input: f64,
     pub output: f64,
-    pub cache: ModelCostExperimentalOver200KCache,
+    pub cache: AssistantMessageTokensCache,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelCost {
     pub input: f64,
     pub output: f64,
-    pub cache: ModelCostCache,
+    pub cache: AssistantMessageTokensCache,
     #[serde(
         default,
         skip_serializing_if = "Option::is_none",
@@ -3684,66 +3555,6 @@ pub struct AgentModel {
 pub struct FindGetResponsePath {
     pub text: String,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FindGetResponseLines {
-    pub text: String,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct InlineObjectMatch {
-    pub text: String,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ProviderAuthErrorData1 {
-    #[serde(rename = "providerID")]
-    pub provider_id: String,
-    pub message: String,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct UnknownErrorData1 {
-    pub message: String,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct MessageAbortedErrorData1 {
-    pub message: String,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct APIErrorData1 {
-    pub message: String,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "statusCode"
-    )]
-    pub status_code: Option<f64>,
-    #[serde(rename = "isRetryable")]
-    pub is_retryable: bool,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "responseHeaders"
-    )]
-    pub response_headers: Option<serde_json::Value>,
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        rename = "responseBody"
-    )]
-    pub response_body: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub metadata: Option<serde_json::Value>,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TextPartInputTime1 {
-    pub start: f64,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub end: Option<f64>,
-}
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AgentPartInputSource1 {
-    pub value: String,
-    pub start: i64,
-    pub end: i64,
-}
 pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     /// Get health information about the OpenCode server.
     ///
@@ -3757,35 +3568,49 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = Vec::new();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/global/health", &query_params);
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/global/health",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<GlobalHealthGetResponse>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<GlobalHealthGetResponse>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Subscribe to global events from the OpenCode system using server-sent events.
     ///
     /// Autogenerated `Get` request to `/global/event`.
     ///
-    fn global_event_get(&self) -> impl Future<Output = Result<(), Self::RequesterErrorType>>
+    fn global_event_get(
+        &self,
+    ) -> impl Future<Output = Result<(), Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
             let query_params: Vec<(String, String)> = Vec::new();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/global/event", &query_params);
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/global/event",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             Ok(())
         }
@@ -3794,24 +3619,33 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     ///
     /// Autogenerated `Post` request to `/global/dispose`.
     ///
-    fn global_dispose_post(&self) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
+    fn global_dispose_post(
+        &self,
+    ) -> impl Future<Output = Result<bool, Self::RequesterErrorType>>
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
             let query_params: Vec<(String, String)> = Vec::new();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/global/dispose", &query_params);
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/global/dispose",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get a list of projects that have been opened with OpenCode.
@@ -3829,25 +3663,29 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/project", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Project>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Project>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Retrieve the currently active project that OpenCode is working with.
@@ -3865,25 +3703,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/project/current", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/project/current",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Project>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Project>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Update project properties such as name, icon and color.
@@ -3904,13 +3749,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/project/{}", ::oapi_universal_gen::urlencode(project_id)),
                 &query_params,
@@ -3922,14 +3767,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Project>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Project>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get a list of all active pseudo-terminal (PTY) sessions managed by OpenCode.
@@ -3947,25 +3796,29 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/pty", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Pty>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Pty>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Create a new pseudo-terminal (PTY) session for running shell commands and processes.
@@ -3984,13 +3837,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/pty", &query_params);
             let request = if let Some(b) = &body {
                 self.create_request_with_body(RequestType::Post, &uri, b)?
@@ -3999,14 +3852,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Pty>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Pty>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Retrieve detailed information about a specific pseudo-terminal (PTY) session.
@@ -4026,13 +3883,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/pty/{}", ::oapi_universal_gen::urlencode(pty_id)),
                 &query_params,
@@ -4040,14 +3897,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Pty>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Pty>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Update properties of an existing pseudo-terminal (PTY) session.
@@ -4068,13 +3929,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/pty/{}", ::oapi_universal_gen::urlencode(pty_id)),
                 &query_params,
@@ -4086,14 +3947,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Pty>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Pty>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Remove and terminate a specific pseudo-terminal (PTY) session.
@@ -4113,13 +3978,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/pty/{}", ::oapi_universal_gen::urlencode(pty_id)),
                 &query_params,
@@ -4127,14 +3992,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Delete, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Establish a WebSocket connection to interact with a pseudo-terminal (PTY) session in real-time.
@@ -4154,13 +4023,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/pty/{}/connect", ::oapi_universal_gen::urlencode(pty_id)),
                 &query_params,
@@ -4168,14 +4037,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Retrieve the current OpenCode configuration settings and preferences.
@@ -4193,25 +4066,29 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/config", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Config>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Config>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Update OpenCode configuration settings and preferences.
@@ -4230,13 +4107,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/config", &query_params);
             let request = if let Some(b) = &body {
                 self.create_request_with_body(RequestType::Patch, &uri, b)?
@@ -4245,14 +4122,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Config>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Config>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get a list of all available tool IDs, including both built-in tools and dynamically registered tools.
@@ -4270,26 +4151,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri =
-                ::oapi_universal_gen::UrlBuilder::build("/experimental/tool/ids", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/experimental/tool/ids",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<ToolIDs>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<ToolIDs>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get a list of available tools with their JSON schema parameters for a specific provider and model combination.
@@ -4312,28 +4199,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                Some((String::from("provider"), provider.to_string())),
-                Some((String::from("model"), model.to_string())),
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, Some((String::from("provider"), provider
+                .to_string())), Some((String::from("model"), model.to_string()))
             ]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/experimental/tool", &query_params);
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/experimental/tool",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<ToolList>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<ToolList>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Clean up and dispose the current OpenCode instance, releasing all resources.
@@ -4351,25 +4242,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/instance/dispose", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/instance/dispose",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Retrieve the current working directory and related path information for the OpenCode instance.
@@ -4387,25 +4285,29 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/path", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Path>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Path>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// List all sandbox worktrees for the current project.
@@ -4423,26 +4325,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri =
-                ::oapi_universal_gen::UrlBuilder::build("/experimental/worktree", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/experimental/worktree",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<String>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<String>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Create a new git worktree for the current project.
@@ -4461,15 +4369,17 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri =
-                ::oapi_universal_gen::UrlBuilder::build("/experimental/worktree", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/experimental/worktree",
+                &query_params,
+            );
             let request = if let Some(b) = &body {
                 self.create_request_with_body(RequestType::Post, &uri, b)?
             } else {
@@ -4477,14 +4387,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Worktree>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Worktree>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Retrieve version control system (VCS) information for the current project, such as git branch.
@@ -4502,25 +4416,29 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/vcs", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<VcsInfo>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<VcsInfo>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get a list of all OpenCode sessions, sorted by most recently updated.
@@ -4545,38 +4463,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                match start.as_ref() {
-                    Some(v) => Some((String::from("start"), v.to_string())),
-                    None => None,
-                },
-                match search.as_ref() {
-                    Some(v) => Some((String::from("search"), v.to_string())),
-                    None => None,
-                },
-                match limit.as_ref() {
-                    Some(v) => Some((String::from("limit"), v.to_string())),
-                    None => None,
-                },
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, match start.as_ref() { Some(v) =>
+                Some((String::from("start"), v.to_string())), None => None, }, match
+                search.as_ref() { Some(v) => Some((String::from("search"), v
+                .to_string())), None => None, }, match limit.as_ref() { Some(v) =>
+                Some((String::from("limit"), v.to_string())), None => None, }
             ]
-            .into_iter()
-            .flatten()
-            .collect();
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/session", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Session>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Session>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Create a new OpenCode session for interacting with AI assistants and managing conversations.
@@ -4595,13 +4507,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/session", &query_params);
             let request = if let Some(b) = &body {
                 self.create_request_with_body(RequestType::Post, &uri, b)?
@@ -4610,14 +4522,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Retrieve the current status of all sessions, including active, idle, and completed states.
@@ -4635,25 +4551,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/session/status", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/session/status",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<serde_json::Value>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<serde_json::Value>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Retrieve detailed information about a specific OpenCode session.
@@ -4673,13 +4596,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/session/{}", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
@@ -4687,14 +4610,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Update properties of an existing session, such as title or other metadata.
@@ -4715,13 +4642,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/session/{}", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
@@ -4733,14 +4660,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Delete a session and permanently remove all associated data, including messages and history.
@@ -4760,13 +4691,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/session/{}", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
@@ -4774,14 +4705,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Delete, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Retrieve all child sessions that were forked from the specified parent session.
@@ -4801,31 +4736,34 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/children",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/children", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Session>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Session>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Retrieve the todo list associated with a specific session, showing tasks and action items.
@@ -4845,31 +4783,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
-                format!(
-                    "/session/{}/todo",
-                    ::oapi_universal_gen::urlencode(session_id)
-                ),
+                format!("/session/{}/todo", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
             );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Todo>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Todo>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Analyze the current application and create an AGENTS.md file with project-specific agent configurations.
@@ -4890,18 +4829,15 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
-                format!(
-                    "/session/{}/init",
-                    ::oapi_universal_gen::urlencode(session_id)
-                ),
+                format!("/session/{}/init", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
             );
             let request = if let Some(b) = &body {
@@ -4911,14 +4847,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Create a new session by forking an existing session at a specific message point.
@@ -4939,18 +4879,15 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
-                format!(
-                    "/session/{}/fork",
-                    ::oapi_universal_gen::urlencode(session_id)
-                ),
+                format!("/session/{}/fork", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
             );
             let request = if let Some(b) = &body {
@@ -4960,14 +4897,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Abort an active session and stop any ongoing AI processing or command execution.
@@ -4987,31 +4928,34 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/abort",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/abort", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Create a shareable link for a session, allowing others to view the conversation.
@@ -5031,31 +4975,34 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/share",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/share", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Remove the shareable link for a session, making it private again.
@@ -5075,31 +5022,34 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/share",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/share", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Delete, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get all file changes (diffs) made during this session.
@@ -5122,36 +5072,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                match message_id.as_ref() {
-                    Some(v) => Some((String::from("messageID"), v.to_string())),
-                    None => None,
-                },
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, match message_id.as_ref() { Some(v) =>
+                Some((String::from("messageID"), v.to_string())), None => None, }
             ]
-            .into_iter()
-            .flatten()
-            .collect();
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
-                format!(
-                    "/session/{}/diff",
-                    ::oapi_universal_gen::urlencode(session_id)
-                ),
+                format!("/session/{}/diff", ::oapi_universal_gen::urlencode(session_id)),
                 &query_params,
             );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<FileDiff>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<FileDiff>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Generate a concise summary of the session using AI compaction to preserve key information.
@@ -5172,17 +5118,16 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/summarize",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/summarize", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
@@ -5193,14 +5138,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Retrieve all messages in a session, including user prompts and AI responses.
@@ -5217,35 +5166,36 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         directory: Option<String>,
         session_id: String,
         limit: Option<f64>,
-    ) -> impl Future<Output = Result<Vec<SessionSessionidMessageGetResponse>, Self::RequesterErrorType>>
+    ) -> impl Future<
+        Output = Result<
+            Vec<SessionSessionidMessageGetResponse>,
+            Self::RequesterErrorType,
+        >,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                match limit.as_ref() {
-                    Some(v) => Some((String::from("limit"), v.to_string())),
-                    None => None,
-                },
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, match limit.as_ref() { Some(v) =>
+                Some((String::from("limit"), v.to_string())), None => None, }
             ]
-            .into_iter()
-            .flatten()
-            .collect();
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/message",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/message", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
@@ -5270,22 +5220,23 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         directory: Option<String>,
         session_id: String,
         body: Option<SessionSessionidMessagePostRequest>,
-    ) -> impl Future<Output = Result<SessionSessionidMessagePostResponse, Self::RequesterErrorType>>
+    ) -> impl Future<
+        Output = Result<SessionSessionidMessagePostResponse, Self::RequesterErrorType>,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/message",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/message", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
@@ -5296,7 +5247,9 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
@@ -5323,19 +5276,22 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         session_id: String,
         message_id: String,
     ) -> impl Future<
-        Output = Result<SessionSessionidMessageMessageidGetResponse, Self::RequesterErrorType>,
+        Output = Result<
+            SessionSessionidMessageMessageidGetResponse,
+            Self::RequesterErrorType,
+        >,
     >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/session/{}/message/{}",
@@ -5347,14 +5303,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
             Ok(
-                serde_json::from_str::<SessionSessionidMessageMessageidGetResponse>(&content)
+                serde_json::from_str::<
+                    SessionSessionidMessageMessageidGetResponse,
+                >(&content)
                     .map_err(|_e| OapiRequesterError::SerializationError.into())?,
             )
         }
@@ -5381,13 +5341,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/session/{}/message/{}/part/{}",
@@ -5404,14 +5364,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Part>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Part>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Delete a part from a message
@@ -5435,13 +5399,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/session/{}/message/{}/part/{}",
@@ -5454,14 +5418,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Delete, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Create and send a new message to a session asynchronously, starting the session if needed and returning immediately.
@@ -5482,13 +5450,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/session/{}/prompt_async",
@@ -5503,7 +5471,9 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             Ok(())
         }
@@ -5521,22 +5491,23 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         directory: Option<String>,
         session_id: String,
         body: Option<SessionSessionidCommandPostRequest>,
-    ) -> impl Future<Output = Result<SessionSessionidCommandPostResponse, Self::RequesterErrorType>>
+    ) -> impl Future<
+        Output = Result<SessionSessionidCommandPostResponse, Self::RequesterErrorType>,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/command",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/command", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
@@ -5547,7 +5518,9 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
@@ -5577,17 +5550,16 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/shell",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/shell", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
@@ -5598,14 +5570,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<AssistantMessage>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<AssistantMessage>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Revert a specific message in a session, undoing its effects and restoring the previous state.
@@ -5626,17 +5602,16 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/revert",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/revert", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
@@ -5647,14 +5622,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Restore all previously reverted messages in a session.
@@ -5674,31 +5653,34 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/session/{}/unrevert",
-                    ::oapi_universal_gen::urlencode(session_id)
+                    "/session/{}/unrevert", ::oapi_universal_gen::urlencode(session_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Session>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Session>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Approve or deny a permission request from the AI assistant.
@@ -5721,13 +5703,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/session/{}/permissions/{}",
@@ -5743,14 +5725,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Approve or deny a permission request from the AI assistant.
@@ -5771,17 +5757,16 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/permission/{}/reply",
-                    ::oapi_universal_gen::urlencode(request_id)
+                    "/permission/{}/reply", ::oapi_universal_gen::urlencode(request_id)
                 ),
                 &query_params,
             );
@@ -5792,14 +5777,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get all pending permission requests across all sessions.
@@ -5817,25 +5806,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/permission", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/permission",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<PermissionRequest>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<PermissionRequest>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get all pending question requests across all sessions.
@@ -5853,25 +5849,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/question", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/question",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<QuestionRequest>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<QuestionRequest>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Provide answers to a question request from the AI assistant.
@@ -5892,17 +5895,16 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/question/{}/reply",
-                    ::oapi_universal_gen::urlencode(request_id)
+                    "/question/{}/reply", ::oapi_universal_gen::urlencode(request_id)
                 ),
                 &query_params,
             );
@@ -5913,14 +5915,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Reject a question request from the AI assistant.
@@ -5940,31 +5946,34 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/question/{}/reject",
-                    ::oapi_universal_gen::urlencode(request_id)
+                    "/question/{}/reject", ::oapi_universal_gen::urlencode(request_id)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get a list of all available commands in the OpenCode system.
@@ -5982,25 +5991,29 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/command", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Command>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Command>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get a list of all configured AI providers and their default models.
@@ -6013,30 +6026,39 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn config_providers_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<ConfigProvidersGetResponse, Self::RequesterErrorType>>
+    ) -> impl Future<
+        Output = Result<ConfigProvidersGetResponse, Self::RequesterErrorType>,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/config/providers", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/config/providers",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<ConfigProvidersGetResponse>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<ConfigProvidersGetResponse>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get a list of all available AI providers, including both available and connected ones.
@@ -6054,25 +6076,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/provider", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/provider",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<ProviderGetResponse>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<ProviderGetResponse>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Retrieve available authentication methods for all AI providers.
@@ -6090,25 +6119,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/provider/auth", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/provider/auth",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<serde_json::Value>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<serde_json::Value>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Initiate OAuth authorization for a specific AI provider to get an authorization URL.
@@ -6124,18 +6160,20 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         directory: Option<String>,
         provider_id: String,
         body: Option<ProviderProvideridOauthAuthorizePostRequest>,
-    ) -> impl Future<Output = Result<ProviderAuthAuthorization, Self::RequesterErrorType>>
+    ) -> impl Future<
+        Output = Result<ProviderAuthAuthorization, Self::RequesterErrorType>,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/provider/{}/oauth/authorize",
@@ -6150,14 +6188,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<ProviderAuthAuthorization>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<ProviderAuthAuthorization>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Handle the OAuth callback from a provider after user authorization.
@@ -6178,13 +6220,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
                     "/provider/{}/oauth/callback",
@@ -6199,14 +6241,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Search for text patterns across files in the project using ripgrep.
@@ -6227,27 +6273,29 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                Some((String::from("pattern"), pattern.to_string())),
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, Some((String::from("pattern"), pattern
+                .to_string()))
             ]
-            .into_iter()
-            .flatten()
-            .collect();
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/find", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<FindGetResponse>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<FindGetResponse>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Search for files or directories by name or pattern in the project directory.
@@ -6274,39 +6322,36 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                Some((String::from("query"), query.to_string())),
-                match dirs.as_ref() {
-                    Some(v) => Some((String::from("dirs"), v.to_string())),
-                    None => None,
-                },
-                match type_field.as_ref() {
-                    Some(v) => Some((String::from("type"), v.to_string())),
-                    None => None,
-                },
-                match limit.as_ref() {
-                    Some(v) => Some((String::from("limit"), v.to_string())),
-                    None => None,
-                },
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, Some((String::from("query"), query
+                .to_string())), match dirs.as_ref() { Some(v) =>
+                Some((String::from("dirs"), v.to_string())), None => None, }, match
+                type_field.as_ref() { Some(v) => Some((String::from("type"), v
+                .to_string())), None => None, }, match limit.as_ref() { Some(v) =>
+                Some((String::from("limit"), v.to_string())), None => None, }
             ]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/find/file", &query_params);
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/find/file",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<String>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<String>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Search for workspace symbols like functions, classes, and variables using LSP.
@@ -6327,27 +6372,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                Some((String::from("query"), query.to_string())),
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, Some((String::from("query"), query
+                .to_string()))
             ]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/find/symbol", &query_params);
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/find/symbol",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Symbol>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Symbol>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// List files and directories in a specified path.
@@ -6368,27 +6418,29 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                Some((String::from("path"), path.to_string())),
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, Some((String::from("path"), path
+                .to_string()))
             ]
-            .into_iter()
-            .flatten()
-            .collect();
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/file", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<FileNode>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<FileNode>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Read the content of a specified file.
@@ -6409,27 +6461,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     {
         async move {
             let query_params: Vec<(String, String)> = vec![
-                match directory.as_ref() {
-                    Some(v) => Some((String::from("directory"), v.to_string())),
-                    None => None,
-                },
-                Some((String::from("path"), path.to_string())),
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }, Some((String::from("path"), path
+                .to_string()))
             ]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/file/content", &query_params);
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/file/content",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<FileContent>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<FileContent>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get the git status of all files in the project.
@@ -6447,25 +6504,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/file/status", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/file/status",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<File>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<File>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Write a log entry to the server logs with specified level and metadata.
@@ -6484,13 +6548,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/log", &query_params);
             let request = if let Some(b) = &body {
                 self.create_request_with_body(RequestType::Post, &uri, b)?
@@ -6499,14 +6563,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get a list of all available AI agents in the OpenCode system.
@@ -6524,25 +6592,29 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/agent", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<Agent>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<Agent>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get the status of all Model Context Protocol (MCP) servers.
@@ -6560,25 +6632,29 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/mcp", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<serde_json::Value>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<serde_json::Value>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Dynamically add a new Model Context Protocol (MCP) server to the system.
@@ -6597,13 +6673,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/mcp", &query_params);
             let request = if let Some(b) = &body {
                 self.create_request_with_body(RequestType::Post, &uri, b)?
@@ -6612,14 +6688,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<serde_json::Value>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<serde_json::Value>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Start OAuth authentication flow for a Model Context Protocol (MCP) server.
@@ -6639,13 +6719,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/mcp/{}/auth", ::oapi_universal_gen::urlencode(name)),
                 &query_params,
@@ -6653,14 +6733,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<McpNameAuthPostResponse>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<McpNameAuthPostResponse>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Remove OAuth credentials for an MCP server
@@ -6675,18 +6759,20 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         &self,
         directory: Option<String>,
         name: String,
-    ) -> impl Future<Output = Result<McpNameAuthDeleteResponse, Self::RequesterErrorType>>
+    ) -> impl Future<
+        Output = Result<McpNameAuthDeleteResponse, Self::RequesterErrorType>,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/mcp/{}/auth", ::oapi_universal_gen::urlencode(name)),
                 &query_params,
@@ -6694,14 +6780,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Delete, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<McpNameAuthDeleteResponse>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<McpNameAuthDeleteResponse>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Complete OAuth authentication for a Model Context Protocol (MCP) server using the authorization code.
@@ -6722,18 +6812,15 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
-                format!(
-                    "/mcp/{}/auth/callback",
-                    ::oapi_universal_gen::urlencode(name)
-                ),
+                format!("/mcp/{}/auth/callback", ::oapi_universal_gen::urlencode(name)),
                 &query_params,
             );
             let request = if let Some(b) = &body {
@@ -6743,14 +6830,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<MCPStatus>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<MCPStatus>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Start OAuth flow and wait for callback (opens browser)
@@ -6770,31 +6861,34 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!(
-                    "/mcp/{}/auth/authenticate",
-                    ::oapi_universal_gen::urlencode(name)
+                    "/mcp/{}/auth/authenticate", ::oapi_universal_gen::urlencode(name)
                 ),
                 &query_params,
             );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<MCPStatus>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<MCPStatus>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Connect an MCP server
@@ -6814,13 +6908,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/mcp/{}/connect", ::oapi_universal_gen::urlencode(name)),
                 &query_params,
@@ -6828,14 +6922,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Disconnect an MCP server
@@ -6855,13 +6953,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/mcp/{}/disconnect", ::oapi_universal_gen::urlencode(name)),
                 &query_params,
@@ -6869,14 +6967,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get all available MCP resources from connected servers. Optionally filter by name.
@@ -6894,26 +6996,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri =
-                ::oapi_universal_gen::UrlBuilder::build("/experimental/resource", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/experimental/resource",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<serde_json::Value>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<serde_json::Value>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get LSP server status
@@ -6931,25 +7039,29 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/lsp", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<LSPStatus>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<LSPStatus>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get formatter status
@@ -6967,25 +7079,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/formatter", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/formatter",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<Vec<FormatterStatus>>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<Vec<FormatterStatus>>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Append prompt to the TUI
@@ -7004,14 +7123,17 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/append-prompt", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/append-prompt",
+                &query_params,
+            );
             let request = if let Some(b) = &body {
                 self.create_request_with_body(RequestType::Post, &uri, b)?
             } else {
@@ -7019,14 +7141,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Open the help dialog in the TUI to display user assistance information.
@@ -7044,25 +7170,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/open-help", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/open-help",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Open the session dialog
@@ -7080,25 +7213,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/open-sessions", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/open-sessions",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Open the theme dialog
@@ -7116,25 +7256,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/open-themes", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/open-themes",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Open the model dialog
@@ -7152,25 +7299,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/open-models", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/open-models",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Submit the prompt
@@ -7188,25 +7342,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/submit-prompt", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/submit-prompt",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Clear the prompt
@@ -7224,25 +7385,32 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/clear-prompt", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/clear-prompt",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Post, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Execute a TUI command (e.g. agent_cycle)
@@ -7261,15 +7429,17 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri =
-                ::oapi_universal_gen::UrlBuilder::build("/tui/execute-command", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/execute-command",
+                &query_params,
+            );
             let request = if let Some(b) = &body {
                 self.create_request_with_body(RequestType::Post, &uri, b)?
             } else {
@@ -7277,14 +7447,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Show a toast notification in the TUI
@@ -7303,14 +7477,17 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/show-toast", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/show-toast",
+                &query_params,
+            );
             let request = if let Some(b) = &body {
                 self.create_request_with_body(RequestType::Post, &uri, b)?
             } else {
@@ -7318,14 +7495,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Publish a TUI event
@@ -7344,14 +7525,17 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/publish", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/publish",
+                &query_params,
+            );
             let request = if let Some(b) = &body {
                 self.create_request_with_body(RequestType::Post, &uri, b)?
             } else {
@@ -7359,14 +7543,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Navigate the TUI to display the specified session.
@@ -7385,14 +7573,17 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/select-session", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/select-session",
+                &query_params,
+            );
             let request = if let Some(b) = &body {
                 self.create_request_with_body(RequestType::Post, &uri, b)?
             } else {
@@ -7400,14 +7591,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Retrieve the next TUI (Terminal User Interface) request from the queue for processing.
@@ -7420,30 +7615,39 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
     fn tui_control_next_get(
         &self,
         directory: Option<String>,
-    ) -> impl Future<Output = Result<TuiControlNextGetResponse, Self::RequesterErrorType>>
+    ) -> impl Future<
+        Output = Result<TuiControlNextGetResponse, Self::RequesterErrorType>,
+    >
     where
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri = ::oapi_universal_gen::UrlBuilder::build("/tui/control/next", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/control/next",
+                &query_params,
+            );
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<TuiControlNextGetResponse>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<TuiControlNextGetResponse>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Submit a response to the TUI request queue to complete a pending request.
@@ -7462,15 +7666,17 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
-            let uri =
-                ::oapi_universal_gen::UrlBuilder::build("/tui/control/response", &query_params);
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
+            let uri = ::oapi_universal_gen::UrlBuilder::build(
+                "/tui/control/response",
+                &query_params,
+            );
             let request = if let Some(b) = &body {
                 self.create_request_with_body(RequestType::Post, &uri, b)?
             } else {
@@ -7478,14 +7684,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Set authentication credentials
@@ -7506,13 +7716,13 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build(
                 format!("/auth/{}", ::oapi_universal_gen::urlencode(provider_id)),
                 &query_params,
@@ -7524,14 +7734,18 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
             };
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             let content = response
                 .response_content()
                 .await
                 .ok_or_else(|| OapiRequesterError::ResponseContentError.into())?;
-            Ok(serde_json::from_str::<bool>(&content)
-                .map_err(|_e| OapiRequesterError::SerializationError.into())?)
+            Ok(
+                serde_json::from_str::<bool>(&content)
+                    .map_err(|_e| OapiRequesterError::SerializationError.into())?,
+            )
         }
     }
     /// Get events
@@ -7549,18 +7763,20 @@ pub trait ApiService: ::oapi_universal_gen::OapiRequester {
         Self::RequesterErrorType: From<OapiRequesterError>,
     {
         async move {
-            let query_params: Vec<(String, String)> = vec![match directory.as_ref() {
-                Some(v) => Some((String::from("directory"), v.to_string())),
-                None => None,
-            }]
-            .into_iter()
-            .flatten()
-            .collect();
+            let query_params: Vec<(String, String)> = vec![
+                match directory.as_ref() { Some(v) => Some((String::from("directory"), v
+                .to_string())), None => None, }
+            ]
+                .into_iter()
+                .flatten()
+                .collect();
             let uri = ::oapi_universal_gen::UrlBuilder::build("/event", &query_params);
             let request = self.create_request(RequestType::Get, &uri)?;
             let response = request.send_request().await?;
             if response.is_client_error() || response.is_server_error() {
-                return Err(OapiRequesterError::ClientOrServerError(response.status()).into());
+                return Err(
+                    OapiRequesterError::ClientOrServerError(response.status()).into(),
+                );
             }
             Ok(())
         }
